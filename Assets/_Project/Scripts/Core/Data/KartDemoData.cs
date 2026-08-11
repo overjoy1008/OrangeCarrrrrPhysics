@@ -39,6 +39,25 @@ namespace OrangeCarrrrr.Core
         public float Length => Geometry.HalfLength * 2f;
     }
 
+    /// <summary>
+    /// A track's serialized <c>the::ToMinimap</c> values, from its own
+    /// <c>track.1s</c>.
+    ///
+    /// This is what turns the flat artwork into the original's rotating map: it
+    /// says where the track's world origin sits on the 256x256 image and how many
+    /// image pixels a world unit is worth. A track without one — only the
+    /// synthetic <c>flat_test</c> — falls back to the square-on bounds map.
+    /// </summary>
+    public sealed class KartMinimapMapping
+    {
+        public string AssetName;
+        public float OriginX;
+        public float OriginY;
+        public float Scale;
+        public uint Width;
+        public uint Height;
+    }
+
     /// <summary><c>KartDemoTrackSpec</c> from <c>kart_demo_data.h</c>.</summary>
     public sealed class TrackSpec
     {
@@ -350,7 +369,56 @@ namespace OrangeCarrrrr.Core
             },
         };
 
+        /// <summary>
+        /// <c>ORIGINAL_MINIMAP_MAPPINGS[]</c>, the serialized <c>the::ToMinimap</c>
+        /// values from each track.1s. <c>flat_test</c> has none, which is why it
+        /// is absent rather than zeroed.
+        /// </summary>
+        private static KartMinimapMapping Minimap(
+            string assetName, float originX, float originY, float scale)
+            => new KartMinimapMapping
+            {
+                AssetName = assetName,
+                OriginX = originX,
+                OriginY = originY,
+                Scale = scale,
+                Width = 256u,
+                Height = 256u,
+            };
+
+        private static readonly KartMinimapMapping[] MinimapTable =
+        {
+            Minimap("desert_I01", 529.7672f, 598.147949f, 0.3f),
+            Minimap("desert_I02", 390.977051f, 595.9359f, 0.3f),
+            Minimap("desert_R01", 614.902832f, 461.68692f, 0.3f),
+            Minimap("forest_I01", 468.612122f, 408.32428f, 0.3f),
+            Minimap("forest_I02", 481.403046f, 618.0281f, 0.3f),
+            Minimap("forest_R02", 571.3153f, 723.649048f, 0.211053431f),
+            Minimap("ice_I01", 562.5881f, 751.542236f, 0.3f),
+            Minimap("ice_I02", 566.9641f, 487.197235f, 0.3f),
+            Minimap("ice_R01", 863.445557f, 897.8673f, 0.160318315f),
+            Minimap("village_I01", 326.083923f, 484.866364f, 0.3f),
+            Minimap("village_I02", 259.2857f, 356.454651f, 0.3f),
+            Minimap("village_R01", 631.49884f, 744.7253f, 0.144852176f),
+            Minimap("village_R03", 573.462f, 769.314758f, 0.1878337f),
+        };
+
         public static IReadOnlyList<TrackSpec> Tracks { get; } = TrackTable;
+
+        public static IReadOnlyList<KartMinimapMapping> MinimapMappings { get; } = MinimapTable;
+
+        /// <summary>The track's map mapping, or null where it has none.</summary>
+        public static KartMinimapMapping FindMinimapMapping(string assetName)
+        {
+            foreach (KartMinimapMapping mapping in MinimapTable)
+            {
+                if (string.Equals(mapping.AssetName, assetName, StringComparison.Ordinal))
+                {
+                    return mapping;
+                }
+            }
+            return null;
+        }
 
         public static KartSpec DefaultKart => Cotten5;
 

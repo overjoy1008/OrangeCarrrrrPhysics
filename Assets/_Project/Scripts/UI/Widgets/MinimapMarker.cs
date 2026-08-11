@@ -24,6 +24,15 @@ namespace OrangeCarrrrr.UI
         private Vector2 _normalized = new Vector2(0.5f, 0.5f);
         private Vector2 _heading = new Vector2(0f, -1f);
 
+        /// <summary>
+        /// The three corners in panel space when the rotating map is on, where
+        /// the marker is not a rotated triangle of fixed size but the projection
+        /// of one through the same camera the map is drawn with.
+        /// </summary>
+        private readonly Vector2[] _corners = new Vector2[3];
+
+        private bool _projected;
+
         public bool ShowGrid
         {
             get => _showGrid;
@@ -42,9 +51,24 @@ namespace OrangeCarrrrr.UI
         /// </summary>
         public void SetKart(Vector2 normalized, Vector2 heading)
         {
-            if (_normalized == normalized && _heading == heading) return;
+            if (!_projected && _normalized == normalized && _heading == heading) return;
+            _projected = false;
             _normalized = normalized;
             _heading = heading;
+            SetVerticesDirty();
+        }
+
+        /// <summary>
+        /// Places the marker as three already-projected corners, in the same
+        /// top-left-origin panel space <see cref="SetKart"/> takes.
+        /// </summary>
+        public void SetKartCorners(Vector2 a, Vector2 b, Vector2 c)
+        {
+            if (_projected && _corners[0] == a && _corners[1] == b && _corners[2] == c) return;
+            _projected = true;
+            _corners[0] = a;
+            _corners[1] = b;
+            _corners[2] = c;
             SetVerticesDirty();
         }
 
@@ -85,6 +109,15 @@ namespace OrangeCarrrrr.UI
             vertex.color = _markerColor;
             for (int corner = 0; corner < 3; ++corner)
             {
+                if (_projected)
+                {
+                    vertex.position = new Vector2(
+                        rect.xMin + _corners[corner].x * rect.width,
+                        rect.yMax - _corners[corner].y * rect.height);
+                    helper.AddVert(vertex);
+                    continue;
+                }
+
                 float across = KartMinimap.MarkerVertices[corner, 0] * KartMinimap.MarkerScale;
                 float along = KartMinimap.MarkerVertices[corner, 1] * KartMinimap.MarkerScale;
                 vertex.position = centre + right * across + forward * along;

@@ -33,13 +33,21 @@ namespace OrangeCarrrrr.Editor
 
         static TrackCourseBuilder() => EditorApplication.delayCall += Build;
 
-        public static void Build()
+        public static void Build() => Build(force: false);
+
+        /// <summary>
+        /// Bakes the courses. Normally only the missing ones, which is what makes
+        /// this cheap enough to run on every editor load; <paramref name="force"/>
+        /// rebakes them all, for when the tables or the reader have changed.
+        /// </summary>
+        public static void Build(bool force)
         {
             var missing = new List<string>();
             foreach (TrackSpec track in KartDemoData.Tracks)
             {
                 if (!track.HasScene) continue;             // the flat reference track
-                if (File.Exists(Path.GetFullPath($"{CourseDirectory}/{track.AssetName}.asset")))
+                if (!force &&
+                    File.Exists(Path.GetFullPath($"{CourseDirectory}/{track.AssetName}.asset")))
                 {
                     continue;
                 }

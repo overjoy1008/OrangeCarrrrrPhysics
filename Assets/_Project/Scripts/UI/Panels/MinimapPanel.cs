@@ -59,12 +59,15 @@ namespace OrangeCarrrrr.UI
             ShowMap(trackAsset.Minimap);
 
             TrackSpec track = trackAsset.ToSpec();
-            KartMinimap.NormalizedPoint(track, kart.Position, out float x, out float y);
+            if (!StepRotatingMap(track, kart))
+            {
+                KartMinimap.NormalizedPoint(track, kart.Position, out float x, out float y);
 
-            kart.GetBodyAxes(out _, out KartVec3 forward, out _);
-            KartMinimap.MarkerHeading(forward, out float headingX, out float headingY);
+                kart.GetBodyAxes(out _, out KartVec3 forward, out _);
+                KartMinimap.MarkerHeading(forward, out float headingX, out float headingY);
 
-            _marker.SetKart(new Vector2(x, y), new Vector2(headingX, headingY));
+                _marker.SetKart(new Vector2(x, y), new Vector2(headingX, headingY));
+            }
 
             KartSpecAsset kartSpec = Simulator.Kart;
             if (_kartLabel != null && kartSpec != null && _shownKart != kartSpec.AssetName)
@@ -114,6 +117,97 @@ namespace OrangeCarrrrr.UI
         }
 
         /// <summary>
+        /// Draws the map the way the original does: as the ground plane under a
+        /// camera that hangs behind the kart and swings round with it.
+        ///
+        /// Returns false for a track with no <c>ToMinimap</c> mapping — only the
+        /// synthetic flat one — which leaves the caller on the square-on path.
+        ///
+        /// The projection itself is per-pixel and lives in the shader; what is
+        /// computed here is the camera it needs, and the marker, which has to go
+        /// through the same camera or it would sit somewhere the map is not.
+        /// </summary>
+        private bool StepRotatingMap(TrackSpec track, KartSimulationState kart)
+        {
+            if (_image == null || _shownMinimap == null) return false;
+
+            KartMinimapMapping mapping = KartDemoData.FindMinimapMapping(track.AssetName);
+            if (mapping == null) return false;
+
+            Material material = RotatingMaterial();
+            if (material == null) return false;
+
+            _camera.Step(track, mapping, kart.Position, kart.Orientation, Simulator.RaceClockMs);
+
+            material.SetVector(MapSizeId, new Vector4(mapping.Width, mapping.Height, 0f, 0f));
+            material.SetVector(CameraPositionId, ToVector(_camera.Position));
+            material.SetVector(CameraRightId, ToVector(_camera.Right));
+            material.SetVector(CameraBackId, ToVector(_camera.Back));
+            material.SetVector(CameraUpId, ToVector(_camera.Up));
+
+            if (_image.material != material) _image.material = material;
+
+            // The original alpha-blends the whole projected map at 0.3, which is
+            // the map object's own TexProperty alpha rather than a HUD choice.
+            _image.color = new Color(1f, 1f, 1f, KartMinimapCamera.Alpha);
+
+            _camera.ProjectMarker(_markerCorners);
+            _marker.SetKartCorners(
+                new Vector2(_markerCorners[0, 0], _markerCorners[0, 1]),
+                new Vector2(_markerCorners[1, 0], _markerCorners[1, 1]),
+                new Vector2(_markerCorners[2, 0], _markerCorners[2, 1]));
+            return true;
+        }
+
+        private readonly KartMinimapCamera _camera = new KartMinimapCamera();
+        private readonly float[,] _markerCorners = new float[3, 2];
+        private Material _rotatingMaterial;
+
+        private static readonly int MapSizeId = Shader.PropertyToID("_MapSize");
+        private static readonly int CameraPositionId = Shader.PropertyToID("_CameraPosition");
+        private static readonly int CameraRightId = Shader.PropertyToID("_CameraRight");
+        private static readonly int CameraBackId = Shader.PropertyToID("_CameraBack");
+        private static readonly int CameraUpId = Shader.PropertyToID("_CameraUp");
+
+        private static Vector4 ToVector(in KartVec3 value)
+            => new Vector4(value.X, value.Y, value.Z, 0f);
+
+        /// <summary>
+        /// The projection material, made on first use. One per panel rather than
+        /// shared, because the camera uniforms are this panel's own.
+        /// </summary>
+        private Material RotatingMaterial()
+        {
+            if (_rotatingMaterial != null) return _rotatingMaterial;
+
+            var shader = Shader.Find(RotatingShader);
+            if (shader == null)
+            {
+                Debug.LogWarning($"No {RotatingShader}; the map stays square-on.", this);
+                return null;
+            }
+
+            _rotatingMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
+            return _rotatingMaterial;
+        }
+
+        private const string RotatingShader = "OrangeCarrrrr/Minimap3D";
+
+        protected override void OnDisable()
+        {
+            base.OnDisable();
+            _camera.Reset();
+        }
+
+        private void OnDestroy()
+        {
+            if (_rotatingMaterial == null) return;
+            if (Application.isPlaying) Destroy(_rotatingMaterial);
+            else DestroyImmediate(_rotatingMaterial);
+            _rotatingMaterial = null;
+        }
+
+        /// <summary>
         /// Puts the track's own map on the panel, falling back to the marker's
         /// quarter grid where the archive has no artwork — which is the case for
         /// the synthetic flat track.
@@ -131,6 +225,14 @@ namespace OrangeCarrrrr.UI
                 _image.enabled = hasArtwork;
             }
             if (_marker != null) _marker.ShowGrid = !hasArtwork;
+
+            // With artwork the original fills only the header strip and leaves
+            // the map area unfilled — "do not put an opaque simulator panel
+            // behind it", because the map already carries its own 0.3 blend and
+            // a solid box under it would hide the scene the blend is meant to
+            // show. Only the outer outline is kept. Without artwork the panel is
+            // solid, since the fallback grid has nothing to see through to.
+            if (_panel != null) _panel.FillHeight = hasArtwork ? ImageTop : 0f;
         }
 
         private static void PlaceImageRect(RectTransform rect)

@@ -40,7 +40,7 @@ namespace OrangeCarrrrr.Editor
         // frame here and baked into the artifact, so a mapping change that does
         // not force a reimport leaves the meshes in the old frame while every
         // transform around them has moved to the new one.
-        private const int Version = 15;
+        private const int Version = 16;
 
         /// <summary>
         /// The one track whose sign boards are mapped upside down in the 2004
@@ -174,7 +174,26 @@ namespace OrangeCarrrrr.Editor
 
             string root = $"{assetDirectory}/{folder}";
             HashSet<string> cutouts = ReadCutoutNames(context, root);
+
             Shader shader = LitShader();
+            if (shader == null)
+            {
+                // Never fall back to the built-in Standard shader. Standard is not
+                // a URP shader, so a material built on it draws magenta, and the
+                // artifact is cached — the track then stays pink on that machine
+                // until something forces a reimport, with nothing on screen to say
+                // why. An import error is recoverable and says what happened;
+                // KtrkMaterialRepair also clears it on the next editor load.
+                context.LogImportError(
+                    $"'{LitShaderName}' was not available when this imported, so no " +
+                    "materials were built. Reimport the asset once the render " +
+                    "pipeline has loaded.");
+                return materials;
+            }
+
+            // So the artifact is rebuilt if the shader itself changes or moves.
+            string shaderPath = AssetDatabase.GetAssetPath(shader);
+            if (!string.IsNullOrEmpty(shaderPath)) context.DependsOnSourceAsset(shaderPath);
 
             foreach (KtrkFile.Mesh mesh in scene.Meshes)
             {
@@ -296,10 +315,24 @@ namespace OrangeCarrrrr.Editor
             return materials.TryGetValue(textureName.Trim(), out Material found) ? found : null;
         }
 
-        private static Shader LitShader()
+        /// <summary>The shader every track material is built on.</summary>
+        internal const string LitShaderName = "Universal Render Pipeline/Lit";
+
+        /// <summary>
+        /// URP's Lit, or null.
+        /// </summary>
+        internal static Shader LitShader()
         {
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
-            return shader != null ? shader : Shader.Find("Standard");
+            // The pipeline asset is asked first. Shader.Find only sees shaders the
+            // asset database has already imported, and on a fresh clone — a
+            // machine that has just pulled the repository and has no Library —
+            // this importer can run before the URP package's shaders are in it.
+            // The pipeline asset holds a direct reference, so it answers whether
+            // or not the search index is ready yet.
+            RenderPipelineAsset pipeline = GraphicsSettings.currentRenderPipeline;
+            if (pipeline != null && pipeline.defaultShader != null) return pipeline.defaultShader;
+
+            return Shader.Find(LitShaderName);
         }
 
         // JsonUtility needs concrete serializable types whose field names match
