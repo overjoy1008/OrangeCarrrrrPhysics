@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afacce84b39ac7f4488d00dea27cb5f6, type: 3}
+  m_Name: burst1
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
+  _assetName: burst1
+  _modelPrefab: {fileID: -768010624544142106, guid: 4f687bf4f6b8f0d418c1846d36cdc087, type: 3}
+  _skinTemplate: {fileID: 2800000, guid: a643b6fee6e8d6f4a82a1d5944c714bc, type: 3}
+  _halfWidth: 0.7863699
+  _halfLength: 0.86079025
+  _modelHeight: 0.81284374
+  _suspensionRange: 0.5
+  _groundedDragScale: 1
+  _dynamics:
+    Mass: 100
+    AirFriction: 3
+    DragFactor: 0.74
+    ForwardAccelForce: 2000
+    BackwardAccelForce: 1500
+    GripBrakeForce: 1800
+    SlipBrakeForce: 1200
+    MaxSteerAngleDeg: 10
+    SteerConstraint: 22
+    FrontGripFactor: 5
+    RearGripFactor: 5
+    DriftTriggerFactor: 0.2
+    DriftTriggerTime: 0.2
+    DriftSlipFactor: 0.2
+    DriftEscapeForce: 1500
+    CornerDrawFactor: 0.2
+    DriftLeanFactor: 0.07
+    SteerLeanFactor: 0.01
+    JumpSpringMillionPerM: 1.2
+    JumpMaxCrouchDistance: 0.18
+    JumpGaugeSweepTime: 0.75
+    JumpPushDuration: 0.09
+    JumpMinEfficiency: 0.2
+    JumpMaxEfficiency: 1
+    JumpVelocityDirectionBias: 0.12
+    JumpBodyUpBlend: 0.25
+    JumpTorqueScale: 0.02
+    JumpMaxSlopeDeg: 45
+    JumpLandingCooldown: 0.12
+    JumpLandingDamping: 1200
+  _maxBoosters: 2

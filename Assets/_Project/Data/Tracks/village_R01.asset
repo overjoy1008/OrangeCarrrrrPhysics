@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f60a80785b91443b31de24ee82a3b0, type: 3}
+  m_Name: village_R01
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
+  _assetName: village_R01
+  _sceneName: VillageOverpass
+  _displayName: "\uBE4C\uB9AC\uC9C0 \uACE0\uAC00\uC758 \uC9C8\uC8FC"
+  _raceMode: "\uC2A4\uD53C\uB4DC"
+  _difficulty: 2
+  _minimum: {x: -36.535, y: -111.3333, z: 2.849871}
+  _maximum: {x: 1239.292, y: 1600.784, z: 106.8285}
+  _hasScene: 1
+  _startKind: 3
+  _startAxis: 2
+  _startLine: {x: 143.6366, y: 523.2488, z: 26.84984}

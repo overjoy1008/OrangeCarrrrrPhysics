@@ -1,0 +1,72 @@
+using System.IO;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace OrangeCarrrrr.Runtime
+{
+    /// <summary>
+    /// The view-side keys from the original's HUD help line. Driving input lives
+    /// in <see cref="SimulatorDriverInput"/>.
+    ///
+    ///   C  switch between the chase camera and the top-down projection
+    ///   B  show or hide the AABB bounds
+    ///   F  emulate the ground-drag trigger enter/leave (x4 / x0.25)
+    ///   L  cycle the kart's paint through colortable.xml
+    ///   T  load the next track
+    ///   K  select the next kart
+    ///   S  save a screenshot
+    ///   R  reset
+    ///
+    /// F1 caps the frame rate. That one is not in the original: the port has to
+    /// be frame-rate independent, and being able to pin 60 or 40 on demand is how
+    /// that gets checked rather than assumed.
+    /// </summary>
+    [RequireComponent(typeof(SimulatorRoot))]
+    public sealed class SimulatorKeys : MonoBehaviour
+    {
+        [SerializeField] private string _screenshotDirectory = "Screenshots";
+
+        private SimulatorRoot _simulator;
+
+        /// <summary>File name of the most recent screenshot, for the HUD notice.</summary>
+        public string LastScreenshotName { get; private set; }
+
+        /// <summary>Seconds left on the "SAVED ..." notice.</summary>
+        public float ScreenshotNoticeSeconds { get; private set; }
+
+        private void Awake() => _simulator = GetComponent<SimulatorRoot>();
+
+        private void Update()
+        {
+            if (ScreenshotNoticeSeconds > 0f)
+            {
+                ScreenshotNoticeSeconds = Mathf.Max(0f, ScreenshotNoticeSeconds - Time.deltaTime);
+            }
+
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard == null || _simulator == null) return;
+
+            if (keyboard.cKey.wasPressedThisFrame) _simulator.ToggleViewMode();
+            if (keyboard.bKey.wasPressedThisFrame) _simulator.ShowBounds = !_simulator.ShowBounds;
+            if (keyboard.rKey.wasPressedThisFrame) _simulator.ResetSimulation();
+            if (keyboard.fKey.wasPressedThisFrame) _simulator.ToggleDragTrigger();
+            if (keyboard.lKey.wasPressedThisFrame) _simulator.NextKartColour();
+            if (keyboard.tKey.wasPressedThisFrame) _simulator.NextTrack();
+            if (keyboard.kKey.wasPressedThisFrame) _simulator.NextKart();
+            if (keyboard.f1Key.wasPressedThisFrame) _simulator.CycleFrameRateCap();
+            if (keyboard.sKey.wasPressedThisFrame) CaptureScreenshot();
+        }
+
+        private void CaptureScreenshot()
+        {
+            string directory = Path.Combine(Application.persistentDataPath, _screenshotDirectory);
+            Directory.CreateDirectory(directory);
+
+            string name = $"shot-{System.DateTime.Now:yyyyMMdd-HHmmss}.png";
+            ScreenCapture.CaptureScreenshot(Path.Combine(directory, name));
+
+            LastScreenshotName = name;
+            ScreenshotNoticeSeconds = 2f;
+        }
+    }
+}

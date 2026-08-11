@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7e3d7e2edc7336a40b3e3727db6a9850
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: c31758f86f3ccde479dd8a1a650215a1, type: 3}
+  material: {instanceID: 0}
+  textureDirectory: Textures
+  reverseWinding: 0
+  flipU: 0
+  recenterParts: 1
+  bakeCollision: 1

@@ -1,0 +1,23 @@
+{
+  "name": "OrangeCarrrrr.Editor",
+  "rootNamespace": "OrangeCarrrrr.Editor",
+  "references": [
+    "OrangeCarrrrr.Core",
+    "OrangeCarrrrr.Runtime",
+    "OrangeCarrrrr.UI",
+    "Unity.TextMeshPro",
+    "Unity.InputSystem",
+    "Unity.RenderPipelines.Universal.Runtime"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

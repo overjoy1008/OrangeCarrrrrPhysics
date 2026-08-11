@@ -1,0 +1,19 @@
+{
+  "name": "OrangeCarrrrr.UI",
+  "rootNamespace": "OrangeCarrrrr.UI",
+  "references": [
+    "OrangeCarrrrr.Core",
+    "OrangeCarrrrr.Runtime",
+    "Unity.TextMeshPro",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
