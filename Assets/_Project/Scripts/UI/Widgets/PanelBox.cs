@@ -20,9 +20,6 @@ namespace OrangeCarrrrr.UI
         [SerializeField] private Color _borderColor = HudPalette.PanelBorder;
         [SerializeField, Min(0f)] private float _borderWidth = 1f;
 
-        [Tooltip("Fill only this many pixels down from the top. 0 fills the whole box.")]
-        [SerializeField, Min(0f)] private float _fillHeight;
-
         public Color BorderColor
         {
             get => _borderColor;
@@ -34,20 +31,6 @@ namespace OrangeCarrrrr.UI
             }
         }
 
-        /// <summary>
-        /// Pixels of fill measured down from the top edge. Zero fills the box,
-        /// which is what every panel but the minimap's wants.
-        /// </summary>
-        public float FillHeight
-        {
-            get => _fillHeight;
-            set
-            {
-                if (Mathf.Approximately(_fillHeight, value)) return;
-                _fillHeight = value;
-                SetVerticesDirty();
-            }
-        }
 
         public float BorderWidth
         {
@@ -66,14 +49,7 @@ namespace OrangeCarrrrr.UI
 
             Rect rect = GetPixelAdjustedRect();
 
-            // The fill can stop short of the bottom, which is what the minimap
-            // panel does on a track that has artwork: only the header strip is
-            // filled and the map area is left clear for the scene to show
-            // through. Everything else fills the whole box.
-            Rect fill = _fillHeight > 0f && _fillHeight < rect.height
-                ? Rect.MinMaxRect(rect.xMin, rect.yMax - _fillHeight, rect.xMax, rect.yMax)
-                : rect;
-            AddQuad(helper, fill, color);
+            AddQuad(helper, rect, color);
 
             if (_borderWidth <= 0f) return;
 

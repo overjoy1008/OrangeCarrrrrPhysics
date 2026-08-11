@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c409fadd205541f4db738d72b03a8c5a, type: 3}
+  m_Name: Jiu
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSoundSet
+  _preset: Jiu
+  _motor: {fileID: 8300000, guid: d611e92cc6b52c44bb9cd99935878044, type: 3}
+  _booster: {fileID: 8300000, guid: e9c82f36afd482448ba271793dfef24c, type: 3}
+  _instantBoost: {fileID: 8300000, guid: 9d9f4956c4416ef49b5b78314ddb7a0b, type: 3}
+  _boosterIdle: {fileID: 8300000, guid: 5e05cfb7f921f1d40aa57822654940a1, type: 3}
+  _drift: {fileID: 8300000, guid: 7701409f090379d49ba0eb1da437215c, type: 3}
+  _crash: {fileID: 8300000, guid: 215b264466c475a4198a96bd1d70cad5, type: 3}
+  _shock: {fileID: 8300000, guid: 6dc2fcf8c6b392542bbeae24a2d7b995, type: 3}
+  _countThree: {fileID: 8300000, guid: b88b1ce2c7cead84d976a709ebd43847, type: 3}
+  _countTwo: {fileID: 8300000, guid: 9dba4978aeacc134595549eb85c184ee, type: 3}
+  _countOne: {fileID: 8300000, guid: 1231029842aaed74d9ffa3ed0ce6d260, type: 3}
+  _countGo: {fileID: 8300000, guid: 36cf0dd38c96fc44e84efbbacbd693c8, type: 3}

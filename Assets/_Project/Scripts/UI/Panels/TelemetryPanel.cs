@@ -69,6 +69,13 @@ namespace OrangeCarrrrr.UI
             new Row(FormatBoost, ColourBoost),
             new Row(FormatForces, _ => HudPalette.TelemetryNeutral),
             new Row(FormatDrag, _ => HudPalette.TelemetryNeutral),
+
+            // Between DRAG and STEP, where the original has it. This row reads the
+            // gauge rather than the kart, and the gauge belongs to the simulator —
+            // hence the closures, which is also why BuildRows is an instance
+            // method and the rows are cached per panel.
+            new Row((text, _) => FormatGauge(text), _ => ColourGauge()),
+
             new Row(FormatStep, ColourStep),
         };
 
@@ -100,7 +107,18 @@ namespace OrangeCarrrrr.UI
                 if (label != null) _labels.Add(label);
             }
 
+            // Laid out every time, so a row that appeared since the last pass is
+            // placed at its own index instead of sitting on top of another. This
+            // is what a stale row saved into a scene used to collide over.
+            ApplyLayout();
+
             if (_labels.Count == 0 || _labels.Count >= Rows.Length) return;
+
+            // Only while playing. Under ExecuteAlways this used to clone in edit
+            // mode too, and the clone was then saved into whatever scene was open
+            // as a prefab-instance addition — which is how fourteen scenes ended
+            // up carrying a row the prefab now has of its own.
+            if (!Application.isPlaying) return;
 
             TextMeshProUGUI template = _labels[0];
             while (_labels.Count < Rows.Length)
@@ -115,7 +133,7 @@ namespace OrangeCarrrrr.UI
         protected override void Refresh()
         {
             if (Simulator == null) return;
-            if (_labels.Count == 0) CollectLabels();
+            if (_rowRoot != null && _labels.Count != _rowRoot.childCount) CollectLabels();
 
             KartSimulationState kart = Simulator.State;
             if (kart == null) return;
@@ -256,6 +274,34 @@ namespace OrangeCarrrrr.UI
             => text.AppendFormat("DRAG    scale x{0,4:F2}  air {1,5:F2}  ground {2,5:F3}  m {3,5:F1}",
                 kart.GroundedDragScale, kart.Config.AirFriction,
                 kart.Config.DragFactor, kart.Config.Mass);
+
+        /// <summary>
+        /// The drift gauge's own readout: which hypothesis is charging it, how
+        /// full it is, how fast it is filling, the suspension model's contact
+        /// weight, and the stored boosters against the kart's cap.
+        /// </summary>
+        private void FormatGauge(StringBuilder text)
+        {
+            KartGauge gauge = Simulator != null ? Simulator.Gauge : null;
+            if (gauge == null) { text.Append("GAUGE   -"); return; }
+
+            uint max = Simulator.Kart != null ? Simulator.Kart.ToSpec().MaxBoosters : 0u;
+            text.AppendFormat(
+                "GAUGE   {0,-17} {1,5:F1}%  rate {2,6:F2}  W {3,4:F2}  store {4} {5}/{6}",
+                KartGauge.ModelName(gauge.Model),
+                gauge.Ratio * 100f,
+                gauge.Rate,
+                gauge.ContactWeight,
+                gauge.UnlimitedBoosters ? "unlimited" : "capped",
+                gauge.Boosters,
+                max);
+        }
+
+        /// <summary>Lit while it is actually charging, the way the original lights it.</summary>
+        private Color ColourGauge()
+            => Simulator != null && Simulator.Gauge != null && Simulator.Gauge.Rate > 0f
+                ? HudPalette.GaugeFill
+                : HudPalette.TelemetryNeutral;
 
         private static void FormatStep(StringBuilder text, KartSimulationState kart)
             => text.AppendFormat("STEP    sub {0,2}  wheels {1}  body {2}  wall {3,4:F1}  gnd {4,4:F1}",

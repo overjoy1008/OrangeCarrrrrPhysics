@@ -10,11 +10,11 @@ namespace OrangeCarrrrr.UI
     /// <summary>
     /// The top-left debug lines <c>draw_scene</c> writes straight onto the frame.
     ///
-    /// The original prints six of them. Four survive into phase 1 unchanged; the
-    /// two that are dropped are the render-mode toggles and the experimental
-    /// gear/gauge/storage line, whose every field belongs to a feature that does
-    /// not exist yet. The key-help line lists the keys that actually respond
-    /// rather than the full set, so the HUD never advertises a dead key.
+    /// The keys are split across three lines the way the original splits them:
+    /// driving, view toggles, and the experimental layers in their own purple.
+    /// Each line lists only the keys that actually respond, so the HUD never
+    /// advertises a dead one — which is why the render-mode toggles and the
+    /// gearbox are still absent.
     /// </summary>
     [AddComponentMenu("OrangeCarrrrr/HUD/Status Lines")]
     public sealed class HudStatusLines : HudWidget
@@ -32,7 +32,13 @@ namespace OrangeCarrrrr.UI
         private readonly StringBuilder _builder = new StringBuilder(384);
 
         /// <summary>How many lines the prefab needs to allocate.</summary>
-        public const int LineCount = 6;
+        public const int LineCount = 8;
+
+        /// <summary>
+        /// The last line that is written every frame. Only the course line and
+        /// the notice line after it come and go.
+        /// </summary>
+        private const int LastAlwaysVisibleLine = 5;
 
         protected override void OnEnable()
         {
@@ -49,16 +55,31 @@ namespace OrangeCarrrrr.UI
                 var label = _lineRoot.GetChild(i).GetComponent<TextMeshProUGUI>();
                 if (label != null) _labels.Add(label);
             }
+            ApplyLayout();
         }
 
         protected override void Refresh()
         {
             if (Simulator == null) return;
-            if (_labels.Count == 0) CollectLabels();
+
+            // Re-collected whenever the row count has moved under us, not only
+            // when it is empty. Rows are added to the prefab when LineCount grows,
+            // and a panel that had already collected the old set would otherwise
+            // fail the check below for the rest of the session and stop writing
+            // every line — including the ones that were there all along.
+            if (_lineRoot != null && _labels.Count != _lineRoot.childCount) CollectLabels();
             if (_labels.Count < LineCount) return;
 
             KartSimulationState kart = Simulator.State;
             if (kart == null) return;
+
+            // The always-written lines are switched on explicitly rather than
+            // left as whatever was serialised. An earlier layout had the course
+            // line at a lower index and hid it when a track had no course; under
+            // ExecuteAlways that ran in edit mode and the disabled state was saved
+            // into every scene as a prefab override, so the line stayed dark long
+            // after it had become something else.
+            for (int line = 0; line <= LastAlwaysVisibleLine; ++line) _labels[line].enabled = true;
 
             WriteStatus(kart);
             WriteKeys();
@@ -87,21 +108,75 @@ namespace OrangeCarrrrr.UI
             _labels[0].color = HudPalette.StatusText;
         }
 
+        /// <summary>
+        /// The driving keys, then the view toggles, then the experimental layers,
+        /// on three lines.
+        ///
+        /// The original splits the first two and says why: "there are enough of
+        /// them now that keeping them with the driving keys ran the line off the
+        /// window." It splits the third for a different reason, and that one is
+        /// about meaning rather than width — "the inferred layers, kept on their
+        /// own line so they read as what they are rather than as part of the
+        /// recovered demo" — which is why it is also the only line in a colour of
+        /// its own.
+        /// </summary>
         private void WriteKeys()
         {
             _builder.Clear();
             _builder.Append(
-                "Arrows: drive/instant  Shift/W: drift  Ctrl/D: boost  " +
-                "C: camera  B: bounds  F: drag trigger  ");
+                "Arrows: drive/instant  Shift/W: drift  Ctrl/D: boost  C: camera  ");
+            _builder.Append("P: parameters  K: karts  T: tracks  ");
+            _builder.AppendFormat("U: engine [{0}]  ", Simulator.EngineSoundPreset);
+            _builder.Append("F: drag trigger");
+
+            _labels[1].SetText(_builder);
+            _labels[1].color = HudPalette.StatusText;
+
+            _builder.Clear();
+            _builder.Append("S: screenshot  R: respawn  ");
             _builder.AppendFormat(
                 "L: colour {0} [{1}]", Simulator.KartColourIndex, Simulator.KartColourName);
             _builder.AppendFormat(
                 "  N: {0} checkpoints", Simulator.ShowCheckpoints ? "hide" : "show");
-            _builder.AppendFormat("  K: karts  T: tracks  F1: fps [{0}]", Simulator.FrameRateCapName);
-            _builder.Append("  S: screenshot  R: respawn");
+            _builder.AppendFormat(
+                "  B: {0} model bounds", Simulator.ShowBounds ? "hide" : "show");
+            _builder.AppendFormat("  F1: fps [{0}]", Simulator.FrameRateCapName);
 
-            _labels[1].SetText(_builder);
-            _labels[1].color = HudPalette.StatusText;
+            _labels[2].SetText(_builder);
+            _labels[2].color = HudPalette.StatusText;
+
+            WriteExperimental();
+        }
+
+        /// <summary>
+        /// The inferred layers, word for word as the original labels them: the
+        /// gauge's charging model, the booster storage cap, and the two boost
+        /// models. None of these is recovered behaviour — they are hypotheses the
+        /// simulator can be run against — and the purple is what says so at a
+        /// glance.
+        ///
+        /// </summary>
+        private void WriteExperimental()
+        {
+            KartGauge gauge = Simulator.Gauge;
+
+            _builder.Clear();
+            _builder.Append("(experimental)");
+            _builder.AppendFormat(
+                " E: gear [{0}]",
+                Simulator.Gearbox.Mode == KartGearMode.Multi ? "multi" : "single");
+            _builder.AppendFormat(" G: gauge [{0}]", KartGauge.ModelName(gauge.Model));
+            _builder.AppendFormat(
+                " H: storage [{0}]", gauge.UnlimitedBoosters ? "unlimited" : "capped");
+            _builder.AppendFormat(
+                " Q: instant [{0}, {1}]",
+                Simulator.StoredInstantBoost ? "stored" : "window",
+                Simulator.StoredInstantBoostCount);
+            _builder.AppendFormat(
+                " M: stop [{0}]", Simulator.ReverseInputEndsBoost ? "reverse" : "release");
+
+            _labels[3].SetText(_builder);
+            _labels[3].color = HudPalette.StatusExperimental;
         }
 
         private void WriteScene(KartSimulationState kart)
@@ -125,21 +200,24 @@ namespace OrangeCarrrrr.UI
             }
             _builder.AppendFormat(" | h {0:F2}", kart.Position.Z);
 
-            _labels[2].SetText(_builder);
-            _labels[2].color = kart.Drift.SlipDetected
+            _labels[4].SetText(_builder);
+            _labels[4].color = kart.Drift.SlipDetected
                 ? HudPalette.StatusDrift
                 : HudPalette.StatusDim;
         }
 
         private void WriteDrift(KartSimulationState kart)
         {
-            bool drifting = kart.Drift.TriggerActive || kart.Drift.InputActive ||
-                            kart.Drift.SlipDetected;
+            bool drifting = KartGauge.DriftVisualActive(kart);
             bool boosting = KartDynamics.AnyBoostActive(kart.TimedBoost, kart.InstantBoost);
 
+            // The original's fields, in its order. The gauge's own readout is not
+            // among them: it belongs to the telemetry panel, where the original
+            // puts it, and the stored count is on the experimental line.
             _builder.Clear();
             _builder.AppendFormat(
-                "DRIFT {0} | ITEM {1} {2:F2}s | INSTANT READY {3:F2}s | INSTANT {4} | drag x{5:F2} | skids {6}",
+                "DRIFT {0} | ITEM {1} {2:F2}s | INSTANT READY {3:F2}s | INSTANT {4} | " +
+                "drag x{5:F2} | skids {6}",
                 drifting ? "ON" : "off",
                 kart.TimedBoost.Active ? "ON" : "off",
                 kart.TimedBoost.RemainingMs * 0.001f,
@@ -148,8 +226,8 @@ namespace OrangeCarrrrr.UI
                 kart.GroundedDragScale,
                 Simulator.SkidMarkSegments);
 
-            _labels[3].SetText(_builder);
-            _labels[3].color = boosting
+            _labels[5].SetText(_builder);
+            _labels[5].color = boosting
                 ? HudPalette.StatusBoost
                 : (drifting ? HudPalette.StatusDrift : HudPalette.StatusDim);
         }
@@ -166,7 +244,7 @@ namespace OrangeCarrrrr.UI
         private void WriteCourse()
         {
             bool ready = Simulator.CourseReady;
-            _labels[4].enabled = ready;
+            _labels[6].enabled = ready;
             if (!ready) return;
 
             KartCourseProgress progress = Simulator.Progress;
@@ -186,8 +264,8 @@ namespace OrangeCarrrrr.UI
             }
             if (progress.WrongWay) _builder.Append(" | WRONG WAY");
 
-            _labels[4].SetText(_builder);
-            _labels[4].color = progress.WrongWay ? HudPalette.StatusWrongWay : HudPalette.StatusDim;
+            _labels[6].SetText(_builder);
+            _labels[6].color = progress.WrongWay ? HudPalette.StatusWrongWay : HudPalette.StatusDim;
         }
 
         /// <summary>
@@ -199,24 +277,24 @@ namespace OrangeCarrrrr.UI
         {
             if (Simulator.RespawnNoticeSeconds > 0f)
             {
-                _labels[5].enabled = true;
+                _labels[7].enabled = true;
                 _builder.Clear();
                 _builder.Append(Simulator.CourseReady
                     ? "RESPAWNING ONTO THE COURSE"
                     : "FELL THROUGH THE TRACK - RESPAWNED");
-                _labels[5].SetText(_builder);
-                _labels[5].color = HudPalette.StatusWrongWay;
+                _labels[7].SetText(_builder);
+                _labels[7].color = HudPalette.StatusWrongWay;
                 return;
             }
 
             bool visible = _keys != null && _keys.ScreenshotNoticeSeconds > 0f;
-            _labels[5].enabled = visible;
+            _labels[7].enabled = visible;
             if (!visible) return;
 
             _builder.Clear();
             _builder.Append("SAVED ").Append(_keys.LastScreenshotName);
-            _labels[5].SetText(_builder);
-            _labels[5].color = HudPalette.ScreenshotNotice;
+            _labels[7].SetText(_builder);
+            _labels[7].color = HudPalette.ScreenshotNotice;
         }
 
         /// <summary>Places the lines at the original's 20 px pitch from (16, 12).</summary>

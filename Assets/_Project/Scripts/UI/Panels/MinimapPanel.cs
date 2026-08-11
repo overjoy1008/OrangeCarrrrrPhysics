@@ -1,23 +1,23 @@
 using OrangeCarrrrr.Core;
 using OrangeCarrrrr.Runtime;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace OrangeCarrrrr.UI
 {
     /// <summary>
-    /// <c>draw_track_minimap</c>: the top-right TRACK MAP panel.
+    /// <c>draw_track_minimap</c>: the top-right map panel.
     ///
-    /// The map area is the track's own <c>xt_minimap.png</c> where the archive
-    /// has one, and a quarter grid where it does not — which is the case for the
-    /// synthetic flat track. Either way the kart is an oriented triangle at its
-    /// normalized position inside the cyan boundary.
+    /// A track with artwork gets the original's rotating camera over its own
+    /// <c>xt_minimap.png</c> — see <see cref="KartMinimapCamera"/> — with the
+    /// kart projected through the same camera and no box behind it. A track
+    /// without artwork, which is only the synthetic flat one, falls back to the
+    /// quarter grid inside a boxed cyan boundary.
     ///
-    /// The original also runs a rotating camera over the artwork on tracks that
-    /// have a per-track mapping for it. That is not ported: this draws the map
-    /// square-on, which is what the fallback path does and what makes the marker
-    /// readable.
+    /// The kart's triangle is drawn either way; only the box comes and goes.
+    ///
+    /// The original's "TRACK MAP" heading and kart read-out are dropped: they are
+    /// text the rest of the HUD already carries.
     /// </summary>
     [AddComponentMenu("OrangeCarrrrr/HUD/Minimap Panel")]
     public sealed class MinimapPanel : HudWidget
@@ -34,15 +34,10 @@ namespace OrangeCarrrrr.UI
         [SerializeField] private PanelBox _panel;
         [SerializeField] private RawImage _image;
         [SerializeField] private MinimapMarker _marker;
-        [SerializeField] private TextMeshProUGUI _label;
-        [SerializeField] private TextMeshProUGUI _kartLabel;
-        [SerializeField] private HudFontSet _fonts;
-
-        private string _shownKart;
 
         /// <summary>
         /// The artwork currently on the panel. Held so the texture is only pushed
-        /// when the track actually changes, the way <c>_shownKart</c> is.
+        /// when the track actually changes.
         /// </summary>
         private Texture2D _shownMinimap;
 
@@ -69,13 +64,6 @@ namespace OrangeCarrrrr.UI
                 _marker.SetKart(new Vector2(x, y), new Vector2(headingX, headingY));
             }
 
-            KartSpecAsset kartSpec = Simulator.Kart;
-            if (_kartLabel != null && kartSpec != null && _shownKart != kartSpec.AssetName)
-            {
-                _shownKart = kartSpec.AssetName;
-                _kartLabel.SetText(
-                    $"KART {kartSpec.AssetName}  {kartSpec.Width:F3} x {kartSpec.Length:F3}");
-            }
         }
 
         /// <summary>Applies the recovered panel geometry.</summary>
@@ -88,18 +76,21 @@ namespace OrangeCarrrrr.UI
             panelRect.anchoredPosition = new Vector2(-Margin, -Margin);
             panelRect.sizeDelta = new Vector2(PanelWidth, PanelHeight);
 
-            if (_panel != null)
-            {
-                Stretch((RectTransform)_panel.transform);
-                _panel.color = HudPalette.TelemetryPanelFill;
-                _panel.BorderColor = HudPalette.TelemetryPanelBorder;
-                _panel.BorderWidth = 1f;
-            }
-
             // image_rect: panel.left + 15 .. panel.right - 15,
             //             panel.top + 42 .. panel.bottom - 16.
             PlaceImageRect(_image != null ? (RectTransform)_image.transform : null);
             PlaceImageRect(_marker != null ? (RectTransform)_marker.transform : null);
+
+            // The box sits on the map area rather than the whole panel: it only
+            // ever shows behind the fallback grid, and a box larger than the grid
+            // it frames would be framing nothing.
+            if (_panel != null)
+            {
+                PlaceImageRect((RectTransform)_panel.transform);
+                _panel.color = HudPalette.TelemetryPanelFill;
+                _panel.BorderColor = HudPalette.TelemetryPanelBorder;
+                _panel.BorderWidth = 1f;
+            }
 
             if (_image != null)
             {
@@ -112,8 +103,6 @@ namespace OrangeCarrrrr.UI
             _mapApplied = false;
             ShowMap(Simulator != null && Simulator.Track != null ? Simulator.Track.Minimap : null);
 
-            PlaceLabel(_label, 6f, "TRACK MAP");
-            PlaceLabel(_kartLabel, 22f, null);
         }
 
         /// <summary>
@@ -226,13 +215,11 @@ namespace OrangeCarrrrr.UI
             }
             if (_marker != null) _marker.ShowGrid = !hasArtwork;
 
-            // With artwork the original fills only the header strip and leaves
-            // the map area unfilled — "do not put an opaque simulator panel
-            // behind it", because the map already carries its own 0.3 blend and
-            // a solid box under it would hide the scene the blend is meant to
-            // show. Only the outer outline is kept. Without artwork the panel is
-            // solid, since the fallback grid has nothing to see through to.
-            if (_panel != null) _panel.FillHeight = hasArtwork ? ImageTop : 0f;
+            // The box belongs to the fallback map only. The original will not put
+            // an opaque panel behind the artwork — the map carries its own 0.3
+            // blend, and a box under it would hide the scene that blend is there
+            // to show. The marker stays on either way: it is the kart.
+            if (_panel != null) _panel.enabled = !hasArtwork;
         }
 
         private static void PlaceImageRect(RectTransform rect)
@@ -247,32 +234,6 @@ namespace OrangeCarrrrr.UI
                 PanelHeight - ImageTop - ImageBottom);
         }
 
-        private void PlaceLabel(TextMeshProUGUI text, float top, string content)
-        {
-            if (text == null) return;
 
-            var rect = (RectTransform)text.transform;
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(0f, 1f);
-            rect.pivot = new Vector2(0f, 1f);
-            rect.anchoredPosition = new Vector2(8f, -top);
-            rect.sizeDelta = new Vector2(PanelWidth - 16f, 16f);
-
-            text.fontSize = 12f;
-            text.alignment = TextAlignmentOptions.TopLeft;
-            text.color = HudPalette.WheelPanelLabel;
-            text.textWrappingMode = TextWrappingModes.NoWrap;
-            text.raycastTarget = false;
-            if (content != null) text.SetText(content);
-            if (_fonts != null && _fonts.Mono != null) text.font = _fonts.Mono;
-        }
-
-        private static void Stretch(RectTransform rect)
-        {
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-        }
     }
 }

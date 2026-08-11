@@ -36,10 +36,51 @@ namespace OrangeCarrrrr.UI
         /// <summary>The <c>T</c> and <c>K</c> lists. Made on first play.</summary>
         [SerializeField] private SelectionMenu _selectionMenu;
 
+        /// <summary>The drift gauge along the bottom. Made on first play.</summary>
+        [SerializeField] private GaugePanel _gauge;
+
+        /// <summary>The engine-note dial. Made on first play.</summary>
+        [SerializeField] private TachometerPanel _tachometer;
+
         private void OnEnable()
         {
             EnsureSelectionMenu();
+            EnsureGauge();
+            EnsureTachometer();
             BindAll();
+        }
+
+        /// <summary>
+        /// Adds the tachometer above the wheel-load panel. Built rather than
+        /// authored for the same reason as the others: its face is drawn from the
+        /// recovered dial constants, so there is no layout to hand-place.
+        /// </summary>
+        private void EnsureTachometer()
+        {
+            if (_tachometer == null)
+            {
+                _tachometer = GetComponentInChildren<TachometerPanel>(includeInactive: true);
+            }
+            if (_tachometer != null || !Application.isPlaying) return;
+
+            var holder = new GameObject("Tachometer", typeof(RectTransform));
+            holder.transform.SetParent(transform, worldPositionStays: false);
+            _tachometer = holder.AddComponent<TachometerPanel>();
+        }
+
+        /// <summary>
+        /// Adds the gauge panel to the canvas, for the same reason the selection
+        /// menu is added rather than authored: its slot count comes from the
+        /// kart's booster cap, so there is nothing to lay out in advance.
+        /// </summary>
+        private void EnsureGauge()
+        {
+            if (_gauge == null) _gauge = GetComponentInChildren<GaugePanel>(includeInactive: true);
+            if (_gauge != null || !Application.isPlaying) return;
+
+            var holder = new GameObject("Gauge", typeof(RectTransform));
+            holder.transform.SetParent(transform, worldPositionStays: false);
+            _gauge = holder.AddComponent<GaugePanel>();
         }
 
         /// <summary>
@@ -84,6 +125,8 @@ namespace OrangeCarrrrr.UI
             if (_countdown != null) _countdown.Bind(_simulator);
             if (_minimap != null) _minimap.Bind(_simulator);
             if (_selectionMenu != null) _selectionMenu.Bind(_simulator);
+            if (_gauge != null) _gauge.Bind(_simulator);
+            if (_tachometer != null) _tachometer.Bind(_simulator);
         }
 
         /// <summary>

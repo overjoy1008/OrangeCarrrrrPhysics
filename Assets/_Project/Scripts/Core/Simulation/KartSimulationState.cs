@@ -130,6 +130,15 @@ namespace OrangeCarrrrr.Core
         public bool PreviousBoostInput;
         public bool Grounded;
 
+        /// <summary>
+        /// Which boost cutoff model is running: false ends a boost when the
+        /// throttle is released, true keeps it alive until reverse is pressed.
+        ///
+        /// Simulator-side, not recovered. It survives <c>Init</c> because it is a
+        /// choice about the bench rather than part of the kart's state.
+        /// </summary>
+        public bool ReverseInputEndsBoost;
+
         /// <summary>Finite-differenced by the simulator, not integrated. HUD only.</summary>
         public KartVec3 Acceleration;
 

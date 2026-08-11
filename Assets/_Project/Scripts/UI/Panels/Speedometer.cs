@@ -87,15 +87,17 @@ namespace OrangeCarrrrr.UI
             {
                 _digits.fontSize = 58f;
 
-                // No bold style: the original asks GDI for Segoe UI at FW_HEAVY,
-                // which picks the Black face, and that face is what UiHeavy
-                // already is. Adding Bold on top of it makes TMP synthesise a
-                // second weight by dilating the SDF, which thickens the strokes
-                // and spaces the digits wider than the original's.
+                // No bold style: the weight comes from the face, and adding Bold
+                // on top would make TMP synthesise a second one by dilating the
+                // SDF, thickening the strokes and spacing the digits wider.
                 _digits.fontStyle = FontStyles.Normal;
                 _digits.alignment = TextAlignmentOptions.Right;
                 _digits.textWrappingMode = TextWrappingModes.NoWrap;
-                if (_fonts != null) _digits.font = _fonts.UiHeavy;
+
+                // Bold rather than the Black the original asks GDI for. That is a
+                // chosen difference: FW_HEAVY reads heavier here than it did
+                // through GDI's rasteriser at this size.
+                if (_fonts != null) _digits.font = _fonts.Ui;
             }
 
             // unit_rect: panel.right - 68 .. panel.right - 10, panel.top + 42 .. panel.bottom - 8.

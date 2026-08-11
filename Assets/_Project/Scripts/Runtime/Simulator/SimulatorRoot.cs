@@ -36,6 +36,9 @@ namespace OrangeCarrrrr.Runtime
         [Tooltip("The K key's list. Left empty, it is resolved from the project.")]
         [SerializeField] private KartCatalog _kartCatalog;
 
+        [Tooltip("The U key's engine sound presets. Left empty, it is resolved from the project.")]
+        [SerializeField] private KartSoundCatalog _soundCatalog;
+
         [Header("Views")]
         [SerializeField] private ChaseCameraRig _chaseCamera;
         [SerializeField] private TopDownCameraRig _topDownCamera;
@@ -55,6 +58,9 @@ namespace OrangeCarrrrr.Runtime
         [Tooltip("N in the original: the course's checkpoint gates. Optional.")]
         [SerializeField] private CourseGateView _gateView;
 
+        [Tooltip("B in the original: the kart model's bounding boxes. Optional.")]
+        [SerializeField] private KartModelBoundsView _modelBounds;
+
         [Header("Input")]
         [Tooltip("Left empty, the component on this object is used.")]
         [SerializeField] private SimulatorDriverInput _driverInput;
@@ -67,6 +73,24 @@ namespace OrangeCarrrrr.Runtime
 
         private readonly FrameRateCounter _fps = new FrameRateCounter();
         private readonly KartFlatGround _flatGround = new KartFlatGround();
+
+        /// <summary>
+        /// The drift gauge. A simulator-side layer rather than recovered code —
+        /// see <see cref="KartGauge"/> — so it gates the item boost the way the
+        /// original's bench does and nothing else.
+        /// </summary>
+        private readonly KartGauge _gauge = new KartGauge();
+
+        /// <summary>
+        /// The gearbox. Like the gauge it is a simulator-side experiment — see
+        /// <see cref="KartGearbox"/> — and it reaches nothing but the engine note
+        /// and its dial.
+        /// </summary>
+        private readonly KartGearbox _gearbox = new KartGearbox();
+
+        /// <summary>Whether the held boost key has a charge behind it.</summary>
+        private bool _boostPressAllowed;
+
 
         private KartCountdown _countdown;
         private uint _raceClockMs;
@@ -164,6 +188,70 @@ namespace OrangeCarrrrr.Runtime
         /// </summary>
         public bool MenuOpen { get; set; }
 
+        /// <summary>The drift gauge, as the HUD reads it.</summary>
+        public KartGauge Gauge => _gauge;
+
+        /// <summary>The gearbox experiment, as the tachometer reads it.</summary>
+        public KartGearbox Gearbox => _gearbox;
+
+        /// <summary>The <c>E</c> key: one straight ramp, or four gear bands.</summary>
+        public void ToggleGearMode() => _gearbox.ToggleMode();
+
+        /// <summary>
+        /// The engine note the sound driver is holding, for the tachometer. It
+        /// only refreshes every 64 ms, and the dial shows exactly that; with no
+        /// sound player the ramp's own base stands in.
+        /// </summary>
+        public float MotorPitch =>
+            _sound != null ? _sound.MotorPitch : KartSoundConstants.MotorBase;
+
+        public float MotorVolume => _sound != null ? _sound.MotorVolume : 0f;
+
+        /// <summary>
+        /// Replaces the running dynamics config. The <c>P</c> window writes
+        /// through here so a change takes effect on the next step rather than
+        /// waiting for a reset — which is the point of a live editor.
+        /// </summary>
+        public void SetDynamics(in KartDynamicsConfig config) => State.Config = config;
+
+        /// <summary>The <c>G</c> key: the next charging hypothesis.</summary>
+        public void NextGaugeModel() => _gauge.NextModel();
+
+        /// <summary>
+        /// The <c>Q</c> key: whether a drift exit opens the accelerator window or
+        /// banks a charge to spend later. Clearing the window with it, so the two
+        /// models never overlap on the same drift.
+        /// </summary>
+        public void ToggleStoredInstantBoost()
+        {
+            KartSimulationState state = State;
+            state.InstantBoost.StoredModel = !state.InstantBoost.StoredModel;
+            state.InstantBoost.OpportunityTimer = 0f;
+        }
+
+        /// <summary>
+        /// The <c>M</c> key: whether releasing the throttle ends a boost, or only
+        /// pressing reverse does.
+        /// </summary>
+        public void ToggleBoostCutoffModel()
+            => State.ReverseInputEndsBoost = !State.ReverseInputEndsBoost;
+
+        /// <summary>The instant boost's model and banked charges, for the HUD.</summary>
+        public bool StoredInstantBoost => State.InstantBoost.StoredModel;
+
+        public uint StoredInstantBoostCount => State.InstantBoost.StoredCount;
+
+        public bool ReverseInputEndsBoost => State.ReverseInputEndsBoost;
+
+        /// <summary>The <c>H</c> key: booster storage capped by the kart, or not.</summary>
+        public void ToggleUnlimitedBoosters()
+        {
+            _gauge.UnlimitedBoosters = !_gauge.UnlimitedBoosters;
+
+            uint max = _kart != null ? _kart.ToSpec().MaxBoosters : KartDemoData.DefaultMaxBoosters;
+            if (!_gauge.UnlimitedBoosters && _gauge.Boosters > max) _gauge.Boosters = max;
+        }
+
         /// <summary>The ground the wheels ray-cast against.</summary>
         private IKartGroundQuery Ground => _trackCollision != null && _trackCollision.World != null
             ? (IKartGroundQuery)_trackCollision.World
@@ -196,10 +284,18 @@ namespace OrangeCarrrrr.Runtime
             set { if (_gateView != null) _gateView.Show = value; }
         }
 
+        /// <summary>
+        /// The <c>B</c> key: the kart model's three bounding boxes.
+        ///
+        /// The original's B is the <em>model</em> bounds, not the track's. The
+        /// track's AABB wall is drawn unconditionally by <c>draw_track</c> and was
+        /// never on a key, which is why <see cref="TestTrackView"/> keeps drawing
+        /// its own and no longer answers to this.
+        /// </summary>
         public bool ShowBounds
         {
-            get => _trackView != null && _trackView.ShowBounds;
-            set { if (_trackView != null) _trackView.ShowBounds = value; }
+            get => _modelBounds != null && _modelBounds.Show;
+            set { if (_modelBounds != null) _modelBounds.Show = value; }
         }
 
         /// <summary>Row of <c>colortable.xml</c>, or the shipped default.</summary>
@@ -306,6 +402,43 @@ namespace OrangeCarrrrr.Runtime
             return _kartCatalog;
         }
 
+        private KartSoundCatalog ResolveSoundCatalog()
+        {
+#if UNITY_EDITOR
+            if (_soundCatalog == null)
+            {
+                _soundCatalog = UnityEditor.AssetDatabase
+                    .LoadAssetAtPath<KartSoundCatalog>(
+                        "Assets/_Project/Data/Audio/KartSoundCatalog.asset");
+            }
+#endif
+            return _soundCatalog;
+        }
+
+        /// <summary>The engine preset now playing, for the HUD.</summary>
+        public string EngineSoundPreset =>
+            _sound != null && _sound.Sounds != null ? _sound.Sounds.Preset : "none";
+
+        /// <summary>
+        /// The <c>U</c> key: the next of the thirteen engine sound presets.
+        ///
+        /// Only the four samples change. The pitch and volume laws under them are
+        /// the recovered ones whichever preset is loaded, so this is a change of
+        /// timbre and nothing else.
+        /// </summary>
+        public void NextEngineSound()
+        {
+            KartSoundCatalog catalog = ResolveSoundCatalog();
+            if (catalog == null || catalog.Count < 2 || _sound == null)
+            {
+                Debug.LogWarning("No other engine sound preset to switch to.", this);
+                return;
+            }
+
+            KartSoundSet next = catalog.Next(_sound.Sounds);
+            if (next != null) _sound.Sounds = next;
+        }
+
         private TrackCatalog ResolveTrackCatalog()
         {
 #if UNITY_EDITOR
@@ -397,10 +530,18 @@ namespace OrangeCarrrrr.Runtime
             if (_skidMarks == null) _skidMarks = GetComponentInChildren<SkidMarkTrail>(includeInactive: true);
             if (_sound == null) _sound = GetComponentInChildren<KartSoundPlayer>(includeInactive: true);
             if (_gateView == null) _gateView = GetComponentInChildren<CourseGateView>(includeInactive: true);
+            if (_modelBounds == null)
+            {
+                _modelBounds = GetComponentInChildren<KartModelBoundsView>(includeInactive: true);
+            }
             if (_boostFlame == null && _kartView != null)
             {
                 _boostFlame = _kartView.GetComponentInChildren<BoostFlame>(includeInactive: true);
             }
+
+            // Assigned here rather than only on the created path, so an authored
+            // one is bound in edit mode too.
+            if (_modelBounds != null) _modelBounds.Kart = _kartView;
 
             // Only ever created while playing, so opening the scene never adds
             // objects to it and nothing is left behind to be saved by accident.
@@ -408,6 +549,11 @@ namespace OrangeCarrrrr.Runtime
 
             if (_skidMarks == null) _skidMarks = Attach<SkidMarkTrail>("Skid marks", transform);
             if (_gateView == null) _gateView = Attach<CourseGateView>("Course gates", transform);
+            if (_modelBounds == null)
+            {
+                _modelBounds = Attach<KartModelBoundsView>("Kart model bounds", transform);
+            }
+            if (_modelBounds != null) _modelBounds.Kart = _kartView;
 
             if (_boostFlame == null && _kartView != null)
             {
@@ -446,8 +592,16 @@ namespace OrangeCarrrrr.Runtime
             KartSpec kartSpec = _kart != null ? _kart.ToSpec() : KartDemoData.DefaultKart;
             TrackSpec trackSpec = _track != null ? _track.ToSpec() : KartDemoData.DefaultTrack;
 
+            // The two bench choices survive the reset, the way the original's
+            // reset_kart carries them across kart_simulation_init: they are
+            // settings about what is being compared, not part of the kart.
+            bool storedModel = _state != null && _state.InstantBoost.StoredModel;
+            bool reverseEndsBoost = _state != null && _state.ReverseInputEndsBoost;
+
             _state ??= new KartSimulationState();
             KartSimulation.Init(_state, kartSpec.Dynamics, kartSpec.Geometry);
+            _state.InstantBoost.StoredModel = storedModel;
+            _state.ReverseInputEndsBoost = reverseEndsBoost;
 
             _flatGround.Height = trackSpec.Minimum.Z;
             BuildCourse();
@@ -455,6 +609,11 @@ namespace OrangeCarrrrr.Runtime
             _previousPosition = _state.Position;
             _respawnDelay = -1f;
             _warpHold = 0f;
+
+            // The charging model and the storage toggle survive a reset — they are
+            // what is being compared across runs — but the charge itself does not.
+            _gauge.Reset();
+            _boostPressAllowed = false;
 
             // The original arms the countdown on reset and backdates it so the
             // race clock starts at zero.
@@ -594,6 +753,7 @@ namespace OrangeCarrrrr.Runtime
             _raceClockMs += elapsedMs;
 
             _controls = DriverInput != null ? DriverInput.Sample() : default;
+            SpendGaugeCharge();
 
             KartCountdownCues cues = _countdown.Update(_raceClockMs);
             if (_sound != null) _sound.PlayCountdown(cues);
@@ -643,6 +803,16 @@ namespace OrangeCarrrrr.Runtime
                 ? (state.LinearVelocity - velocityBefore) * (1f / seconds)
                 : KartVec3.Zero;
 
+            // The gauge integrates the same rear-axle slip the tire model uses, so
+            // it needs the body-axis split of the velocity.
+            state.GetBodyAxes(out KartVec3 bodyRight, out _, out _);
+            _gauge.Step(
+                state,
+                KartVec3.Dot(state.LinearVelocity, bodyRight),
+                KartGauge.DriftVisualActive(state),
+                _kart != null ? _kart.ToSpec().MaxBoosters : KartDemoData.DefaultMaxBoosters,
+                seconds);
+
             StepCourse(state);
             RespawnIfFallenThrough(state, deltaTime);
 
@@ -653,6 +823,16 @@ namespace OrangeCarrrrr.Runtime
             if (_skidMarks != null) _skidMarks.Step(state, Ground, elapsedMs);
             if (_boostFlame != null) _boostFlame.Step(state);
             if (_sound != null) _sound.Step(state, _raceClockMs);
+
+            // After the sound driver, the way the original orders it: the gearbox
+            // only re-pitches the engine loop the driver already opened, so Single
+            // leaves the recovered note untouched and Multi replaces it with its
+            // own sawtooth.
+            _gearbox.Step(state.Speed, seconds);
+            if (_gearbox.Mode == KartGearMode.Multi && _sound != null)
+            {
+                _sound.OverrideMotorPitch(_gearbox.Pitch);
+            }
 
             if (_viewMode == SimulatorViewMode.TopDown)
             {
@@ -668,6 +848,45 @@ namespace OrangeCarrrrr.Runtime
             }
 
             Stepped?.Invoke();
+        }
+
+        /// <summary>
+        /// Gates the item boost on a gauge charge.
+        ///
+        /// Three conditions have to hold before a charge is spent, and all three
+        /// are the original's:
+        ///
+        /// <list type="bullet">
+        /// <item><c>!_boostPressAllowed</c> — one charge per grant, so holding the
+        /// key does not drain the gauge.</item>
+        /// <item><c>!TimedBoost.Active</c> — <b>one booster at a time</b>. Without
+        /// this, pressing again while a boost is still running spends the next
+        /// charge on top of it and two or three go at once.</item>
+        /// <item><c>ForwardInput != 0</c> — the engine only starts an item boost
+        /// while accelerating, so the charge is spent at the moment it can fire
+        /// rather than on a press that cannot.</item>
+        /// </list>
+        ///
+        /// Retried every frame the key is held rather than only on the press
+        /// edge: a hold that could not fire yet — no charge, or off the throttle —
+        /// fires as soon as it can.
+        /// </summary>
+        private void SpendGaugeCharge()
+        {
+            bool held = _controls.BoostActive;
+
+            if (!held)
+            {
+                _boostPressAllowed = false;
+            }
+            else if (!_boostPressAllowed &&
+                     !State.TimedBoost.Active &&
+                     _controls.ForwardInput != 0f)
+            {
+                _boostPressAllowed = _gauge.TakeBooster();
+            }
+
+            _controls.BoostActive = held && _boostPressAllowed;
         }
 
         /// <summary>

@@ -11,6 +11,13 @@ namespace OrangeCarrrrr.Runtime
     ///   C  switch between the chase camera and the top-down projection
     ///   B  show or hide the AABB bounds
     ///   N  show or hide the course's checkpoint gates
+    ///   U  cycle the engine sound preset
+    ///   E  engine note: one ramp, or four gear bands
+    ///   G  cycle the drift gauge's charging model
+    ///   H  booster storage capped by the kart, or unlimited
+    ///   P  the live parameter editor
+    ///   Q  instant boost: opportunity window, or a stored charge
+    ///   M  boost cutoff: throttle release, or reverse press
     ///   F  emulate the ground-drag trigger enter/leave (x4 / x0.25)
     ///   L  cycle the kart's paint through colortable.xml
     ///   T  open the track list (in the HUD's SelectionMenu, not here)
@@ -58,8 +65,26 @@ namespace OrangeCarrrrr.Runtime
             if (keyboard.nKey.wasPressedThisFrame) _simulator.ShowCheckpoints = !_simulator.ShowCheckpoints;
             if (keyboard.fKey.wasPressedThisFrame) _simulator.ToggleDragTrigger();
             if (keyboard.lKey.wasPressedThisFrame) _simulator.NextKartColour();
+            if (keyboard.eKey.wasPressedThisFrame) _simulator.ToggleGearMode();
+            if (keyboard.gKey.wasPressedThisFrame) _simulator.NextGaugeModel();
+            if (keyboard.uKey.wasPressedThisFrame) _simulator.NextEngineSound();
+            if (keyboard.pKey.wasPressedThisFrame) Parameters();
+            if (keyboard.qKey.wasPressedThisFrame) _simulator.ToggleStoredInstantBoost();
+            if (keyboard.mKey.wasPressedThisFrame) _simulator.ToggleBoostCutoffModel();
+            if (keyboard.hKey.wasPressedThisFrame) _simulator.ToggleUnlimitedBoosters();
             if (keyboard.f1Key.wasPressedThisFrame) _simulator.CycleFrameRateCap();
             if (keyboard.sKey.wasPressedThisFrame) CaptureScreenshot();
+        }
+
+        /// <summary>
+        /// The <c>P</c> window, added to the simulator on first use so no scene
+        /// has to carry a debug tool it may never open.
+        /// </summary>
+        private void Parameters()
+        {
+            var window = _simulator.GetComponent<ParameterWindow>();
+            if (window == null) window = _simulator.gameObject.AddComponent<ParameterWindow>();
+            window.Toggle();
         }
 
         private void CaptureScreenshot()

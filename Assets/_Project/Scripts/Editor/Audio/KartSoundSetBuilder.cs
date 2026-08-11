@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using OrangeCarrrrr.Runtime;
 using UnityEditor;
@@ -6,9 +7,9 @@ using UnityEngine;
 namespace OrangeCarrrrr.Editor
 {
     /// <summary>
-    /// Builds the classic engine preset's <see cref="KartSoundSet"/> from the
-    /// samples as they import, and gives them the import settings the originals
-    /// need.
+    /// Builds a <see cref="KartSoundSet"/> for every engine preset from the
+    /// samples as they import, gathers them into the catalog the <c>U</c> key
+    /// walks, and gives the samples the import settings the originals need.
     ///
     /// The demo's samples are 16-bit mono 22050 Hz PCM. Unity's defaults would
     /// compress them to Vorbis and load them streaming, which adds latency to a
@@ -16,23 +17,47 @@ namespace OrangeCarrrrr.Editor
     /// 64 ms. Decompressed PCM, preloaded, is what keeps them behaving like the
     /// waveOut mixer's buffers.
     ///
-    /// Wiring the asset here rather than leaving it to be dragged in is
+    /// The thirteen presets are the original's own list and order. Each one is
+    /// four samples — motor, booster, instant boost, booster idle — and the bike
+    /// variants differ only in the first two, which is why they sit beside their
+    /// car in the order rather than in a group of their own. The kart and
+    /// countdown samples are shared: they are not part of the engine note.
+    ///
+    /// Wiring the assets here rather than leaving them to be dragged in is
     /// deliberate: an unattached sound set is a silent simulator with nothing to
     /// show for it.
     /// </summary>
     public sealed class KartSoundSetBuilder : AssetPostprocessor
     {
-        private const string EngineDirectory = "Assets/_Project/Audio/Engine/Classic";
+        private const string EngineRoot = "Assets/_Project/Audio/Engine";
         private const string KartDirectory = "Assets/_Project/Audio/Kart";
         private const string CountdownDirectory = "Assets/_Project/Audio/Countdown";
-        private const string SetPath = "Assets/_Project/Data/Audio/Classic.asset";
+        private const string SetDirectory = "Assets/_Project/Data/Audio";
+        private const string CatalogPath = SetDirectory + "/KartSoundCatalog.asset";
 
-        private static readonly string[] Clips =
+        /// <summary>
+        /// The presets in the original's enum order: classic, then each engine
+        /// with its bike variant after it.
+        /// </summary>
+        private static readonly string[] Presets =
         {
-            EngineDirectory + "/engine.wav",
-            EngineDirectory + "/booster.wav",
-            EngineDirectory + "/boosterDrift.wav",
-            EngineDirectory + "/boosterPlay.wav",
+            "Classic",
+            "Sr", "SrBike",
+            "Z7", "Z7Bike",
+            "Ht", "HtBike",
+            "Jiu", "JiuBike",
+            "X", "XBike",
+            "V1", "V1Bike",
+        };
+
+        /// <summary>The four engine slots, in the order the original loads them.</summary>
+        private static readonly string[] EngineSlots =
+        {
+            "engine.wav", "booster.wav", "boosterDrift.wav", "boosterPlay.wav",
+        };
+
+        private static readonly string[] SharedClips =
+        {
             KartDirectory + "/drift.wav",
             KartDirectory + "/crash.wav",
             KartDirectory + "/shock.wav",
@@ -42,13 +67,20 @@ namespace OrangeCarrrrr.Editor
             CountdownDirectory + "/count_go.wav",
         };
 
+        private static bool IsSample(string path)
+        {
+            string normalised = path.Replace('\\', '/');
+            if (System.Array.Exists(SharedClips, clip => clip == normalised)) return true;
+            return normalised.StartsWith(EngineRoot + "/") && normalised.EndsWith(".wav");
+        }
+
         /// <summary>
         /// Import settings for the demo's own samples, applied as they arrive so
         /// the asset never exists in a compressed state.
         /// </summary>
         private void OnPreprocessAudio()
         {
-            if (!System.Array.Exists(Clips, path => path == assetPath.Replace('\\', '/'))) return;
+            if (!IsSample(assetPath)) return;
 
             var importer = (AudioImporter)assetImporter;
             importer.forceToMono = true;
@@ -67,7 +99,7 @@ namespace OrangeCarrrrr.Editor
         {
             foreach (string path in imported)
             {
-                if (!System.Array.Exists(Clips, clip => clip == path.Replace('\\', '/'))) continue;
+                if (!IsSample(path)) continue;
 
                 // Deferred: creating assets from inside the import callback
                 // re-enters the asset pipeline while it is still running.
@@ -76,44 +108,66 @@ namespace OrangeCarrrrr.Editor
             }
         }
 
-        private static void Build()
+        internal static void Build()
         {
-            var set = AssetDatabase.LoadAssetAtPath<KartSoundSet>(SetPath);
-            if (set == null)
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(SetPath)));
-                AssetDatabase.Refresh();
-
-                set = ScriptableObject.CreateInstance<KartSoundSet>();
-                AssetDatabase.CreateAsset(set, SetPath);
-            }
+            Directory.CreateDirectory(Path.GetFullPath(SetDirectory));
+            AssetDatabase.Refresh();
 
             int found = 0;
+            int wanted = 0;
+
             AudioClip Clip(string path)
             {
+                ++wanted;
                 var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
                 if (clip != null) ++found;
                 return clip;
             }
 
-            set.SetClips(
-                "classic",
-                Clip(EngineDirectory + "/engine.wav"),
-                Clip(EngineDirectory + "/booster.wav"),
-                Clip(EngineDirectory + "/boosterDrift.wav"),
-                Clip(EngineDirectory + "/boosterPlay.wav"),
-                Clip(KartDirectory + "/drift.wav"),
-                Clip(KartDirectory + "/crash.wav"),
-                Clip(KartDirectory + "/shock.wav"),
-                Clip(CountdownDirectory + "/count_3.wav"),
-                Clip(CountdownDirectory + "/count_2.wav"),
-                Clip(CountdownDirectory + "/count_1.wav"),
-                Clip(CountdownDirectory + "/count_go.wav"));
+            var sets = new List<KartSoundSet>(Presets.Length);
+            foreach (string preset in Presets)
+            {
+                string setPath = $"{SetDirectory}/{preset}.asset";
+                var set = AssetDatabase.LoadAssetAtPath<KartSoundSet>(setPath);
+                if (set == null)
+                {
+                    set = ScriptableObject.CreateInstance<KartSoundSet>();
+                    AssetDatabase.CreateAsset(set, setPath);
+                }
 
-            EditorUtility.SetDirty(set);
+                string engine = $"{EngineRoot}/{preset}";
+                set.SetClips(
+                    preset,
+                    Clip($"{engine}/{EngineSlots[0]}"),
+                    Clip($"{engine}/{EngineSlots[1]}"),
+                    Clip($"{engine}/{EngineSlots[2]}"),
+                    Clip($"{engine}/{EngineSlots[3]}"),
+                    Clip(SharedClips[0]),
+                    Clip(SharedClips[1]),
+                    Clip(SharedClips[2]),
+                    Clip(SharedClips[3]),
+                    Clip(SharedClips[4]),
+                    Clip(SharedClips[5]),
+                    Clip(SharedClips[6]));
+
+                EditorUtility.SetDirty(set);
+                sets.Add(set);
+            }
+
+            var catalog = AssetDatabase.LoadAssetAtPath<KartSoundCatalog>(CatalogPath);
+            if (catalog == null)
+            {
+                catalog = ScriptableObject.CreateInstance<KartSoundCatalog>();
+                AssetDatabase.CreateAsset(catalog, CatalogPath);
+            }
+            catalog.SetPresets(sets.ToArray());
+            EditorUtility.SetDirty(catalog);
+
             AssetDatabase.SaveAssets();
 
-            Debug.Log($"Classic sound set: {found} of {Clips.Length} samples wired into {SetPath}.");
+            Debug.Log(
+                $"Engine sound presets: {Presets.Length} sets, " +
+                $"{found} of {wanted} samples wired, catalog at {CatalogPath}.");
         }
     }
 }

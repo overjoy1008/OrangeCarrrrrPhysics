@@ -41,6 +41,14 @@ namespace OrangeCarrrrr.Runtime
         private uint _instantBoostActivations;
         private bool _started;
 
+        /// <summary>
+        /// The note the driver is holding, for the tachometer. It only recomputes
+        /// every 64 ms, and the dial is meant to show exactly that.
+        /// </summary>
+        public float MotorPitch { get; private set; } = KartSoundConstants.MotorBase;
+
+        public float MotorVolume { get; private set; }
+
         public KartSoundSet Sounds
         {
             get => _sounds;
@@ -164,6 +172,24 @@ namespace OrangeCarrrrr.Runtime
         }
 
         /// <summary>
+        /// Re-pitches the engine loop the driver already opened, leaving its
+        /// volume alone.
+        ///
+        /// This is how the gearbox reaches the sound: <c>Single</c> never calls
+        /// it, so the recovered note is untouched, and <c>Multi</c> replaces the
+        /// pitch with its own sawtooth. Applied after <see cref="Step"/>, which is
+        /// the order the original uses — the driver computes the note first and
+        /// the gearbox overwrites it.
+        /// </summary>
+        public void OverrideMotorPitch(float pitch)
+        {
+            if (!_started) return;
+
+            MotorPitch = pitch;
+            if (_motor != null) _motor.pitch = pitch;
+        }
+
+        /// <summary>
         /// One frame, driven by the same millisecond clock the simulation uses so
         /// the 64 ms motor interval lands where the original puts it.
         /// </summary>
@@ -185,6 +211,9 @@ namespace OrangeCarrrrr.Runtime
                 kart.LastStep.WallImpactSpeed,
                 kart.LastStep.GroundImpactSpeed,
                 nowMs);
+
+            MotorPitch = state.MotorPitch;
+            MotorVolume = state.MotorVolume;
 
             if (_motor != null)
             {

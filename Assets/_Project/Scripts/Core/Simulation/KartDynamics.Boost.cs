@@ -7,9 +7,11 @@ namespace OrangeCarrrrr.Core
     /// window, and pressing the accelerator inside it applies the forward-force
     /// multiplier for another half second.
     ///
-    /// The simulator's alternate "stored" model — where the window banks a charge
-    /// to spend later — is deliberately not ported: it is a hypothesis rather
-    /// than recovered behaviour, and it is out of scope.
+    /// The alternate "stored" model — where the drift exit banks a charge to
+    /// spend later instead of opening a window — is a simulator-side hypothesis
+    /// rather than recovered behaviour. It is here so the two can be compared
+    /// back to back, and <see cref="KartInstantBoostState.StoredModel"/> is off
+    /// unless something turns it on.
     /// </summary>
     [Serializable]
     public struct KartInstantBoostState
@@ -18,6 +20,15 @@ namespace OrangeCarrrrr.Core
         public float ActiveTimer;
         public uint ActivationCount;
         public bool Active;
+
+        /// <summary>
+        /// Bank the drift exit as a charge instead of opening a window. Not
+        /// recovered — see the type's own remarks.
+        /// </summary>
+        public bool StoredModel;
+
+        /// <summary>Charges banked under <see cref="StoredModel"/>.</summary>
+        public uint StoredCount;
     }
 
     /// <summary>The 3000 ms item boost.</summary>
@@ -61,12 +72,34 @@ namespace OrangeCarrrrr.Core
         /// <summary>GoKart::SetAccel(true), 0x00431960.</summary>
         public static void InstantBoostPressForward(ref KartInstantBoostState state)
         {
+            if (state.StoredModel)
+            {
+                InstantBoostUseStored(ref state);
+                return;
+            }
+
             if (state.OpportunityTimer <= 0f) return;
 
             state.OpportunityTimer = 0f;
             state.ActiveTimer = InstantBoostWindowSeconds;
             state.Active = true;
             state.ActivationCount += 1;
+        }
+
+        /// <summary>
+        /// Spends one banked charge. The stored model's half of
+        /// <see cref="InstantBoostPressForward"/>; false when there is nothing to
+        /// spend.
+        /// </summary>
+        public static bool InstantBoostUseStored(ref KartInstantBoostState state)
+        {
+            if (!state.StoredModel || state.StoredCount == 0u) return false;
+
+            state.StoredCount -= 1u;
+            state.ActiveTimer = InstantBoostWindowSeconds;
+            state.Active = true;
+            state.ActivationCount += 1;
+            return true;
         }
 
         /// <summary>
@@ -85,7 +118,12 @@ namespace OrangeCarrrrr.Core
             }
 
             drift.EntryWasForward = false;
-            if (boost.OpportunityTimer == 0f)
+
+            if (boost.StoredModel)
+            {
+                if (boost.StoredCount != uint.MaxValue) boost.StoredCount += 1u;
+            }
+            else if (boost.OpportunityTimer == 0f)
             {
                 boost.OpportunityTimer = InstantBoostWindowSeconds;
             }

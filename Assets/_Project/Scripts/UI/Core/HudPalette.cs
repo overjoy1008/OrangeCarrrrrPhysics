@@ -23,6 +23,21 @@ namespace OrangeCarrrrr.UI
         /// <summary>The wrong-way flag and the respawn notice, which share a colour.</summary>
         public static readonly Color StatusWrongWay = new Color32(255, 120, 120, 255);
 
+        // kart_demo_draw_tachometer.
+        public static readonly Color TachometerTitle = new Color32(180, 205, 215, 255);
+        public static readonly Color TachometerNeedle = new Color32(255, 210, 90, 255);
+        public static readonly Color TachometerDim = new Color32(150, 165, 180, 255);
+        public static readonly Color TachometerGear = new Color32(120, 215, 245, 255);
+
+        // kart_demo_draw_gauge: the drift gauge along the bottom.
+        public static readonly Color GaugeBack = new Color32(14, 18, 24, 255);
+        public static readonly Color GaugeEdge = new Color32(86, 98, 108, 255);
+        public static readonly Color GaugeFill = new Color32(255, 210, 90, 255);
+        public static readonly Color GaugeSlotFull = new Color32(255, 140, 40, 255);
+        public static readonly Color GaugeSlotEmpty = new Color32(30, 38, 46, 255);
+        public static readonly Color GaugeCount = new Color32(255, 170, 70, 255);
+        public static readonly Color GaugeLabel = new Color32(200, 212, 220, 255);
+
         // draw_telemetry.
         public static readonly Color TelemetryPanelFill = new Color32(15, 19, 26, 255);
         public static readonly Color TelemetryPanelBorder = new Color32(54, 64, 73, 255);

@@ -316,10 +316,14 @@ namespace OrangeCarrrrr.Runtime
             _dirty = true;
         }
 
-        /// <summary>The HUD, the sound and the marks all treat the linger as drifting.</summary>
+        /// <summary>
+        /// The HUD, the sound, the gauge and the marks all treat the linger as
+        /// drifting. Kept as one definition in <see cref="KartGauge"/> rather than
+        /// a copy here: four callers agreeing by coincidence is three chances for
+        /// one of them to drift.
+        /// </summary>
         public static bool DriftVisualActive(KartSimulationState kart)
-            => kart.Drift.InputActive || kart.Drift.TriggerActive ||
-               kart.Drift.SlipDetected || kart.Drift.LingerTimer > 0f;
+            => KartGauge.DriftVisualActive(kart);
 
         private void Append(
             int side,

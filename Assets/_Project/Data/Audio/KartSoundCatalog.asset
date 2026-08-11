@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a092f07b0b352f4eb5c117fe3053834, type: 3}
+  m_Name: KartSoundCatalog
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSoundCatalog
+  _presets:
+  - {fileID: 11400000, guid: 8599316143eff5b4cafa0cc864698a2d, type: 2}
+  - {fileID: 11400000, guid: c7bacb2b41a420c4f9c2601455b69abe, type: 2}
+  - {fileID: 11400000, guid: 70e0f0bf627363149ad5997d2789da05, type: 2}
+  - {fileID: 11400000, guid: bc66ce0f09ceaf343a6c552374f111ea, type: 2}
+  - {fileID: 11400000, guid: 7d4ee53417fc6674a853584d9633db24, type: 2}
+  - {fileID: 11400000, guid: 0ec654f17438a264890159f7c844f188, type: 2}
+  - {fileID: 11400000, guid: 0fb0a1e0f0e72404794ca5973c10b745, type: 2}
+  - {fileID: 11400000, guid: f4b356c4797d1fa489ffbb7e78963d91, type: 2}
+  - {fileID: 11400000, guid: c29f61313c16f41409afc37ccf03b5b4, type: 2}
+  - {fileID: 11400000, guid: fcd2aaa5bcd653440bcbc6eb995a3e9e, type: 2}
+  - {fileID: 11400000, guid: bb344a9f4d3673649bc142d4d991b097, type: 2}
+  - {fileID: 11400000, guid: 17e91ee0038aabf4a8c33d107ca0a278, type: 2}
+  - {fileID: 11400000, guid: 87862e8bd60cf8c4da4bf142b1a95b91, type: 2}

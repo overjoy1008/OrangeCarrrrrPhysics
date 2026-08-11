@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c409fadd205541f4db738d72b03a8c5a, type: 3}
   m_Name: Classic
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSoundSet
-  _preset: classic
+  _preset: Classic
   _motor: {fileID: 8300000, guid: 469d10fdc9aa9e54296dcb7cadac4156, type: 3}
   _booster: {fileID: 8300000, guid: 555800d95ce57504a825503e236e71cf, type: 3}
   _instantBoost: {fileID: 8300000, guid: 3fd530932c1a5654b970ea8eae0116a4, type: 3}

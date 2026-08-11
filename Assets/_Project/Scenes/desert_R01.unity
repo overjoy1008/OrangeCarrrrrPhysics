@@ -487,10 +487,6 @@ PrefabInstance:
       propertyPath: m_fontColor.r
       value: 0.9607843
       objectReference: {fileID: 0}
-    - target: {fileID: 4732107473499744390, guid: c01250a985318154d938130fd0db74fa, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5373310481445427099, guid: c01250a985318154d938130fd0db74fa, type: 3}
       propertyPath: m_text
       value: DRAG    scale x1.00  air  3.00  ground 0.725  m 100.0

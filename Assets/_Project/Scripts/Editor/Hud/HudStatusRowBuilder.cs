@@ -58,6 +58,10 @@ namespace OrangeCarrrrr.Editor
                 {
                     Transform copy = Object.Instantiate(liveRoot.GetChild(0), liveRoot);
                     copy.name = $"Line{liveRoot.childCount - 1:00}";
+
+                    // Never inherit the template's disabled state: a row that
+                    // arrives switched off looks exactly like a broken panel.
+                    copy.gameObject.SetActive(true);
                     copy.SetAsLastSibling();
 
                     // The clone carries line 0's text until the panel next

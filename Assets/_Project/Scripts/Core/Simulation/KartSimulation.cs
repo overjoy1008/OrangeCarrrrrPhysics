@@ -199,9 +199,16 @@ namespace OrangeCarrrrr.Core
 
             KartDynamics.TimedBoostStepMilliseconds(ref state.TimedBoost, frameElapsedMs);
 
-            // Releasing the throttle ends both boosts. The alternate model, where
-            // they survive until reverse is pressed, is out of scope.
-            if (controls.ForwardInput == 0f)
+            // Two simulator-side cutoff models, so they can be compared: the
+            // default ends both boosts on throttle release, and the alternate
+            // keeps them alive until reverse is pressed. Neither is recovered —
+            // which of the two the 2004 engine used is the open question.
+            // Whichever is selected is shared by the item and instant boosts.
+            bool cutoff = state.ReverseInputEndsBoost
+                ? controls.ReverseInput != 0f
+                : controls.ForwardInput == 0f;
+
+            if (cutoff)
             {
                 if (state.TimedBoost.Active)
                 {
