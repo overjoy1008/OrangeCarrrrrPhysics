@@ -1,0 +1,588 @@
+{
+  "track": "ice_R01",
+  "theme": "ice",
+  "referenced": 74,
+  "written": 63,
+  "unmatched": [
+    "ad_board_a",
+    "ad_board_b",
+    "ad_board_c",
+    "ad_fence_a",
+    "ad_fence_b",
+    "ad_fence_c",
+    "ad_start",
+    "ice_01",
+    "ice_cave_B02",
+    "ice_ob_a",
+    "ice_tree_01"
+  ],
+  "textures": [
+    {
+      "name": "fence_A",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "fence_A.dds"
+    },
+    {
+      "name": "fence_A_arrow",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "fence_A_arrow.png"
+    },
+    {
+      "name": "fence_A_rlend",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "fence_A_rlend.dds"
+    },
+    {
+      "name": "fence_D",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "fence_D.dds"
+    },
+    {
+      "name": "fence_D-1",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "fence_D-1.dds"
+    },
+    {
+      "name": "fence_D-2",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "fence_D-2.dds"
+    },
+    {
+      "name": "fence_D_arrow",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "fence_D_arrow.dds"
+    },
+    {
+      "name": "fence_D_road",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "fence_D_road.dds"
+    },
+    {
+      "name": "fence_F-1",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "fence_F-1.dds"
+    },
+    {
+      "name": "fence_F-1-1",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "fence_F-1-1.dds"
+    },
+    {
+      "name": "fence_F-2",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "fence_F-2.dds"
+    },
+    {
+      "name": "fence_G",
+      "width": 256,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "fence_G.png"
+    },
+    {
+      "name": "ice_arrow_B",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_arrow_B.png"
+    },
+    {
+      "name": "ice_cablecar",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_cablecar.png"
+    },
+    {
+      "name": "ice_cablecar_a",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_cablecar_a.png"
+    },
+    {
+      "name": "ice_cablecar_h",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_cablecar_h.png"
+    },
+    {
+      "name": "ice_cave-A_1",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_cave-A_1.png"
+    },
+    {
+      "name": "ice_cave-A_2",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_cave-A_2.png"
+    },
+    {
+      "name": "ice_cave_01",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_cave_01.dds"
+    },
+    {
+      "name": "ice_cave_A",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_cave_A.png"
+    },
+    {
+      "name": "ice_cave_B01",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_cave_B01.dds"
+    },
+    {
+      "name": "ice_cave_R01",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "ice_cave_R01.dds"
+    },
+    {
+      "name": "ice_fog01",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "ice_fog01.png"
+    },
+    {
+      "name": "ice_mountain_A",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_mountain_A.png"
+    },
+    {
+      "name": "ice_ob_c",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "ice_ob_c.png"
+    },
+    {
+      "name": "ice_p_B_A",
+      "width": 128,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_B_A.png"
+    },
+    {
+      "name": "ice_precipice_A",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_precipice_A.png"
+    },
+    {
+      "name": "ice_precipice_snow",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_precipice_snow.png"
+    },
+    {
+      "name": "ice_precipice_snow-1",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_precipice_snow-1.png"
+    },
+    {
+      "name": "ice_precipice_snow_a",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_precipice_snow_a.png"
+    },
+    {
+      "name": "ice_R_house01",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_R_house01.png"
+    },
+    {
+      "name": "ice_R_house02",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_R_house02.png"
+    },
+    {
+      "name": "ice_road-A_3",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road-A_3.dds"
+    },
+    {
+      "name": "ice_road_01",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_01.png"
+    },
+    {
+      "name": "ice_road_01_e",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_01_e.dds"
+    },
+    {
+      "name": "ice_road_03",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_03.dds"
+    },
+    {
+      "name": "ice_road_03_1",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_03_1.dds"
+    },
+    {
+      "name": "ice_sign_a",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_sign_a.png"
+    },
+    {
+      "name": "ice_sign_a01",
+      "width": 128,
+      "height": 32,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_sign_a01.dds"
+    },
+    {
+      "name": "ice_sign_st",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_sign_st.png"
+    },
+    {
+      "name": "ice_sign_start",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_sign_start.png"
+    },
+    {
+      "name": "ice_snowman",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_snowman.png"
+    },
+    {
+      "name": "ice_snowroad_D",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_snowroad_D.dds"
+    },
+    {
+      "name": "ice_stone",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_stone.png"
+    },
+    {
+      "name": "ice_tree",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "ice_tree.png"
+    },
+    {
+      "name": "light",
+      "width": 32,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "light.dds"
+    },
+    {
+      "name": "road_side",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_side.dds"
+    },
+    {
+      "name": "road_snow",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_snow.dds"
+    },
+    {
+      "name": "road_snow_arrow",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_snow_arrow.dds"
+    },
+    {
+      "name": "road_snow_B",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_snow_B.dds"
+    },
+    {
+      "name": "road_snow_C",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_snow_C.dds"
+    },
+    {
+      "name": "road_snow_D",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_snow_D.dds"
+    },
+    {
+      "name": "road_snow_finish",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_snow_finish.dds"
+    },
+    {
+      "name": "road_snow_precipice",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_snow_precipice.dds"
+    },
+    {
+      "name": "road_snow_start",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "road_snow_start.dds"
+    },
+    {
+      "name": "sign-danger-1",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "sign-danger-1.png"
+    },
+    {
+      "name": "sign-finish-A",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "sign-finish-A.png"
+    },
+    {
+      "name": "sign_aa",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "sign_aa.png"
+    },
+    {
+      "name": "sign_HB",
+      "width": 256,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "sign_HB.png"
+    },
+    {
+      "name": "sign_R",
+      "width": 32,
+      "height": 32,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "sign_R.dds"
+    },
+    {
+      "name": "sign_stick",
+      "width": 64,
+      "height": 32,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_common",
+      "sourceFile": "sign_stick.dds"
+    },
+    {
+      "name": "snow",
+      "width": 32,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "snow.png"
+    },
+    {
+      "name": "transparency",
+      "width": 32,
+      "height": 32,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "transparency.dds"
+    }
+  ]
+}

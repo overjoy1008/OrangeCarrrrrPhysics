@@ -1,0 +1,448 @@
+{
+  "track": "village_I02",
+  "theme": "village",
+  "referenced": 54,
+  "written": 48,
+  "unmatched": [
+    "ad_board_a",
+    "ad_board_b",
+    "ad_board_c",
+    "ad_fence_a",
+    "ad_fence_b",
+    "ad_start"
+  ],
+  "textures": [
+    {
+      "name": "bighouse_set",
+      "width": 512,
+      "height": 512,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "bighouse_set.dds"
+    },
+    {
+      "name": "busstop_set",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "busstop_set.dds"
+    },
+    {
+      "name": "cement01",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "cement01.dds"
+    },
+    {
+      "name": "cement06",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "cement06.png"
+    },
+    {
+      "name": "cement06_start",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "cement06_start.png"
+    },
+    {
+      "name": "cement07",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "cement07.png"
+    },
+    {
+      "name": "cement08",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "cement08.png"
+    },
+    {
+      "name": "F_fence00",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_common",
+      "sourceFile": "F_fence00.dds"
+    },
+    {
+      "name": "F_road02",
+      "width": 128,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "F_road02.dds"
+    },
+    {
+      "name": "fence00",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "fence00.dds"
+    },
+    {
+      "name": "fence00_e",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "fence00_e.dds"
+    },
+    {
+      "name": "fence01",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "fence01.dds"
+    },
+    {
+      "name": "fence01_a",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "fence01_a.dds"
+    },
+    {
+      "name": "fence12",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "fence12.dds"
+    },
+    {
+      "name": "flag00",
+      "width": 64,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "flag00.png"
+    },
+    {
+      "name": "flag01",
+      "width": 64,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "flag01.png"
+    },
+    {
+      "name": "fountion00_128",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "fountion00_128.dds"
+    },
+    {
+      "name": "fountionwater02",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "fountionwater02.dds"
+    },
+    {
+      "name": "front_128",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "front_128.dds"
+    },
+    {
+      "name": "garbage&fireplug",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "garbage&fireplug.dds"
+    },
+    {
+      "name": "gate_set",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "gate_set.dds"
+    },
+    {
+      "name": "house_inner",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "house_inner.dds"
+    },
+    {
+      "name": "lamp00",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "lamp00.dds"
+    },
+    {
+      "name": "redtulip128",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "redtulip128.dds"
+    },
+    {
+      "name": "s_tree_set",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "s_tree_set.dds"
+    },
+    {
+      "name": "sign06",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "sign06.dds"
+    },
+    {
+      "name": "sign08",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "sign08.dds"
+    },
+    {
+      "name": "sign_ani",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "sign_ani.dds"
+    },
+    {
+      "name": "sign_stick",
+      "width": 64,
+      "height": 32,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "sign_stick.dds"
+    },
+    {
+      "name": "smallhouse_set",
+      "width": 512,
+      "height": 512,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "smallhouse_set.dds"
+    },
+    {
+      "name": "stick",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "stick.dds"
+    },
+    {
+      "name": "stick00",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "stick00.dds"
+    },
+    {
+      "name": "tent_set",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "tent_set.dds"
+    },
+    {
+      "name": "tilegrass",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "tilegrass.dds"
+    },
+    {
+      "name": "tulip_set",
+      "width": 512,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "tulip_set.dds"
+    },
+    {
+      "name": "v_back",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "v_back.dds"
+    },
+    {
+      "name": "v_back00",
+      "width": 256,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "v_back00.dds"
+    },
+    {
+      "name": "v_bridge00",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "v_bridge00.dds"
+    },
+    {
+      "name": "v_tree00_set",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "v_tree00_set.dds"
+    },
+    {
+      "name": "v_tree01_set",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "v_tree01_set.dds"
+    },
+    {
+      "name": "v_tree_set",
+      "width": 512,
+      "height": 512,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "v_tree_set.dds"
+    },
+    {
+      "name": "v_wall",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "v_wall.dds"
+    },
+    {
+      "name": "v_wall00",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "v_wall00.dds"
+    },
+    {
+      "name": "waterdrop",
+      "width": 128,
+      "height": 32,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "waterdrop.dds"
+    },
+    {
+      "name": "windmill_re256",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "windmill_re256.dds"
+    },
+    {
+      "name": "window",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "window.dds"
+    },
+    {
+      "name": "wood00",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_village",
+      "sourceFile": "wood00.dds"
+    },
+    {
+      "name": "yellowtulip128",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_village",
+      "sourceFile": "yellowtulip128.dds"
+    }
+  ]
+}

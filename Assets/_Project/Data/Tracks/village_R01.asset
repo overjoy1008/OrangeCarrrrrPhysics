@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: village_R01
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
   _assetName: village_R01
-  _sceneName: VillageOverpass
   _displayName: "\uBE4C\uB9AC\uC9C0 \uACE0\uAC00\uC758 \uC9C8\uC8FC"
   _raceMode: "\uC2A4\uD53C\uB4DC"
   _difficulty: 2
@@ -23,3 +22,5 @@ MonoBehaviour:
   _startKind: 3
   _startAxis: 2
   _startLine: {x: 143.6366, y: 523.2488, z: 26.84984}
+  _minimap: {fileID: 2800000, guid: d4f1e594755ac184ea031ebc018d7741, type: 3}
+  _course: {fileID: 11400000, guid: dd2f903b498d99f4bb0fe93220cbde4a, type: 2}

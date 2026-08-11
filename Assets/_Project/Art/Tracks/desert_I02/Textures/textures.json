@@ -1,0 +1,289 @@
+{
+    "track":  "desert_I02",
+    "theme":  "desert",
+    "referenced":  38,
+    "written":  29,
+    "unmatched":  [
+                      "ad_board_a",
+                      "ad_board_b",
+                      "ad_board_c",
+                      "ad_fence_a",
+                      "ad_fence_b",
+                      "ad_fence_c",
+                      "ad_start",
+                      "de_road_wood_ì í01",
+                      "fence_woodB_arrow"
+                  ],
+    "textures":  [
+                     {
+                         "name":  "005_item_object_01",
+                         "width":  512,
+                         "height":  512,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "005_item_object_01.dds"
+                     },
+                     {
+                         "name":  "005_item_object_02",
+                         "width":  256,
+                         "height":  256,
+                         "hasAlpha":  true,
+                         "transparent":  true,
+                         "source":  "theme_desert",
+                         "sourceFile":  "005_item_object_02.dds"
+                     },
+                     {
+                         "name":  "005_item_object_03",
+                         "width":  128,
+                         "height":  64,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "005_item_object_03.png"
+                     },
+                     {
+                         "name":  "ad_start_de",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "ad_start_de.dds"
+                     },
+                     {
+                         "name":  "background_sand",
+                         "width":  256,
+                         "height":  64,
+                         "hasAlpha":  true,
+                         "transparent":  true,
+                         "source":  "theme_desert",
+                         "sourceFile":  "background_sand.dds"
+                     },
+                     {
+                         "name":  "de_fence_wood01",
+                         "width":  128,
+                         "height":  64,
+                         "hasAlpha":  true,
+                         "transparent":  true,
+                         "source":  "theme_desert",
+                         "sourceFile":  "de_fence_wood01.png"
+                     },
+                     {
+                         "name":  "de_road_wood",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  true,
+                         "transparent":  true,
+                         "source":  "theme_desert",
+                         "sourceFile":  "de_road_wood.dds"
+                     },
+                     {
+                         "name":  "de_road_wood_점프01",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  true,
+                         "transparent":  true,
+                         "source":  "theme_desert",
+                         "sourceFile":  "de_road_wood_점프01.dds"
+                     },
+                     {
+                         "name":  "fence_red_A",
+                         "width":  128,
+                         "height":  64,
+                         "hasAlpha":  true,
+                         "transparent":  true,
+                         "source":  "theme_desert",
+                         "sourceFile":  "fence_red_A.dds"
+                     },
+                     {
+                         "name":  "fence_woodB",
+                         "width":  128,
+                         "height":  64,
+                         "hasAlpha":  true,
+                         "transparent":  true,
+                         "source":  "theme_desert",
+                         "sourceFile":  "fence_woodB.dds"
+                     },
+                     {
+                         "name":  "item_object_01",
+                         "width":  256,
+                         "height":  256,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "item_object_01.png"
+                     },
+                     {
+                         "name":  "pyramid_01",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "pyramid_01.dds"
+                     },
+                     {
+                         "name":  "pyramid_02",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "pyramid_02.dds"
+                     },
+                     {
+                         "name":  "pyramid_inside_ceilling",
+                         "width":  256,
+                         "height":  64,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "pyramid_inside_ceilling.dds"
+                     },
+                     {
+                         "name":  "pyramid_inside_gate",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "pyramid_inside_gate.dds"
+                     },
+                     {
+                         "name":  "pyramid_inside_wall01",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "pyramid_inside_wall01.dds"
+                     },
+                     {
+                         "name":  "pyramid_inside_wall02",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "pyramid_inside_wall02.dds"
+                     },
+                     {
+                         "name":  "road_pyramid",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "road_pyramid.dds"
+                     },
+                     {
+                         "name":  "road_sand",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "road_sand.dds"
+                     },
+                     {
+                         "name":  "road_ston",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "road_ston.dds"
+                     },
+                     {
+                         "name":  "road_ston_start",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "road_ston_start.dds"
+                     },
+                     {
+                         "name":  "road_ston_uphill",
+                         "width":  256,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "road_ston_uphill.dds"
+                     },
+                     {
+                         "name":  "sand",
+                         "width":  128,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "sand.dds"
+                     },
+                     {
+                         "name":  "sign_ani_A",
+                         "width":  128,
+                         "height":  64,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "sign_ani_A.dds"
+                     },
+                     {
+                         "name":  "sign_ani_B",
+                         "width":  64,
+                         "height":  32,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "sign_ani_B.dds"
+                     },
+                     {
+                         "name":  "sign_stick",
+                         "width":  64,
+                         "height":  32,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_common",
+                         "sourceFile":  "sign_stick.dds"
+                     },
+                     {
+                         "name":  "sign_y",
+                         "width":  64,
+                         "height":  64,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "sign_y.dds"
+                     },
+                     {
+                         "name":  "ston_C",
+                         "width":  128,
+                         "height":  128,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "ston_C.dds"
+                     },
+                     {
+                         "name":  "transparency",
+                         "width":  32,
+                         "height":  32,
+                         "hasAlpha":  true,
+                         "transparent":  true,
+                         "source":  "theme_common",
+                         "sourceFile":  "transparency.dds"
+                     },
+                     {
+                         "name":  "wood_pillar",
+                         "width":  256,
+                         "height":  64,
+                         "hasAlpha":  false,
+                         "transparent":  false,
+                         "source":  "theme_desert",
+                         "sourceFile":  "wood_pillar.dds"
+                     }
+                 ]
+}

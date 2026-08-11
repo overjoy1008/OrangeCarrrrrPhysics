@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f60a80785b91443b31de24ee82a3b0, type: 3}
+  m_Name: forest_I02
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
+  _assetName: forest_I02
+  _displayName: "\uD3EC\uB808\uC2A4\uD2B8 \uBC84\uC12F\uB3D9\uAD74"
+  _raceMode: "\uC544\uC774\uD15C"
+  _difficulty: 2
+  _minimum: {x: 82.21716, y: -140.4142, z: -1.271019}
+  _maximum: {x: 754.2902, y: 1395.292, z: 113.3375}
+  _hasScene: 1
+  _startKind: 2
+  _startAxis: 2
+  _startLine: {x: 224.0634, y: 553.9555, z: 31.909}
+  _minimap: {fileID: 2800000, guid: d40470e437b455a468c95725d5f7805f, type: 3}
+  _course: {fileID: 11400000, guid: 6e0b5c5007a729c4384e967760930ad6, type: 2}

@@ -1,0 +1,475 @@
+{
+  "track": "forest_I01",
+  "theme": "forest",
+  "referenced": 57,
+  "written": 51,
+  "unmatched": [
+    "ad_board_a",
+    "ad_board_b",
+    "ad_board_c",
+    "ad_fence_a",
+    "ad_fence_b",
+    "ad_start"
+  ],
+  "textures": [
+    {
+      "name": "ca_racing_fence",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "ca_racing_fence.dds"
+    },
+    {
+      "name": "F_ back01",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_ back01.dds"
+    },
+    {
+      "name": "F_ cliff04",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_ cliff04.dds"
+    },
+    {
+      "name": "F_ ston00",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_ ston00.dds"
+    },
+    {
+      "name": "F_ ston01",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_ ston01.dds"
+    },
+    {
+      "name": "F_cabin00",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_cabin00.dds"
+    },
+    {
+      "name": "F_fence00",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_fence00.dds"
+    },
+    {
+      "name": "F_fence02",
+      "width": 256,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_fence02.dds"
+    },
+    {
+      "name": "F_fence03",
+      "width": 256,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_fence03.dds"
+    },
+    {
+      "name": "F_fence04",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_fence04.dds"
+    },
+    {
+      "name": "F_fence06",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_fence06.dds"
+    },
+    {
+      "name": "F_fence08",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_fence08.dds"
+    },
+    {
+      "name": "F_flower_set",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_flower_set.dds"
+    },
+    {
+      "name": "F_grass09",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_grass09.dds"
+    },
+    {
+      "name": "F_grass10",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_grass10.dds"
+    },
+    {
+      "name": "F_grass_set",
+      "width": 256,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_grass_set.dds"
+    },
+    {
+      "name": "F_grass_set00",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_grass_set00.dds"
+    },
+    {
+      "name": "F_handrail",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_handrail.dds"
+    },
+    {
+      "name": "F_mtree00",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_mtree00.dds"
+    },
+    {
+      "name": "F_mtree02",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_mtree02.dds"
+    },
+    {
+      "name": "F_mtree03",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_mtree03.dds"
+    },
+    {
+      "name": "F_mushroom_set",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_mushroom_set.png"
+    },
+    {
+      "name": "F_netbridge",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_netbridge.dds"
+    },
+    {
+      "name": "F_overpass",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_overpass.dds"
+    },
+    {
+      "name": "F_overpass00",
+      "width": 64,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_overpass00.dds"
+    },
+    {
+      "name": "F_overpass02",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_overpass02.dds"
+    },
+    {
+      "name": "F_pinegrass_set",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_pinegrass_set.dds"
+    },
+    {
+      "name": "F_pinetree00_set",
+      "width": 512,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_pinetree00_set.dds"
+    },
+    {
+      "name": "F_pinetree_set",
+      "width": 128,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_pinetree_set.dds"
+    },
+    {
+      "name": "F_pinetreebranch_set",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_pinetreebranch_set.dds"
+    },
+    {
+      "name": "F_pinetreeleaf_set",
+      "width": 512,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_pinetreeleaf_set.dds"
+    },
+    {
+      "name": "F_road00",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_road00.png"
+    },
+    {
+      "name": "F_road02",
+      "width": 128,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_road02.dds"
+    },
+    {
+      "name": "F_roadstart01",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_roadstart01.png"
+    },
+    {
+      "name": "F_sign",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_sign.dds"
+    },
+    {
+      "name": "F_sign00",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_sign00.dds"
+    },
+    {
+      "name": "F_sign03",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_sign03.dds"
+    },
+    {
+      "name": "F_tilegrass00",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_tilegrass00.dds"
+    },
+    {
+      "name": "F_tree00_set",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_tree00_set.dds"
+    },
+    {
+      "name": "F_treeleaf00_set",
+      "width": 512,
+      "height": 512,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_treeleaf00_set.dds"
+    },
+    {
+      "name": "F_treeleaf_set",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_forest",
+      "sourceFile": "F_treeleaf_set.dds"
+    },
+    {
+      "name": "F_treewood00",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_treewood00.dds"
+    },
+    {
+      "name": "F_treewood01",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_treewood01.dds"
+    },
+    {
+      "name": "F_water01",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_water01.dds"
+    },
+    {
+      "name": "F_wood",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_wood.dds"
+    },
+    {
+      "name": "F_woodtunnel",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "F_woodtunnel.dds"
+    },
+    {
+      "name": "shadow00",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "shadow00.dds"
+    },
+    {
+      "name": "shadow01",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "shadow01.dds"
+    },
+    {
+      "name": "transparency",
+      "width": 32,
+      "height": 32,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "transparency.dds"
+    },
+    {
+      "name": "tunnel00",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "tunnel00.dds"
+    },
+    {
+      "name": "wood00",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_forest",
+      "sourceFile": "wood00.dds"
+    }
+  ]
+}

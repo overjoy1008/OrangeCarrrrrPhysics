@@ -105,6 +105,17 @@ namespace OrangeCarrrrr.Core
 
         // ------------------------------------------------------------- ray
 
+        /// <summary>
+        /// Does the segment pierce the triangle? The course's gate test is built
+        /// on exactly this, which is why it is shared rather than reimplemented:
+        /// a checkpoint has to agree with the ground query about what a segment
+        /// touching a triangle means.
+        /// </summary>
+        public static bool SegmentTriangleHit(
+            in KartVec3 start, in KartVec3 delta,
+            in KartVec3 a, in KartVec3 b, in KartVec3 c)
+            => SegmentTriangleIntersection(start, delta, a, b, c, out _, out _);
+
         private static bool SegmentTriangleIntersection(
             in KartVec3 start, in KartVec3 delta,
             in KartVec3 a, in KartVec3 b, in KartVec3 c,

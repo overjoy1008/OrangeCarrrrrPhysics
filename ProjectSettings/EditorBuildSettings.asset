@@ -6,10 +6,46 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Project/Scenes/Simulator.unity
+    path: Assets/_Project/Scenes/flat_test.unity
     guid: 3be7a5b7c2706bc4f88c8f43044b96d6
   - enabled: 1
-    path: Assets/_Project/Scenes/VillageOverpass.unity
+    path: Assets/_Project/Scenes/village_R01.unity
     guid: 22b2fbe2a4b58de48bf0a2f36cfb059d
+  - enabled: 1
+    path: Assets/_Project/Scenes/desert_I01.unity
+    guid: 1b4d8708304670749b9693b1418ced66
+  - enabled: 1
+    path: Assets/_Project/Scenes/desert_I02.unity
+    guid: 5caae97e2f177c24b8d82940d5b8f0bb
+  - enabled: 1
+    path: Assets/_Project/Scenes/desert_R01.unity
+    guid: 897a09cfb593e9e47a42298874dac7e8
+  - enabled: 1
+    path: Assets/_Project/Scenes/forest_I01.unity
+    guid: ab342ed0a2feaa84a9b2c0e569ebfc77
+  - enabled: 1
+    path: Assets/_Project/Scenes/forest_I02.unity
+    guid: 6da10d7536631d145b1c3c64066f72c4
+  - enabled: 1
+    path: Assets/_Project/Scenes/forest_R02.unity
+    guid: 53aa386ec95262d498b65c0b31378d5f
+  - enabled: 1
+    path: Assets/_Project/Scenes/ice_I01.unity
+    guid: 7e73d9dd8f8139d468420913fe5a47ba
+  - enabled: 1
+    path: Assets/_Project/Scenes/ice_I02.unity
+    guid: 2500cd6384da8d14a8292ff968044078
+  - enabled: 1
+    path: Assets/_Project/Scenes/ice_R01.unity
+    guid: 9a6d51e86edc1f74cac894c15ebd413e
+  - enabled: 1
+    path: Assets/_Project/Scenes/village_I01.unity
+    guid: 28924912410065a42bb6b44b893acc11
+  - enabled: 1
+    path: Assets/_Project/Scenes/village_I02.unity
+    guid: 07afef862fb96c647b125e81fa9c155f
+  - enabled: 1
+    path: Assets/_Project/Scenes/village_R03.unity
+    guid: 701bcfa3030b8de42a017981738a9bbc
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

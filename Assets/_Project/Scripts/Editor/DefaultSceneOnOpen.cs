@@ -18,7 +18,7 @@ namespace OrangeCarrrrr.Editor
     [InitializeOnLoad]
     internal static class DefaultSceneOnOpen
     {
-        private const string DefaultScenePath = "Assets/_Project/Scenes/Simulator.unity";
+        private const string DefaultScenePath = "Assets/_Project/Scenes/flat_test.unity";
 
         static DefaultSceneOnOpen()
         {

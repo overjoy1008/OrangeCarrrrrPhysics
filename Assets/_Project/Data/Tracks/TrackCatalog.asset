@@ -14,4 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackCatalog
   _tracks:
   - {fileID: 11400000, guid: 9280433ee506adf48a7d746116e9c31b, type: 2}
+  - {fileID: 11400000, guid: b8a920bb86a946048a479e5c15e71f85, type: 2}
+  - {fileID: 11400000, guid: dfa6b985f511eaa4094a629ef2f6385e, type: 2}
+  - {fileID: 11400000, guid: abd7b9cb142dbcd4b98fb583b0d80a7b, type: 2}
+  - {fileID: 11400000, guid: 04528d10a556371469650981d8d1a109, type: 2}
+  - {fileID: 11400000, guid: 4966b5aff750e814984be7258d2da84b, type: 2}
+  - {fileID: 11400000, guid: 03429571c6b4ffd4a80720e5f69c9329, type: 2}
+  - {fileID: 11400000, guid: 9509b36baae12604f8104258ede5b860, type: 2}
+  - {fileID: 11400000, guid: 1c7e62ffb55a14b43aee0873bcb57112, type: 2}
+  - {fileID: 11400000, guid: dd3013a332e9f704cba14e94081ca3ae, type: 2}
+  - {fileID: 11400000, guid: 60a8be300d87be945a8575239afd0884, type: 2}
+  - {fileID: 11400000, guid: 993db12164a3b794e887ddc85f9b7d2c, type: 2}
   - {fileID: 11400000, guid: f546555dc2a1b53448690587dc24b902, type: 2}
+  - {fileID: 11400000, guid: 17e3865c2ee69004392a4d5574f073aa, type: 2}

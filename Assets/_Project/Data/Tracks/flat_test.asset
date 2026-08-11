@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: flat_test
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
   _assetName: flat_test
-  _sceneName: Simulator
   _displayName: "\uD14C\uC2A4\uD2B8 \uD3C9\uC9C0"
   _raceMode: "\uD14C\uC2A4\uD2B8"
   _difficulty: 0
@@ -23,3 +22,5 @@ MonoBehaviour:
   _startKind: 0
   _startAxis: 0
   _startLine: {x: 0, y: 0, z: 0}
+  _minimap: {fileID: 0}
+  _course: {fileID: 0}

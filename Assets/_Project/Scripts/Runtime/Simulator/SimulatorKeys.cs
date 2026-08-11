@@ -10,12 +10,13 @@ namespace OrangeCarrrrr.Runtime
     ///
     ///   C  switch between the chase camera and the top-down projection
     ///   B  show or hide the AABB bounds
+    ///   N  show or hide the course's checkpoint gates
     ///   F  emulate the ground-drag trigger enter/leave (x4 / x0.25)
     ///   L  cycle the kart's paint through colortable.xml
-    ///   T  load the next track
-    ///   K  select the next kart
+    ///   T  open the track list (in the HUD's SelectionMenu, not here)
+    ///   K  open the kart list (likewise)
     ///   S  save a screenshot
-    ///   R  reset
+    ///   R  respawn onto the checkpoint the kart is at, half a second later
     ///
     /// F1 caps the frame rate. That one is not in the original: the port has to
     /// be frame-rate independent, and being able to pin 60 or 40 on demand is how
@@ -46,13 +47,17 @@ namespace OrangeCarrrrr.Runtime
             Keyboard keyboard = Keyboard.current;
             if (keyboard == null || _simulator == null) return;
 
+            // T and K belong to the selection menu, which lives with the rest of
+            // the HUD. While it is up it owns the keyboard outright — it moves on
+            // the same arrows the kart steers with — so nothing here fires.
+            if (_simulator.MenuOpen) return;
+
             if (keyboard.cKey.wasPressedThisFrame) _simulator.ToggleViewMode();
             if (keyboard.bKey.wasPressedThisFrame) _simulator.ShowBounds = !_simulator.ShowBounds;
-            if (keyboard.rKey.wasPressedThisFrame) _simulator.ResetSimulation();
+            if (keyboard.rKey.wasPressedThisFrame) _simulator.RequestRespawn();
+            if (keyboard.nKey.wasPressedThisFrame) _simulator.ShowCheckpoints = !_simulator.ShowCheckpoints;
             if (keyboard.fKey.wasPressedThisFrame) _simulator.ToggleDragTrigger();
             if (keyboard.lKey.wasPressedThisFrame) _simulator.NextKartColour();
-            if (keyboard.tKey.wasPressedThisFrame) _simulator.NextTrack();
-            if (keyboard.kKey.wasPressedThisFrame) _simulator.NextKart();
             if (keyboard.f1Key.wasPressedThisFrame) _simulator.CycleFrameRateCap();
             if (keyboard.sKey.wasPressedThisFrame) CaptureScreenshot();
         }

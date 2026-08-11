@@ -69,9 +69,8 @@ namespace OrangeCarrrrr.Core
     }
 
     /// <summary>
-    /// The recovered tables, transcribed from <c>kart_demo_data.c</c>. All
-    /// twenty-six karts are carried; the thirteen real tracks land with their
-    /// own phase.
+    /// The recovered tables, transcribed from <c>kart_demo_data.c</c>: all
+    /// twenty-six karts and all fourteen tracks.
     ///
     /// Every value here came out of the 2004 demo's own archives via
     /// <c>DeveloperTools/AssetPipeline</c>, so it is transcribed rather than tuned.
@@ -105,12 +104,9 @@ namespace OrangeCarrrrr.Core
             };
 
         /// <summary>
-        /// Exact model-root AABB and parameter.xml values extracted from the 2004
-        /// demo's kart.rho. The archive spells Cotton as "cotten".
-        /// </summary>
-        /// <summary>
         /// <c>KARTS[]</c> in the file's own order, which is the order the K menu
-        /// walks. Five dynamics presets cover the five families; the geometry is
+        /// walks. Exact model-root AABBs and parameter.xml values extracted from
+        /// the 2004 demo's kart.rho; the archive spells Cotton as "cotten". Five dynamics presets cover the five families; the geometry is
         /// per kart because each model root has its own AABB.
         /// </summary>
         private static readonly KartSpec[] KartTable =
@@ -171,7 +167,190 @@ namespace OrangeCarrrrr.Core
 
         public static IReadOnlyList<KartSpec> Karts { get; } = KartTable;
 
-        public static IReadOnlyList<TrackSpec> Tracks { get; } = new[] { FlatTest };
+        /// <summary>
+        /// <c>TRACKS[]</c> in the file's own order: the synthetic flat track, then
+        /// the thirteen real ones. Bounds, start line and the evidence level of
+        /// each start pose all came out of the decoded <c>track.1s</c>.
+        ///
+        /// Only forest_I01 and village_R01 have their start *direction* checked
+        /// against the original game; everything below Confirmed assumes the
+        /// +axis direction.
+        /// </summary>
+        private static readonly TrackSpec[] TrackTable =
+        {
+            FlatTest,
+            new TrackSpec
+            {
+                AssetName = "desert_I01",
+                DisplayName = "사막 지옥의 모래구덩이",
+                RaceMode = "아이템",
+                Difficulty = 2,
+                Minimum = new KartVec3(27.22131f, 17.29889f, 6.201988f),
+                Maximum = new KartVec3(976.4961f, 1240.95f, 131.7757f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisClear,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(535.2981f, 643.5748f, 30.19893f),
+            },
+            new TrackSpec
+            {
+                AssetName = "desert_I02",
+                DisplayName = "사막 피라미드 탐험",
+                RaceMode = "아이템",
+                Difficulty = 2,
+                Minimum = new KartVec3(15.52185f, 21.88702f, 15.50548f),
+                Maximum = new KartVec3(716.0608f, 1257.209f, 131.0995f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisClear,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(270.9646f, 765.0216f, 21.74277f),
+            },
+            new TrackSpec
+            {
+                AssetName = "desert_R01",
+                DisplayName = "사막 빙글빙글 공사장",
+                RaceMode = "스피드",
+                Difficulty = 4,
+                Minimum = new KartVec3(-75.36597f, 49.39597f, 5.913539f),
+                Maximum = new KartVec3(1131.802f, 986.7229f, 152.137f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisClear,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(264.6601f, 490.8936f, 37.98141f),
+            },
+            new TrackSpec
+            {
+                AssetName = "forest_I01",
+                DisplayName = "포레스트 통나무",
+                RaceMode = "아이템",
+                Difficulty = 1,
+                Minimum = new KartVec3(13.48803f, 27.24757f, 1.752445f),
+                Maximum = new KartVec3(909.879f, 834.4304f, 118.1231f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.Confirmed,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(758.6121f, 484.8074f, 27.07603f),
+            },
+            new TrackSpec
+            {
+                AssetName = "forest_I02",
+                DisplayName = "포레스트 버섯동굴",
+                RaceMode = "아이템",
+                Difficulty = 2,
+                Minimum = new KartVec3(82.21716f, -140.4142f, -1.271019f),
+                Maximum = new KartVec3(754.2902f, 1395.292f, 113.3375f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisClear,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(224.0634f, 553.9555f, 31.909f),
+            },
+            new TrackSpec
+            {
+                AssetName = "forest_R02",
+                DisplayName = "포레스트 지그재그",
+                RaceMode = "스피드",
+                Difficulty = 4,
+                Minimum = new KartVec3(-7.913147f, -134.8193f, -0.718708f),
+                Maximum = new KartVec3(1084.896f, 1392.051f, 172.8659f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisClear,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(738.7255f, 341.9955f, 60.39529f),
+            },
+            new TrackSpec
+            {
+                AssetName = "ice_I01",
+                DisplayName = "아이스 갈라진 빙산",
+                RaceMode = "아이템→현재 스피드",
+                Difficulty = 4,
+                Minimum = new KartVec3(24.31265f, 60.53888f, 1.654024f),
+                Maximum = new KartVec3(1107.896f, 1165.535f, 318.2377f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisWeak,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(405.2543f, 737.3219f, 15.57826f),
+            },
+            new TrackSpec
+            {
+                AssetName = "ice_I02",
+                DisplayName = "아이스 상어의 무덤",
+                RaceMode = "아이템",
+                Difficulty = 1,
+                Minimum = new KartVec3(93.76453f, 55.66373f, -5.161366f),
+                Maximum = new KartVec3(870.5864f, 896.9417f, 313.5863f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisWeak,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(381.7374f, 456.2767f, 13.87031f),
+            },
+            new TrackSpec
+            {
+                AssetName = "ice_R01",
+                DisplayName = "아이스 설산 다운힐",
+                RaceMode = "스피드",
+                Difficulty = 5,
+                Minimum = new KartVec3(40.15965f, -209.4469f, 11.96741f),
+                Maximum = new KartVec3(1979.582f, 1983.356f, 796.1914f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisWeak,
+                StartAxis = KartTrackStartAxis.X,
+                StartLine = new KartVec3(1088.797f, 1561.169f, 530.375f),
+            },
+            new TrackSpec
+            {
+                AssetName = "village_I01",
+                DisplayName = "빌리지 시계탑",
+                RaceMode = "아이템",
+                Difficulty = 2,
+                Minimum = new KartVec3(6.550034f, 13.51373f, 0.5811663f),
+                Maximum = new KartVec3(723.9319f, 1013.374f, 87.23308f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisClear,
+                StartAxis = KartTrackStartAxis.X,
+                StartLine = new KartVec3(314.5892f, 152.8071f, 13.29302f),
+            },
+            new TrackSpec
+            {
+                AssetName = "village_I02",
+                DisplayName = "빌리지 손가락",
+                RaceMode = "아이템→현재 스피드",
+                Difficulty = 3,
+                Minimum = new KartVec3(-2.671448f, 11.83069f, -1.29806f),
+                Maximum = new KartVec3(561.3079f, 682.4102f, 49.30659f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisClear,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(119.2628f, 337.893f, 8.578018f),
+            },
+            new TrackSpec
+            {
+                AssetName = "village_R01",
+                DisplayName = "빌리지 고가의 질주",
+                RaceMode = "스피드",
+                Difficulty = 2,
+                Minimum = new KartVec3(-36.535f, -111.3333f, 2.849871f),
+                Maximum = new KartVec3(1239.292f, 1600.784f, 106.8285f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.Confirmed,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(143.6366f, 523.2488f, 26.84984f),
+            },
+            new TrackSpec
+            {
+                AssetName = "village_R03",
+                DisplayName = "빌리지 붐힐터널",
+                RaceMode = "스피드",
+                Difficulty = 4,
+                Minimum = new KartVec3(23.36246f, 46.18066f, 8.646021f),
+                Maximum = new KartVec3(1213.144f, 1447.473f, 90.51943f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.AxisClear,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(215.792f, 600.6079f, 27.30944f),
+            },
+        };
+
+        public static IReadOnlyList<TrackSpec> Tracks { get; } = TrackTable;
 
         public static KartSpec DefaultKart => Cotten5;
 
@@ -191,7 +370,7 @@ namespace OrangeCarrrrr.Core
 
         public static TrackSpec FindTrack(string assetName)
         {
-            foreach (TrackSpec track in Tracks)
+            foreach (TrackSpec track in TrackTable)
             {
                 if (string.Equals(track.AssetName, assetName, StringComparison.Ordinal)) return track;
             }

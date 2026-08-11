@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f60a80785b91443b31de24ee82a3b0, type: 3}
+  m_Name: desert_R01
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
+  _assetName: desert_R01
+  _displayName: "\uC0AC\uB9C9 \uBE59\uAE00\uBE59\uAE00 \uACF5\uC0AC\uC7A5"
+  _raceMode: "\uC2A4\uD53C\uB4DC"
+  _difficulty: 4
+  _minimum: {x: -75.36597, y: 49.39597, z: 5.913539}
+  _maximum: {x: 1131.802, y: 986.7229, z: 152.137}
+  _hasScene: 1
+  _startKind: 2
+  _startAxis: 2
+  _startLine: {x: 264.6601, y: 490.8936, z: 37.98141}
+  _minimap: {fileID: 2800000, guid: e54a6503d79416041925a8cd441b8d07, type: 3}
+  _course: {fileID: 11400000, guid: 6dc8647e387d7d94bb632c5f89144ac8, type: 2}

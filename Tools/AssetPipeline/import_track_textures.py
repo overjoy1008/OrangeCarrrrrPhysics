@@ -135,8 +135,11 @@ def main():
     if arguments.art_directory:
         art = os.path.join(project, arguments.art_directory)
     else:
-        folder = "".join(part.capitalize() for part in arguments.track.split("_"))
-        art = os.path.join(project, "Assets", "_Project", "Art", "Tracks", folder)
+        # Folder named after the track id, the same string the spec, the scene and
+        # the KTRK all use. One name for a track everywhere beats a CamelCase
+        # variant that has to be mapped back.
+        art = os.path.join(
+            project, "Assets", "_Project", "Art", "Tracks", arguments.track)
 
     ktrk = os.path.join(art, f"track_{arguments.track}.ktrk")
     if not os.path.isfile(ktrk):

@@ -1,0 +1,348 @@
+{
+  "track": "ice_I01",
+  "theme": "ice",
+  "referenced": 42,
+  "written": 37,
+  "unmatched": [
+    "ad_board_a",
+    "ad_board_b",
+    "ad_board_c",
+    "ad_start",
+    "ice_aurora"
+  ],
+  "textures": [
+    {
+      "name": "ice_arrow_B",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_arrow_B.png"
+    },
+    {
+      "name": "ice_arrow_C",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_arrow_C.png"
+    },
+    {
+      "name": "ice_aurora_a",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "ice_aurora_a.png"
+    },
+    {
+      "name": "ice_fish",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "ice_fish.dds"
+    },
+    {
+      "name": "ice_flag",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_flag.dds"
+    },
+    {
+      "name": "ice_glacial terrain_A",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_glacial terrain_A.png"
+    },
+    {
+      "name": "ice_glacial terrain_B",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_glacial terrain_B.png"
+    },
+    {
+      "name": "ice_icicle_C",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_icicle_C.dds"
+    },
+    {
+      "name": "ice_icicle_D",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_icicle_D.dds"
+    },
+    {
+      "name": "ice_p_A",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_A.png"
+    },
+    {
+      "name": "ice_p_A-B",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_A-B.png"
+    },
+    {
+      "name": "ice_p_A_a",
+      "width": 64,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_common",
+      "sourceFile": "ice_p_A_a.png"
+    },
+    {
+      "name": "ice_p_B",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_B.dds"
+    },
+    {
+      "name": "ice_p_B-1",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_B-1.dds"
+    },
+    {
+      "name": "ice_p_B_B",
+      "width": 128,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_B_B.dds"
+    },
+    {
+      "name": "ice_p_B_C",
+      "width": 128,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_B_C.png"
+    },
+    {
+      "name": "ice_p_c",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_c.png"
+    },
+    {
+      "name": "ice_p_c_1",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_p_c_1.png"
+    },
+    {
+      "name": "ice_penguin",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_penguin.png"
+    },
+    {
+      "name": "ice_penguin-1",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_penguin-1.png"
+    },
+    {
+      "name": "ice_road_AG",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_AG.png"
+    },
+    {
+      "name": "ice_road_AG_B",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_AG_B.dds"
+    },
+    {
+      "name": "ice_road_AG_C",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_AG_C.dds"
+    },
+    {
+      "name": "ice_road_B_B",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_B_B.dds"
+    },
+    {
+      "name": "ice_road_BC",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_BC.dds"
+    },
+    {
+      "name": "ice_road_BC_01",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_BC_01.dds"
+    },
+    {
+      "name": "ice_road_start_G",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_road_start_G.dds"
+    },
+    {
+      "name": "ice_see",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "ice_see.png"
+    },
+    {
+      "name": "ice_see-ani",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "ice_see-ani.dds"
+    },
+    {
+      "name": "ice_see-bottom",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_see-bottom.dds"
+    },
+    {
+      "name": "ice_sign_jump01",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_sign_jump01.png"
+    },
+    {
+      "name": "ice_sign_jump02",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_sign_jump02.png"
+    },
+    {
+      "name": "ice_sign_p",
+      "width": 64,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_ice",
+      "sourceFile": "ice_sign_p.dds"
+    },
+    {
+      "name": "sign_stick",
+      "width": 64,
+      "height": 32,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_common",
+      "sourceFile": "sign_stick.dds"
+    },
+    {
+      "name": "start",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_ice",
+      "sourceFile": "start.png"
+    },
+    {
+      "name": "transparency",
+      "width": 32,
+      "height": 32,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "transparency.dds"
+    },
+    {
+      "name": "twinkle",
+      "width": 32,
+      "height": 32,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "twinkle.png"
+    }
+  ]
+}

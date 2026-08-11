@@ -86,7 +86,13 @@ namespace OrangeCarrrrr.UI
             if (_digits != null)
             {
                 _digits.fontSize = 58f;
-                _digits.fontStyle = FontStyles.Bold;
+
+                // No bold style: the original asks GDI for Segoe UI at FW_HEAVY,
+                // which picks the Black face, and that face is what UiHeavy
+                // already is. Adding Bold on top of it makes TMP synthesise a
+                // second weight by dilating the SDF, which thickens the strokes
+                // and spaces the digits wider than the original's.
+                _digits.fontStyle = FontStyles.Normal;
                 _digits.alignment = TextAlignmentOptions.Right;
                 _digits.textWrappingMode = TextWrappingModes.NoWrap;
                 if (_fonts != null) _digits.font = _fonts.UiHeavy;
@@ -98,7 +104,9 @@ namespace OrangeCarrrrr.UI
             {
                 _unit.SetText("KM/H");
                 _unit.fontSize = 18f;
-                _unit.fontStyle = FontStyles.Bold;
+
+                // Likewise: FW_BOLD in the original is the Bold face, which Ui is.
+                _unit.fontStyle = FontStyles.Normal;
                 _unit.alignment = TextAlignmentOptions.Center;
                 _unit.color = HudPalette.SpeedometerUnit;
                 if (_fonts != null) _unit.font = _fonts.Ui;

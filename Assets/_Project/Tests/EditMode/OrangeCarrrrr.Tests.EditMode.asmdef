@@ -3,6 +3,7 @@
   "rootNamespace": "OrangeCarrrrr.Tests",
   "references": [
     "OrangeCarrrrr.Core",
+    "OrangeCarrrrr.Runtime",
     "UnityEngine.TestRunner",
     "UnityEditor.TestRunner"
   ],

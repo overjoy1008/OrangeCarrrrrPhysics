@@ -1,0 +1,252 @@
+{
+  "track": "desert_I01",
+  "theme": "desert",
+  "referenced": 34,
+  "written": 26,
+  "unmatched": [
+    "ad_board_a",
+    "ad_board_b",
+    "ad_board_c",
+    "ad_fence_a",
+    "ad_fence_b",
+    "ad_fence_c",
+    "ad_start",
+    "fence_woodB_arrow"
+  ],
+  "textures": [
+    {
+      "name": "ad_start_de",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "ad_start_de.dds"
+    },
+    {
+      "name": "de_grass01",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_desert",
+      "sourceFile": "de_grass01.dds"
+    },
+    {
+      "name": "de_sand_hill-2",
+      "width": 32,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "de_sand_hill-2.dds"
+    },
+    {
+      "name": "de_sand_road01_B",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "de_sand_road01_B.dds"
+    },
+    {
+      "name": "de_sand_road01_B_1",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "de_sand_road01_B_1.dds"
+    },
+    {
+      "name": "de_sand_road01_start",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "de_sand_road01_start.dds"
+    },
+    {
+      "name": "fence_red",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_desert",
+      "sourceFile": "fence_red.dds"
+    },
+    {
+      "name": "fence_red_A",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_desert",
+      "sourceFile": "fence_red_A.dds"
+    },
+    {
+      "name": "fence_red_arrow",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_desert",
+      "sourceFile": "fence_red_arrow.dds"
+    },
+    {
+      "name": "fence_red_B",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_desert",
+      "sourceFile": "fence_red_B.dds"
+    },
+    {
+      "name": "fence_woodB",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_desert",
+      "sourceFile": "fence_woodB.dds"
+    },
+    {
+      "name": "flower",
+      "width": 128,
+      "height": 64,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "flower.dds"
+    },
+    {
+      "name": "item_object_01",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "item_object_01.png"
+    },
+    {
+      "name": "pillar",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "pillar.dds"
+    },
+    {
+      "name": "pyramid_01",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "pyramid_01.dds"
+    },
+    {
+      "name": "pyramid_02",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "pyramid_02.dds"
+    },
+    {
+      "name": "road_sand",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "road_sand.dds"
+    },
+    {
+      "name": "road_sand_sign",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "road_sand_sign.dds"
+    },
+    {
+      "name": "sand",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "sand.dds"
+    },
+    {
+      "name": "sand_light",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "sand_light.dds"
+    },
+    {
+      "name": "sign_ani_blue",
+      "width": 128,
+      "height": 128,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "sign_ani_blue.dds"
+    },
+    {
+      "name": "sign_stick",
+      "width": 64,
+      "height": 32,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_common",
+      "sourceFile": "sign_stick.dds"
+    },
+    {
+      "name": "soil",
+      "width": 256,
+      "height": 256,
+      "hasAlpha": false,
+      "transparent": false,
+      "source": "theme_desert",
+      "sourceFile": "soil.dds"
+    },
+    {
+      "name": "soil_back01",
+      "width": 256,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_desert",
+      "sourceFile": "soil_back01.dds"
+    },
+    {
+      "name": "soil_sand_ani",
+      "width": 64,
+      "height": 128,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "soil_sand_ani.dds"
+    },
+    {
+      "name": "transparency",
+      "width": 32,
+      "height": 32,
+      "hasAlpha": true,
+      "transparent": true,
+      "source": "theme_common",
+      "sourceFile": "transparency.dds"
+    }
+  ]
+}

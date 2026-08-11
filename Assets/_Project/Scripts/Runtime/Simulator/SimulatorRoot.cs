@@ -52,6 +52,9 @@ namespace OrangeCarrrrr.Runtime
         [Tooltip("Engine, drift, booster and countdown samples. Optional.")]
         [SerializeField] private KartSoundPlayer _sound;
 
+        [Tooltip("N in the original: the course's checkpoint gates. Optional.")]
+        [SerializeField] private CourseGateView _gateView;
+
         [Header("Input")]
         [Tooltip("Left empty, the component on this object is used.")]
         [SerializeField] private SimulatorDriverInput _driverInput;
@@ -71,6 +74,42 @@ namespace OrangeCarrrrr.Runtime
         private KartSimulationState _state;
         private KartSimulationControls _controls;
         private bool _startBoostPending = true;
+
+        private KartCourse _course;
+        private TrackCourseAsset _courseBuiltFrom;
+        private KartCourseProgress _progress;
+
+        /// <summary>
+        /// Where the kart was at the end of the previous step. The course walks
+        /// the segment between two consecutive positions, so it needs the pair
+        /// rather than the current pose.
+        /// </summary>
+        private KartVec3 _previousPosition;
+
+        /// <summary>
+        /// Seconds left before an armed respawn fires, or a negative value when
+        /// nothing is armed. The original arms a timer and only moves the kart
+        /// 500 ms later, for a fall and for its own reset command alike.
+        /// </summary>
+        private float _respawnDelay = -1f;
+
+        /// <summary>The original's own delay, and the reason R is not instant.</summary>
+        private const float RespawnDelaySeconds = 0.5f;
+
+        /// <summary>
+        /// Seconds left of the hold after a warp, during which the drive inputs
+        /// are ignored — the same hold the countdown uses at the start line.
+        /// </summary>
+        private float _warpHold;
+
+        /// <summary>
+        /// How long the kart sits still at the top of ice_R01's lift.
+        ///
+        /// Not a recovered constant. Nothing in the track's course tables says how
+        /// long the 2004 game holds the kart there, so this is a chosen value and
+        /// the one number here that is safe to tune by eye.
+        /// </summary>
+        private const float WarpHoldSeconds = 1f;
 
         /// <summary>Raised after the state and the views have been advanced.</summary>
         public event Action Stepped;
@@ -93,6 +132,11 @@ namespace OrangeCarrrrr.Runtime
 
         public bool DragTriggerActive => _dragTriggerActive;
 
+        /// <summary>
+        /// Seconds left on the "fell through the track" notice, for the HUD.
+        /// </summary>
+        public float RespawnNoticeSeconds { get; private set; }
+
         /// <summary>Laid-down skid quads, as the original's <c>skids</c> read-out counts them.</summary>
         public int SkidMarkSegments => _skidMarks != null ? _skidMarks.SegmentCount : 0;
 
@@ -101,6 +145,24 @@ namespace OrangeCarrrrr.Runtime
 
         /// <summary>Milliseconds since the countdown was armed.</summary>
         public uint RaceClockMs => _raceClockMs;
+
+        /// <summary>
+        /// The track's checkpoint graph, or null on a track that has no course —
+        /// which is only the synthetic flat one.
+        /// </summary>
+        public KartCourse Course => _course;
+
+        /// <summary>The kart's place on that graph, as the HUD reads it.</summary>
+        public KartCourseProgress Progress => _progress;
+
+        public bool CourseReady => _course != null && _course.NodeCount != 0;
+
+        /// <summary>
+        /// True while a selection menu owns the keyboard. The drive inputs are
+        /// blanked for as long as it does, since the menu moves on the same arrow
+        /// keys the kart steers with.
+        /// </summary>
+        public bool MenuOpen { get; set; }
 
         /// <summary>The ground the wheels ray-cast against.</summary>
         private IKartGroundQuery Ground => _trackCollision != null && _trackCollision.World != null
@@ -127,6 +189,13 @@ namespace OrangeCarrrrr.Runtime
             ? (_topDownCamera != null ? _topDownCamera.Camera : null)
             : (_chaseCamera != null ? _chaseCamera.Camera : null);
 
+        /// <summary>The <c>N</c> key: draw the checkpoint gates over the track.</summary>
+        public bool ShowCheckpoints
+        {
+            get => _gateView != null && _gateView.Show;
+            set { if (_gateView != null) _gateView.Show = value; }
+        }
+
         public bool ShowBounds
         {
             get => _trackView != null && _trackView.ShowBounds;
@@ -148,15 +217,15 @@ namespace OrangeCarrrrr.Runtime
             if (_kartView != null) _kartView.NextColour();
         }
 
+        /// <summary>The <c>T</c> key's list, resolved from the project when unset.</summary>
+        public TrackCatalog Tracks => ResolveTrackCatalog();
+
+        /// <summary>The <c>K</c> key's list, resolved from the project when unset.</summary>
+        public KartCatalog Karts => ResolveKartCatalog();
+
         /// <summary>
-        /// The <c>T</c> key: the next track in the catalog.
-        ///
-        /// A track is a whole scene here, so switching loads one. The original
-        /// swaps which embedded KTRK the renderer reads instead, but it is not
-        /// carrying 375 GameObjects and a collision set per track.
-        ///
-        /// With two tracks this walks between them; the original's fourteen-entry
-        /// popup belongs with the other twelve, not before them.
+        /// The next track in the catalog. Kept for the cycle the port used before
+        /// <c>T</c> opened a list.
         /// </summary>
         public void NextTrack()
         {
@@ -166,26 +235,33 @@ namespace OrangeCarrrrr.Runtime
                 Debug.LogWarning("No other track to switch to.", this);
                 return;
             }
+            LoadTrack(catalog.Next(_track));
+        }
 
-            TrackSpecAsset next = catalog.Next(_track);
-            if (next == null || next == _track) return;
+        /// <summary>
+        /// Switches to a track.
+        ///
+        /// A track is a whole scene here, so switching loads one. The original
+        /// swaps which embedded KTRK the renderer reads instead, but it is not
+        /// carrying 375 GameObjects and a collision set per track.
+        /// </summary>
+        public void LoadTrack(TrackSpecAsset track)
+        {
+            if (track == null || track == _track) return;
 
-            if (string.IsNullOrWhiteSpace(next.SceneName))
+            if (string.IsNullOrWhiteSpace(track.SceneName))
             {
-                Debug.LogWarning($"Track '{next.AssetName}' names no scene.", this);
+                Debug.LogWarning($"Track '{track.AssetName}' names no scene.", this);
                 return;
             }
 
             if (!Application.isPlaying) return;
-            SceneManager.LoadScene(next.SceneName);
+            SceneManager.LoadScene(track.SceneName);
         }
 
         /// <summary>
-        /// The <c>K</c> key: the next of the twenty-six karts.
-        ///
-        /// A kart is not a scene, so nothing is loaded — but its geometry is, so
-        /// the simulation has to be re-initialised rather than nudged. The
-        /// original resets the kart to the line on a change too.
+        /// The next of the twenty-six karts. Kept for the cycle the port used
+        /// before <c>K</c> opened a list.
         /// </summary>
         public void NextKart()
         {
@@ -195,13 +271,23 @@ namespace OrangeCarrrrr.Runtime
                 Debug.LogWarning("No other kart to switch to.", this);
                 return;
             }
+            SelectKart(catalog.Next(_kart));
+        }
 
-            KartSpecAsset next = catalog.Next(_kart);
-            if (next == null || next == _kart) return;
+        /// <summary>
+        /// Switches to a kart.
+        ///
+        /// A kart is not a scene, so nothing is loaded — but its geometry is, so
+        /// the simulation has to be re-initialised rather than nudged. The
+        /// original resets the kart to the line on a change too.
+        /// </summary>
+        public void SelectKart(KartSpecAsset kart)
+        {
+            if (kart == null || kart == _kart) return;
 
-            _kart = next;
-            if (_kartView != null) _kartView.Kart = next;
-            if (_boostFlame != null) _boostFlame.Kart = next;
+            _kart = kart;
+            if (_kartView != null) _kartView.Kart = kart;
+            if (_boostFlame != null) _boostFlame.Kart = kart;
 
             // Half width and half length feed the suspension and the body box, so
             // the state has to be rebuilt from the new geometry.
@@ -310,6 +396,7 @@ namespace OrangeCarrrrr.Runtime
             // or created by an earlier run.
             if (_skidMarks == null) _skidMarks = GetComponentInChildren<SkidMarkTrail>(includeInactive: true);
             if (_sound == null) _sound = GetComponentInChildren<KartSoundPlayer>(includeInactive: true);
+            if (_gateView == null) _gateView = GetComponentInChildren<CourseGateView>(includeInactive: true);
             if (_boostFlame == null && _kartView != null)
             {
                 _boostFlame = _kartView.GetComponentInChildren<BoostFlame>(includeInactive: true);
@@ -320,6 +407,7 @@ namespace OrangeCarrrrr.Runtime
             if (!Application.isPlaying) return;
 
             if (_skidMarks == null) _skidMarks = Attach<SkidMarkTrail>("Skid marks", transform);
+            if (_gateView == null) _gateView = Attach<CourseGateView>("Course gates", transform);
 
             if (_boostFlame == null && _kartView != null)
             {
@@ -362,7 +450,11 @@ namespace OrangeCarrrrr.Runtime
             KartSimulation.Init(_state, kartSpec.Dynamics, kartSpec.Geometry);
 
             _flatGround.Height = trackSpec.Minimum.Z;
+            BuildCourse();
             ApplyStartPose(trackSpec);
+            _previousPosition = _state.Position;
+            _respawnDelay = -1f;
+            _warpHold = 0f;
 
             // The original arms the countdown on reset and backdates it so the
             // race clock starts at zero.
@@ -393,14 +485,60 @@ namespace OrangeCarrrrr.Runtime
         }
 
         /// <summary>
-        /// Puts the kart where the original puts it: on the start line's road
-        /// quad, facing along the course. A track with no start line spawns at
-        /// the bounds centre but keeps the same facing, which is what stops the
-        /// flat reference track pointing the opposite way to all thirteen real
-        /// ones.
+        /// Builds the track's checkpoint graph, once per course asset.
+        ///
+        /// Rebuilding is keyed on the asset rather than done every reset: the
+        /// graph is thousands of gates and links, and R is pressed far more often
+        /// than the track changes.
+        /// </summary>
+        private void BuildCourse()
+        {
+            TrackCourseAsset asset = _track != null ? _track.Course : null;
+            if (asset != _courseBuiltFrom || (_course == null && asset != null))
+            {
+                _courseBuiltFrom = asset;
+                _course = asset != null ? KartCourse.Build(asset.ToAsset()) : null;
+
+                if (asset != null && _course == null)
+                {
+                    Debug.LogWarning($"{asset.name}'s course could not be built.", this);
+                }
+            }
+
+            if (_gateView != null) _gateView.Course = _course;
+        }
+
+        /// <summary>
+        /// Puts the kart on the start grid.
+        ///
+        /// The course is the authority where a track has one: it fixes the pose
+        /// exactly, including which way round the lap is driven — something the
+        /// start-line mesh alone never said, and which eleven of the thirteen
+        /// tracks were only assuming. The measured start line stays as the
+        /// fallback for the synthetic track, which has no course.
         /// </summary>
         private void ApplyStartPose(TrackSpec track)
         {
+            if (CourseReady)
+            {
+                // Slot 0 of the start grid, then the ground snap the original
+                // follows it with: a ray from 10 above the placed position, 100
+                // down.
+                _course.StartPose(0, out KartVec3 gridPosition, out KartQuat gridOrientation);
+                if (Ground.QueryGround(
+                        new KartVec3(gridPosition.X, gridPosition.Y, gridPosition.Z + 10f),
+                        new KartVec3(0f, 0f, -100f),
+                        out KartGroundHit hit))
+                {
+                    gridPosition = hit.Point;
+                }
+
+                _state.Position = gridPosition;
+                _state.Orientation = gridOrientation;
+                _progress = KartCourseProgress.Init(_course, gridPosition);
+                return;
+            }
+
             _state.Orientation = KartTrackStart.Orientation(track);
 
             if (KartTrackStart.Position(track, out KartVec3 position))
@@ -469,11 +607,16 @@ namespace OrangeCarrrrr.Runtime
                     !cues.Released && _controls.DriftInput && _controls.ForwardInput != 0f);
             }
 
-            if (!cues.Released)
+            if (_warpHold > 0f) _warpHold = Mathf.Max(0f, _warpHold - deltaTime);
+
+            if (!cues.Released || _warpHold > 0f || MenuOpen)
             {
                 // Held at the line: the original releases every kart on GO, so
                 // until then the drive inputs are ignored and only the view keys
-                // do anything.
+                // do anything. The same hold sets the kart down at the top of
+                // ice_R01's lift, which is the one other place it arrives
+                // somewhere it did not drive to, and holds it while a selection
+                // menu has the arrow keys.
                 _controls.ForwardInput = 0f;
                 _controls.ReverseInput = 0f;
                 _controls.DriftInput = false;
@@ -500,6 +643,9 @@ namespace OrangeCarrrrr.Runtime
                 ? (state.LinearVelocity - velocityBefore) * (1f / seconds)
                 : KartVec3.Zero;
 
+            StepCourse(state);
+            RespawnIfFallenThrough(state, deltaTime);
+
             if (_kartView != null) _kartView.Apply(state);
 
             // After the step and after the kart has moved, so a mark is laid at
@@ -522,6 +668,144 @@ namespace OrangeCarrrrr.Runtime
             }
 
             Stepped?.Invoke();
+        }
+
+        /// <summary>
+        /// Walks the kart's trail segment past the checkpoint gates.
+        ///
+        /// The original walks every segment of the kart's position trail; one
+        /// simulation step is one segment of that trail. A "warpnext" plane is
+        /// checked first and replaces the step: on the one track that has one
+        /// (ice_R01's lift) the kart is moved rather than advanced, so feeding
+        /// that jump to the gate test would read as a crossing of everything in
+        /// between.
+        /// </summary>
+        private void StepCourse(KartSimulationState state)
+        {
+            if (!CourseReady)
+            {
+                _previousPosition = state.Position;
+                return;
+            }
+
+            if (_course.WarpNext(_previousPosition, state.Position,
+                                 out KartVec3 destination, out float yaw))
+            {
+                state.Position = destination;
+                state.Orientation = PreRotateZ(state.Orientation, yaw);
+
+                // The 2004 game sets the kart down stopped at the top of
+                // ice_R01's lift and lets the player pull away again. The
+                // reference C port does not: it carries the velocities through
+                // the warp, turned by the same yaw. Stopping and holding is the
+                // deliberate divergence — the course tables carry no duration, so
+                // the second below is a chosen number rather than a recovered one.
+                Stop(state);
+                _warpHold = WarpHoldSeconds;
+            }
+            else
+            {
+                KartCourseProgress.Step(
+                    _course, ref _progress, _previousPosition, state.Position,
+                    state.Orientation, state.LinearVelocity, _raceClockMs);
+            }
+
+            _previousPosition = state.Position;
+        }
+
+        /// <summary>The turn applied on the world side, so the kart's own spin is kept.</summary>
+        private static KartQuat PreRotateZ(KartQuat value, float radians)
+        {
+            float half = radians * 0.5f;
+            var turn = new KartQuat(Mathf.Cos(half), 0f, 0f, Mathf.Sin(half));
+            return new KartQuat(
+                turn.W * value.W - turn.X * value.X - turn.Y * value.Y - turn.Z * value.Z,
+                turn.W * value.X + turn.X * value.W + turn.Y * value.Z - turn.Z * value.Y,
+                turn.W * value.Y - turn.X * value.Z + turn.Y * value.W + turn.Z * value.X,
+                turn.W * value.Z + turn.X * value.Y - turn.Y * value.X + turn.Z * value.W);
+        }
+
+        /// <summary>
+        /// The <c>R</c> key. The original has no teleport-to-the-line key: its
+        /// reset command and a fall out of the world both arm the same timer, and
+        /// 500 ms later put the kart back on the node it is already in. Without a
+        /// course to respawn onto, this falls back to the full reset.
+        /// </summary>
+        public void RequestRespawn()
+        {
+            if (!CourseReady)
+            {
+                ResetSimulation();
+                return;
+            }
+            if (_respawnDelay >= 0f) return;
+
+            _respawnDelay = RespawnDelaySeconds;
+            RespawnNoticeSeconds = 2f;
+        }
+
+        /// <summary>
+        /// Arms the respawn for a kart that has left the world, and fires whatever
+        /// is already armed once its delay is up.
+        /// </summary>
+        private void RespawnIfFallenThrough(KartSimulationState state, float deltaTime)
+        {
+            if (RespawnNoticeSeconds > 0f)
+            {
+                RespawnNoticeSeconds = Mathf.Max(0f, RespawnNoticeSeconds - deltaTime);
+            }
+
+            TrackSpec trackSpec = _track != null ? _track.ToSpec() : KartDemoData.DefaultTrack;
+
+            if (state.Position.Z < KartTrackStart.FallLimit(trackSpec) && _respawnDelay < 0f)
+            {
+                if (CourseReady)
+                {
+                    _respawnDelay = RespawnDelaySeconds;
+                    RespawnNoticeSeconds = 2f;
+                }
+                else
+                {
+                    // No course to come back onto, so the whole simulation goes
+                    // back to the start line instead.
+                    ApplyStartPose(trackSpec);
+                    Stop(state);
+                    if (_skidMarks != null) _skidMarks.Clear();
+                    RespawnNoticeSeconds = 1.5f;
+                    _previousPosition = state.Position;
+                }
+            }
+
+            if (_respawnDelay < 0f) return;
+
+            _respawnDelay -= deltaTime;
+            if (_respawnDelay > 0f) return;
+            _respawnDelay = -1f;
+
+            if (!_course.RespawnPose(_progress, out KartVec3 position, out KartQuat orientation))
+            {
+                return;
+            }
+
+            state.Position = position;
+            state.Orientation = orientation;
+            Stop(state);
+            _previousPosition = position;
+
+            if (_skidMarks != null) _skidMarks.Clear();
+            if (_chaseCamera != null) _chaseCamera.ResetFollow();
+        }
+
+        /// <summary>
+        /// The original writes the respawn pose and zeroes the velocities with it,
+        /// which is why the kart lands stopped rather than carrying its fall into
+        /// the road it reappears on.
+        /// </summary>
+        private static void Stop(KartSimulationState state)
+        {
+            state.LinearVelocity = KartVec3.Zero;
+            state.AngularVelocity = KartVec3.Zero;
+            state.Acceleration = KartVec3.Zero;
         }
 
         /// <summary>The original drives its window from a 16 ms timer.</summary>

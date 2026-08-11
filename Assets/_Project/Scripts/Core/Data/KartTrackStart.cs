@@ -33,6 +33,41 @@ namespace OrangeCarrrrr.Core
         }
 
         /// <summary>
+        /// The asset-space height the scene is dropped by, so that the plane the
+        /// start line sits on ends up at world z 0.
+        /// </summary>
+        public static float SceneGroundZ(TrackSpec track)
+        {
+            if (track == null) return 0f;
+            return track.StartKind == KartTrackStartKind.None
+                ? track.Minimum.Z
+                : track.StartLine.Z;
+        }
+
+        /// <summary>
+        /// Below this the kart has left the world, ported from
+        /// <c>kart_demo_track_fall_limit</c>.
+        ///
+        /// A scene only carries road triangles where the original track had road,
+        /// so going off an edge drops the kart into a void it can never land in.
+        /// Forty units of clearance under the lowest geometry is wide enough that
+        /// a hard landing on the lowest road is never mistaken for a fall.
+        ///
+        /// This matters more here than it does in the C build: eleven of the
+        /// thirteen tracks have an assumed driving direction, so a kart that is
+        /// pointing the wrong way leaves the road almost immediately.
+        /// </summary>
+        public static float FallLimit(TrackSpec track)
+        {
+            const float margin = 40f;
+            if (track == null) return -margin;
+
+            float floor = track.Minimum.Z - SceneGroundZ(track);
+            if (floor > 0f) floor = 0f;
+            return floor - margin;
+        }
+
+        /// <summary>
         /// The facing. A track with no start line still gets the same facing as
         /// every other track — only its spawn position falls back to the bounds
         /// centre. Leaving the raw default would point it at -Y, opposite to all

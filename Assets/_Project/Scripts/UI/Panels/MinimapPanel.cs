@@ -38,10 +38,15 @@ namespace OrangeCarrrrr.UI
         [SerializeField] private TextMeshProUGUI _kartLabel;
         [SerializeField] private HudFontSet _fonts;
 
-        [Tooltip("Per-track artwork. Empty falls back to the quarter grid.")]
-        [SerializeField] private Texture2D _minimapTexture;
-
         private string _shownKart;
+
+        /// <summary>
+        /// The artwork currently on the panel. Held so the texture is only pushed
+        /// when the track actually changes, the way <c>_shownKart</c> is.
+        /// </summary>
+        private Texture2D _shownMinimap;
+
+        private bool _mapApplied;
 
         protected override void Refresh()
         {
@@ -50,6 +55,8 @@ namespace OrangeCarrrrr.UI
             KartSimulationState kart = Simulator.State;
             TrackSpecAsset trackAsset = Simulator.Track;
             if (kart == null || trackAsset == null) return;
+
+            ShowMap(trackAsset.Minimap);
 
             TrackSpec track = trackAsset.ToSpec();
             KartMinimap.NormalizedPoint(track, kart.Position, out float x, out float y);
@@ -91,18 +98,39 @@ namespace OrangeCarrrrr.UI
             PlaceImageRect(_image != null ? (RectTransform)_image.transform : null);
             PlaceImageRect(_marker != null ? (RectTransform)_marker.transform : null);
 
-            bool hasArtwork = _minimapTexture != null;
             if (_image != null)
             {
-                _image.texture = _minimapTexture;
                 _image.color = Color.white;
-                _image.enabled = hasArtwork;
                 _image.raycastTarget = false;
             }
-            if (_marker != null) _marker.ShowGrid = !hasArtwork;
+
+            // The artwork itself is the track's, not the layout's, so re-applying
+            // the layout must not decide what the panel shows.
+            _mapApplied = false;
+            ShowMap(Simulator != null && Simulator.Track != null ? Simulator.Track.Minimap : null);
 
             PlaceLabel(_label, 6f, "TRACK MAP");
             PlaceLabel(_kartLabel, 22f, null);
+        }
+
+        /// <summary>
+        /// Puts the track's own map on the panel, falling back to the marker's
+        /// quarter grid where the archive has no artwork — which is the case for
+        /// the synthetic flat track.
+        /// </summary>
+        private void ShowMap(Texture2D minimap)
+        {
+            if (_mapApplied && _shownMinimap == minimap) return;
+            _shownMinimap = minimap;
+            _mapApplied = true;
+
+            bool hasArtwork = minimap != null;
+            if (_image != null)
+            {
+                _image.texture = minimap;
+                _image.enabled = hasArtwork;
+            }
+            if (_marker != null) _marker.ShowGrid = !hasArtwork;
         }
 
         private static void PlaceImageRect(RectTransform rect)

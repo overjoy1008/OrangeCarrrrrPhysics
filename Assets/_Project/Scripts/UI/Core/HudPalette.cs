@@ -20,6 +20,9 @@ namespace OrangeCarrrrr.UI
         public static readonly Color StatusExperimental = new Color32(190, 165, 240, 255);
         public static readonly Color ScreenshotNotice = new Color32(140, 235, 255, 255);
 
+        /// <summary>The wrong-way flag and the respawn notice, which share a colour.</summary>
+        public static readonly Color StatusWrongWay = new Color32(255, 120, 120, 255);
+
         // draw_telemetry.
         public static readonly Color TelemetryPanelFill = new Color32(15, 19, 26, 255);
         public static readonly Color TelemetryPanelBorder = new Color32(54, 64, 73, 255);

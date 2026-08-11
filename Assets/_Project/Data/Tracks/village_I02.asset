@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f60a80785b91443b31de24ee82a3b0, type: 3}
+  m_Name: village_I02
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
+  _assetName: village_I02
+  _displayName: "\uBE4C\uB9AC\uC9C0 \uC190\uAC00\uB77D"
+  _raceMode: "\uC544\uC774\uD15C\u2192\uD604\uC7AC \uC2A4\uD53C\uB4DC"
+  _difficulty: 3
+  _minimum: {x: -2.671448, y: 11.83069, z: -1.29806}
+  _maximum: {x: 561.3079, y: 682.4102, z: 49.30659}
+  _hasScene: 1
+  _startKind: 2
+  _startAxis: 2
+  _startLine: {x: 119.2628, y: 337.893, z: 8.578018}
+  _minimap: {fileID: 2800000, guid: fac3c3f09f2dd7948a8524608d775bcc, type: 3}
+  _course: {fileID: 11400000, guid: 6ca1e66af06936d4c9712a79e9415aee, type: 2}

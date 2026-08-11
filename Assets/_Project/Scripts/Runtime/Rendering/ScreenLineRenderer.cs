@@ -36,10 +36,38 @@ namespace OrangeCarrrrr.Runtime
                 _mesh.MarkDynamic();
             }
             if (_filter.sharedMesh != _mesh) _filter.sharedMesh = _mesh;
+            EnsureMaterial();
 
             transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             transform.localScale = Vector3.one;
         }
+
+        /// <summary>
+        /// The batch's colours are vertex colours, so a renderer with no material
+        /// draws nothing at all rather than drawing wrongly.
+        ///
+        /// An authored renderer already has one. This is for the ones created at
+        /// runtime — the course gate view is added to a scene that never had it —
+        /// where forgetting the material would look exactly like the feature being
+        /// broken.
+        /// </summary>
+        private void EnsureMaterial()
+        {
+            if (_renderer.sharedMaterial != null) return;
+
+            var material = Resources.Load<Material>(LineMaterialResource);
+            if (material == null)
+            {
+                Debug.LogWarning(
+                    $"No line material at Resources/{LineMaterialResource}; " +
+                    $"{name} will not draw.", this);
+                return;
+            }
+            _renderer.sharedMaterial = material;
+        }
+
+        /// <summary>The vertex-colour material every line source shares.</summary>
+        private const string LineMaterialResource = "ScreenLine";
 
         /// <summary>Uploads whatever is currently in <see cref="Batch"/>.</summary>
         public void Rebuild(Camera camera)

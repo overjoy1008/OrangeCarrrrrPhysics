@@ -33,7 +33,36 @@ namespace OrangeCarrrrr.UI
         [SerializeField] private CountdownDisplay _countdown;
         [SerializeField] private MinimapPanel _minimap;
 
-        private void OnEnable() => BindAll();
+        /// <summary>The <c>T</c> and <c>K</c> lists. Made on first play.</summary>
+        [SerializeField] private SelectionMenu _selectionMenu;
+
+        private void OnEnable()
+        {
+            EnsureSelectionMenu();
+            BindAll();
+        }
+
+        /// <summary>
+        /// Adds the selection menu to the canvas.
+        ///
+        /// Built here rather than authored into the prefab because its rows come
+        /// from the track and kart catalogs — fourteen and twenty-six — and a
+        /// prefab copy of those lists would only be something to keep in step.
+        /// Only while playing, so opening the HUD prefab never adds objects to it.
+        /// </summary>
+        private void EnsureSelectionMenu()
+        {
+            if (_selectionMenu == null)
+            {
+                _selectionMenu = GetComponentInChildren<SelectionMenu>(includeInactive: true);
+            }
+            if (_selectionMenu != null || !Application.isPlaying) return;
+
+            var holder = new GameObject("Selection menu", typeof(RectTransform));
+            holder.transform.SetParent(transform, worldPositionStays: false);
+            _selectionMenu = holder.AddComponent<SelectionMenu>();
+            _selectionMenu.Close();
+        }
 
         private void BindAll()
         {
@@ -54,6 +83,7 @@ namespace OrangeCarrrrr.UI
             if (_axisGizmo != null) _axisGizmo.Bind(_simulator);
             if (_countdown != null) _countdown.Bind(_simulator);
             if (_minimap != null) _minimap.Bind(_simulator);
+            if (_selectionMenu != null) _selectionMenu.Bind(_simulator);
         }
 
         /// <summary>

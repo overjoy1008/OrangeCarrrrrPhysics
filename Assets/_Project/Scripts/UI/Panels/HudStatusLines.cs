@@ -32,7 +32,7 @@ namespace OrangeCarrrrr.UI
         private readonly StringBuilder _builder = new StringBuilder(384);
 
         /// <summary>How many lines the prefab needs to allocate.</summary>
-        public const int LineCount = 5;
+        public const int LineCount = 6;
 
         protected override void OnEnable()
         {
@@ -64,6 +64,7 @@ namespace OrangeCarrrrr.UI
             WriteKeys();
             WriteScene(kart);
             WriteDrift(kart);
+            WriteCourse();
             WriteScreenshotNotice();
         }
 
@@ -94,8 +95,10 @@ namespace OrangeCarrrrr.UI
                 "C: camera  B: bounds  F: drag trigger  ");
             _builder.AppendFormat(
                 "L: colour {0} [{1}]", Simulator.KartColourIndex, Simulator.KartColourName);
-            _builder.AppendFormat("  K: kart  T: track  F1: fps [{0}]", Simulator.FrameRateCapName);
-            _builder.Append("  S: screenshot  R: reset");
+            _builder.AppendFormat(
+                "  N: {0} checkpoints", Simulator.ShowCheckpoints ? "hide" : "show");
+            _builder.AppendFormat("  K: karts  T: tracks  F1: fps [{0}]", Simulator.FrameRateCapName);
+            _builder.Append("  S: screenshot  R: respawn");
 
             _labels[1].SetText(_builder);
             _labels[1].color = HudPalette.StatusText;
@@ -151,16 +154,69 @@ namespace OrangeCarrrrr.UI
                 : (drifting ? HudPalette.StatusDrift : HudPalette.StatusDim);
         }
 
+        /// <summary>
+        /// The original's own progress record, field for field: the node the kart
+        /// is in, how far into it, the accumulated start-gate crossings that gate
+        /// the lap counter, and the wrong-way flag.
+        ///
+        /// <c>advance</c> is printed because it is the mechanism rather than a
+        /// derived number — a lap that refuses to count is always a lap where this
+        /// stopped moving, and the line says so directly.
+        /// </summary>
+        private void WriteCourse()
+        {
+            bool ready = Simulator.CourseReady;
+            _labels[4].enabled = ready;
+            if (!ready) return;
+
+            KartCourseProgress progress = Simulator.Progress;
+
+            _builder.Clear();
+            _builder.AppendFormat(
+                "LAP {0} | node {1}/{2} {3:F0}m | advance {4}",
+                progress.Lap,
+                progress.NodeId,
+                Simulator.Course.NodeCount,
+                progress.NodeDistance,
+                progress.Advance);
+
+            if (progress.BestLapMs != 0)
+            {
+                _builder.AppendFormat(" | best {0:F2}s", progress.BestLapMs * 0.001f);
+            }
+            if (progress.WrongWay) _builder.Append(" | WRONG WAY");
+
+            _labels[4].SetText(_builder);
+            _labels[4].color = progress.WrongWay ? HudPalette.StatusWrongWay : HudPalette.StatusDim;
+        }
+
+        /// <summary>
+        /// The last line carries whichever notice is live. The respawn wins: it
+        /// says the kart is being put back on the course, which matters more than
+        /// a filename.
+        /// </summary>
         private void WriteScreenshotNotice()
         {
+            if (Simulator.RespawnNoticeSeconds > 0f)
+            {
+                _labels[5].enabled = true;
+                _builder.Clear();
+                _builder.Append(Simulator.CourseReady
+                    ? "RESPAWNING ONTO THE COURSE"
+                    : "FELL THROUGH THE TRACK - RESPAWNED");
+                _labels[5].SetText(_builder);
+                _labels[5].color = HudPalette.StatusWrongWay;
+                return;
+            }
+
             bool visible = _keys != null && _keys.ScreenshotNoticeSeconds > 0f;
-            _labels[4].enabled = visible;
+            _labels[5].enabled = visible;
             if (!visible) return;
 
             _builder.Clear();
             _builder.Append("SAVED ").Append(_keys.LastScreenshotName);
-            _labels[4].SetText(_builder);
-            _labels[4].color = HudPalette.ScreenshotNotice;
+            _labels[5].SetText(_builder);
+            _labels[5].color = HudPalette.ScreenshotNotice;
         }
 
         /// <summary>Places the lines at the original's 20 px pitch from (16, 12).</summary>

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f60a80785b91443b31de24ee82a3b0, type: 3}
+  m_Name: ice_I01
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
+  _assetName: ice_I01
+  _displayName: "\uC544\uC774\uC2A4 \uAC08\uB77C\uC9C4 \uBE59\uC0B0"
+  _raceMode: "\uC544\uC774\uD15C\u2192\uD604\uC7AC \uC2A4\uD53C\uB4DC"
+  _difficulty: 4
+  _minimum: {x: 24.31265, y: 60.53888, z: 1.654024}
+  _maximum: {x: 1107.896, y: 1165.535, z: 318.2377}
+  _hasScene: 1
+  _startKind: 1
+  _startAxis: 2
+  _startLine: {x: 405.2543, y: 737.3219, z: 15.57826}
+  _minimap: {fileID: 2800000, guid: bd3629e82edb7724f8da8271c3d085c8, type: 3}
+  _course: {fileID: 11400000, guid: 8ddd796d85f311346b104fde2129000c, type: 2}
