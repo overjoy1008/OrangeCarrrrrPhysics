@@ -1,0 +1,29 @@
+{
+  "Source": "D:\\GitHub\\KartriderDemoPhysics\\Assets\\Models\\Karts\\extracted\\stage_common\\readyCamera.1s",
+  "Output": "C:\\Users\\overj\\AppData\\Local\\Temp\\claude\\D--GitHub-OrangeCarrrrrPhysics\\f859331b-27cd-4b8a-b2f2-be1630182075\\scratchpad\\ready\\v2.kcam",
+  "Node": "Camera02",
+  "DurationMs": 3333,
+  "FieldOfViewDegrees": 45.00001,
+  "NearPlane": 1,
+  "FarPlane": 1000,
+  "RestPosition": [
+    -4.758153E-07,
+    -10.885385,
+    9.90597
+  ],
+  "PositionKeyCount": 201,
+  "PositionKeyRangeMs": [
+    0,
+    6666
+  ],
+  "EulerKeyCounts": [
+    3,
+    3,
+    3
+  ],
+  "EulerFirstValues": [
+    0.8726647,
+    2.9802322E-08,
+    -1.1920929E-07
+  ]
+}

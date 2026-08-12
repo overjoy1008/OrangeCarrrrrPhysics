@@ -42,12 +42,41 @@ namespace OrangeCarrrrr.UI
         /// <summary>The engine-note dial. Made on first play.</summary>
         [SerializeField] private TachometerPanel _tachometer;
 
+        /// <summary>The race's FINAL LAP / FINISH / result art. Made on first play.</summary>
+        [SerializeField] private RaceBannerDisplay _raceBanner;
+
         private void OnEnable()
         {
             EnsureSelectionMenu();
             EnsureGauge();
             EnsureTachometer();
+            EnsureRaceBanner();
             BindAll();
+        }
+
+        /// <summary>
+        /// Adds the race banners. Built rather than authored because the panel
+        /// resolves the original's own artwork out of the project and lays itself
+        /// out around it.
+        /// </summary>
+        private void EnsureRaceBanner()
+        {
+            if (_raceBanner == null)
+            {
+                _raceBanner = GetComponentInChildren<RaceBannerDisplay>(includeInactive: true);
+            }
+            if (_raceBanner != null || !Application.isPlaying) return;
+
+            var holder = new GameObject("Race banner", typeof(RectTransform));
+            holder.transform.SetParent(transform, worldPositionStays: false);
+
+            var rect = (RectTransform)holder.transform;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+
+            _raceBanner = holder.AddComponent<RaceBannerDisplay>();
         }
 
         /// <summary>
@@ -124,6 +153,7 @@ namespace OrangeCarrrrr.UI
             if (_axisGizmo != null) _axisGizmo.Bind(_simulator);
             if (_countdown != null) _countdown.Bind(_simulator);
             if (_minimap != null) _minimap.Bind(_simulator);
+            if (_raceBanner != null) _raceBanner.Bind(_simulator);
             if (_selectionMenu != null) _selectionMenu.Bind(_simulator);
             if (_gauge != null) _gauge.Bind(_simulator);
             if (_tachometer != null) _tachometer.Bind(_simulator);

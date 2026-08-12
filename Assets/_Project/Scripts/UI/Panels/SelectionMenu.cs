@@ -65,6 +65,7 @@ namespace OrangeCarrrrr.UI
 
             if (_simulator == null) _simulator = FindFirstObjectByType<SimulatorRoot>();
             if (_simulator == null) return;
+            Subscribe(_simulator);
 
             if (Step())
             {
@@ -78,6 +79,42 @@ namespace OrangeCarrrrr.UI
 
             if (keyboard.tKey.wasPressedThisFrame) OpenTracks();
             else if (keyboard.kKey.wasPressedThisFrame) OpenKarts();
+        }
+
+        /// <summary>
+        /// The simulator whose race this menu is listening to. Resolved in
+        /// <see cref="Update"/> rather than in a lifecycle method, because that is
+        /// where the reference itself is resolved.
+        /// </summary>
+        private SimulatorRoot _subscribed;
+
+        private void Subscribe(SimulatorRoot simulator)
+        {
+            if (ReferenceEquals(_subscribed, simulator)) return;
+
+            if (_subscribed != null) _subscribed.RaceExitDue -= OnRaceExitDue;
+            _subscribed = simulator;
+            if (_subscribed != null) _subscribed.RaceExitDue += OnRaceExitDue;
+        }
+
+        private void OnDisable()
+        {
+            if (_subscribed == null) return;
+            _subscribed.RaceExitDue -= OnRaceExitDue;
+            _subscribed = null;
+        }
+
+        /// <summary>
+        /// Eight seconds after the finish.
+        ///
+        /// The original leaves for <c>SelectChallengeStage</c> here. This port has no
+        /// challenge select, and the track list is the nearest thing it has: it is
+        /// what the player would be picking from next either way.
+        /// </summary>
+        private void OnRaceExitDue()
+        {
+            if (IsOpen || _simulator == null) return;
+            OpenTracks();
         }
 
         private void OpenTracks()

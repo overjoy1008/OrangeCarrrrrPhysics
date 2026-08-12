@@ -42,6 +42,12 @@ namespace OrangeCarrrrr.Runtime
         [Header("Views")]
         [SerializeField] private ChaseCameraRig _chaseCamera;
         [SerializeField] private TopDownCameraRig _topDownCamera;
+
+        [Tooltip("The finish orbit. Left empty, one is built from the chase camera on play.")]
+        [SerializeField] private SurroundCameraRig _surroundCamera;
+
+        [Tooltip("The pre-countdown sweep. Left empty, one is built from the chase camera on play.")]
+        [SerializeField] private ReadyCameraRig _readyCamera;
         [SerializeField] private KartView _kartView;
         [SerializeField] private TestTrackView _trackView;
 
@@ -68,6 +74,19 @@ namespace OrangeCarrrrr.Runtime
         [Header("State")]
         [SerializeField] private SimulatorViewMode _viewMode = SimulatorViewMode.Chase;
 
+        /// <summary>
+        /// How many laps the race is.
+        ///
+        /// <b>Not recovered.</b> The original does not hold this in code: the time
+        /// challenge reads it out of the selected challenge's descriptor and hands
+        /// it to the course's setter at <c>0x004247E0</c> (the call at
+        /// <c>0x004564B5</c> passes the stage's <c>+0xD8</c>, filled from an asset).
+        /// Three is what the reference C port ran with and what the demo's
+        /// challenges are; the number itself is content this port has not extracted.
+        /// </summary>
+        [Tooltip("Laps before the finish. Content-driven in the original; 3 in the demo's challenges.")]
+        [SerializeField] private uint _lapCount = 3u;
+
         [Tooltip("F in the original: the ground-drag trigger, x4 on entry and x0.25 on exit.")]
         [SerializeField] private bool _dragTriggerActive;
 
@@ -92,7 +111,19 @@ namespace OrangeCarrrrr.Runtime
         private bool _boostPressAllowed;
 
 
-        private KartCountdown _countdown;
+        /// <summary>
+        /// The race's state machine: the grid, the countdown, the run and the
+        /// finish. It owns the countdown rather than duplicating it.
+        /// </summary>
+        private readonly KartRaceFlow _flow = new KartRaceFlow();
+
+        /// <summary>
+        /// Which cameraman is installed. The original swaps camera objects at
+        /// <c>count_3</c> and at the finish, so the port switches the same way
+        /// instead of holding a view flag.
+        /// </summary>
+        private readonly KartCameraDirector _cameras = new KartCameraDirector();
+
         private uint _raceClockMs;
 
         private KartSimulationState _state;
@@ -138,6 +169,18 @@ namespace OrangeCarrrrr.Runtime
         /// <summary>Raised after the state and the views have been advanced.</summary>
         public event Action Stepped;
 
+        /// <summary>Raised on the frame the final gate closed the race.</summary>
+        public event Action Finished;
+
+        /// <summary>Raised three seconds later, when the result panel is due.</summary>
+        public event Action ResultsShown;
+
+        /// <summary>
+        /// Raised eight seconds after the finish, where the original leaves for
+        /// <c>SelectChallengeStage</c>.
+        /// </summary>
+        public event Action RaceExitDue;
+
         public KartSimulationState State
         {
             get
@@ -165,7 +208,27 @@ namespace OrangeCarrrrr.Runtime
         public int SkidMarkSegments => _skidMarks != null ? _skidMarks.SegmentCount : 0;
 
         /// <summary>The race-start countdown, as the HUD reads it.</summary>
-        public KartCountdown Countdown => _countdown;
+        public KartCountdown Countdown => _flow.Countdown;
+
+        /// <summary>The race's state machine, as the HUD and the cameras read it.</summary>
+        public KartRaceFlow Race => _flow;
+
+        /// <summary>
+        /// Whether the finish ends the race or is only recorded.
+        ///
+        /// <see cref="KartRaceMode.Free"/> is what the simulator has always done and
+        /// what the parameter window, the kart cycle and the track cycle assume;
+        /// <see cref="KartRaceMode.Race"/> is the original's rule. Nothing acts on
+        /// this yet — the finish itself is not detected until the course reports it.
+        /// </summary>
+        public KartRaceMode RaceMode
+        {
+            get => _flow.Mode;
+            set => _flow.Mode = value;
+        }
+
+        public void ToggleRaceMode()
+            => RaceMode = _flow.Mode == KartRaceMode.Race ? KartRaceMode.Free : KartRaceMode.Race;
 
         /// <summary>Milliseconds since the countdown was armed.</summary>
         public uint RaceClockMs => _raceClockMs;
@@ -180,6 +243,9 @@ namespace OrangeCarrrrr.Runtime
         public KartCourseProgress Progress => _progress;
 
         public bool CourseReady => _course != null && _course.NodeCount != 0;
+
+        /// <summary>Laps before the finish, as the HUD reads it.</summary>
+        public uint LapCount => _lapCount;
 
         /// <summary>
         /// True while a selection menu owns the keyboard. The drive inputs are
@@ -272,10 +338,8 @@ namespace OrangeCarrrrr.Runtime
             }
         }
 
-        /// <summary>The camera currently rendering, whichever view is active.</summary>
-        public Camera ActiveCamera => _viewMode == SimulatorViewMode.TopDown
-            ? (_topDownCamera != null ? _topDownCamera.Camera : null)
-            : (_chaseCamera != null ? _chaseCamera.Camera : null);
+        /// <summary>The camera currently rendering, whichever cameraman is installed.</summary>
+        public Camera ActiveCamera => _cameras.ActiveCamera;
 
         /// <summary>The <c>N</c> key: draw the checkpoint gates over the track.</summary>
         public bool ShowCheckpoints
@@ -507,6 +571,7 @@ namespace OrangeCarrrrr.Runtime
         private void OnEnable()
         {
             EnsureEffects();
+            EnsureRaceCameras();
             ResetSimulation();
             ApplyViewMode();
 
@@ -564,6 +629,60 @@ namespace OrangeCarrrrr.Runtime
             }
 
             if (_sound == null) _sound = gameObject.AddComponent<KartSoundPlayer>();
+
+            // The race's music, on its own object so its AudioSource does not share
+            // one with the engine loop.
+            if (GetComponentInChildren<RaceMusicPlayer>(includeInactive: true) == null)
+            {
+                Attach<RaceMusicPlayer>("Race music", transform);
+            }
+        }
+
+        /// <summary>
+        /// Builds the finish camera from the chase camera when the scene has none.
+        ///
+        /// The thirteen track scenes were authored before there was a
+        /// <c>SurroundCameraman</c> to author, and copying the chase camera is the
+        /// only way to get its clear flags, culling mask and clip planes right
+        /// without hand-editing every one of them. A rig dragged into the field
+        /// still wins.
+        /// </summary>
+        private void EnsureRaceCameras()
+        {
+            if (_surroundCamera == null)
+            {
+                _surroundCamera = GetComponentInChildren<SurroundCameraRig>(includeInactive: true);
+            }
+            if (_readyCamera == null)
+            {
+                _readyCamera = GetComponentInChildren<ReadyCameraRig>(includeInactive: true);
+            }
+
+            // Only while playing, so opening a scene never adds a camera to it and
+            // nothing is left behind to be saved by accident.
+            if (!Application.isPlaying || _chaseCamera == null) return;
+
+            if (_surroundCamera == null)
+            {
+                _surroundCamera = BuildCamera<SurroundCameraRig>("Surround camera");
+            }
+            if (_readyCamera == null)
+            {
+                _readyCamera = BuildCamera<ReadyCameraRig>("Ready camera");
+            }
+        }
+
+        private T BuildCamera<T>(string name) where T : Component
+        {
+            var holder = new GameObject(name);
+            holder.transform.SetParent(transform, worldPositionStays: false);
+
+            Camera copy = holder.AddComponent<Camera>();
+            copy.CopyFrom(_chaseCamera.Camera);
+
+            T rig = holder.AddComponent<T>();
+            holder.SetActive(false);
+            return rig;
         }
 
         private static T Attach<T>(string name, Transform parent) where T : Component
@@ -616,10 +735,11 @@ namespace OrangeCarrrrr.Runtime
             _boostPressAllowed = false;
 
             // The original arms the countdown on reset and backdates it so the
-            // race clock starts at zero.
+            // race clock starts at zero. The mode survives, the way the bench
+            // choices above do: it is a setting about what is being run, not part
+            // of the race.
             _raceClockMs = 0u;
-            _countdown = default;
-            _countdown.Start(_raceClockMs);
+            _flow.Start(_raceClockMs);
 
             _dragTriggerActive = false;
             _startBoostPending = true;
@@ -628,6 +748,10 @@ namespace OrangeCarrrrr.Runtime
 
             if (DriverInput != null) DriverInput.ResetSteering();
             if (_chaseCamera != null) _chaseCamera.ResetFollow();
+
+            // The sweep is already installed when the race is reset from the grid,
+            // so the director will not re-activate it and it has to be rewound here.
+            if (_readyCamera != null) _readyCamera.Restart();
             if (_skidMarks != null) _skidMarks.Clear();
             if (_boostFlame != null)
             {
@@ -663,6 +787,10 @@ namespace OrangeCarrrrr.Runtime
                     Debug.LogWarning($"{asset.name}'s course could not be built.", this);
                 }
             }
+
+            // Set every time rather than only on a rebuild, so changing the field
+            // in the inspector takes effect on the next reset.
+            _course?.SetLapCount(_lapCount);
 
             if (_gateView != null) _gateView.Course = _course;
         }
@@ -734,14 +862,8 @@ namespace OrangeCarrrrr.Runtime
                 // so opening the scene does not quietly integrate the kart away
                 // from where it was authored.
                 if (_kartView != null) _kartView.Apply(state);
-                if (_chaseCamera != null && _viewMode == SimulatorViewMode.Chase)
-                {
-                    _chaseCamera.Step(state, (uint)Mathf.RoundToInt(SimulatorTickSeconds * 1000f));
-                }
-                else if (_topDownCamera != null)
-                {
-                    _topDownCamera.Step(state);
-                }
+                ApplyViewMode();
+                _cameras.Step(state, (uint)Mathf.RoundToInt(SimulatorTickSeconds * 1000f));
                 Stepped?.Invoke();
                 return;
             }
@@ -755,8 +877,12 @@ namespace OrangeCarrrrr.Runtime
             _controls = DriverInput != null ? DriverInput.Sample() : default;
             SpendGaugeCharge();
 
-            KartCountdownCues cues = _countdown.Update(_raceClockMs);
+            KartRaceFlowCues flow = _flow.Update(_raceClockMs);
+            KartCountdownCues cues = flow.Countdown;
             if (_sound != null) _sound.PlayCountdown(cues);
+
+            if (flow.ShowResults) ResultsShown?.Invoke();
+            if (flow.ExitDue) RaceExitDue?.Invoke();
 
             // The original lets the player rev on the line: holding drift with the
             // throttle runs the booster idle loop until GO. Read before the line
@@ -769,11 +895,12 @@ namespace OrangeCarrrrr.Runtime
 
             if (_warpHold > 0f) _warpHold = Mathf.Max(0f, _warpHold - deltaTime);
 
-            if (!cues.Released || _warpHold > 0f || MenuOpen)
+            if (flow.DriveHeld || _warpHold > 0f || MenuOpen)
             {
                 // Held at the line: the original releases every kart on GO, so
                 // until then the drive inputs are ignored and only the view keys
-                // do anything. The same hold sets the kart down at the top of
+                // do anything. The race takes the wheel back at the finish through
+                // the same flag. The same hold sets the kart down at the top of
                 // ice_R01's lift, which is the one other place it arrives
                 // somewhere it did not drive to, and holds it while a selection
                 // menu has the arrow keys.
@@ -786,7 +913,7 @@ namespace OrangeCarrrrr.Runtime
             else if (_startBoostPending && _controls.ForwardInput != 0f)
             {
                 _startBoostPending = false;
-                if (_countdown.StartBoostGranted(_raceClockMs))
+                if (_flow.Countdown.StartBoostGranted(_raceClockMs))
                 {
                     // The same call an item boost makes, so the start boost drives
                     // the booster sound and the wide field of view identically.
@@ -834,18 +961,20 @@ namespace OrangeCarrrrr.Runtime
                 _sound.OverrideMotorPitch(_gearbox.Pitch);
             }
 
-            if (_viewMode == SimulatorViewMode.TopDown)
-            {
-                if (_topDownCamera != null) _topDownCamera.Step(state);
-            }
-            else if (_chaseCamera != null)
+            if (_chaseCamera != null)
             {
                 // The chase camera widens its field of view on the kart's
-                // booster-like flag, which is exactly "any boost active".
+                // booster-like flag, which is exactly "any boost active". Set
+                // whether or not it is the installed cameraman, so it is already
+                // right when the race hands it back.
                 _chaseCamera.WideView =
                     KartDynamics.AnyBoostActive(state.TimedBoost, state.InstantBoost);
-                _chaseCamera.Step(state, elapsedMs);
             }
+
+            // The phase may have changed this frame, so the slot is chosen after
+            // the step rather than before it.
+            ApplyViewMode();
+            _cameras.Step(state, elapsedMs);
 
             Stepped?.Invoke();
         }
@@ -930,6 +1059,29 @@ namespace OrangeCarrrrr.Runtime
             }
 
             _previousPosition = state.Position;
+            FinishIfRaceIsRun();
+        }
+
+        /// <summary>
+        /// The original's finish test, <c>0x00424800</c>: the kart's lap counter past
+        /// the course's lap count.
+        ///
+        /// <code>return *(uint *)(course + 0x60) &lt; lap;</code>
+        ///
+        /// where <c>+0x60</c> is the lap count and the compared value is the kart's
+        /// own record slot 7 — the same counter <see cref="KartCourseProgress.Lap"/>
+        /// holds. It reads one ahead because the counter turns over to 1 on the
+        /// crossing that starts the first lap, so a three-lap race finishes at 4.
+        ///
+        /// Checked every frame, as the stage's state machine checks it, rather than
+        /// only on the frame a gate was crossed.
+        /// </summary>
+        private void FinishIfRaceIsRun()
+        {
+            if (_course == null || _course.LapCount == 0u) return;
+            if (_progress.Lap <= _course.LapCount) return;
+
+            if (_flow.Finish(_raceClockMs)) Finished?.Invoke();
         }
 
         /// <summary>The turn applied on the world side, so the kart's own spin is kept.</summary>
@@ -1046,14 +1198,42 @@ namespace OrangeCarrrrr.Runtime
             _state.Acceleration = KartVec3.Zero;
         }
 
+        /// <summary>
+        /// Puts the scene's rigs into the director's slots.
+        ///
+        /// Only two of the four are filled: the ready sweep and the surround orbit
+        /// are not recovered yet, and an empty slot falls back to the chase camera,
+        /// which is exactly what the port did before there was a director at all.
+        /// </summary>
+        private void InstallCameramen()
+        {
+            // Through Unity's own null comparison, so a rig that was destroyed or
+            // never assigned empties the slot rather than filling it with an object
+            // the director would then compare by reference.
+            _cameras.Install(KartCameraSlot.Chase, _chaseCamera != null ? _chaseCamera : null);
+            _cameras.Install(KartCameraSlot.TopDown, _topDownCamera != null ? _topDownCamera : null);
+            _cameras.Install(KartCameraSlot.Surround, _surroundCamera != null ? _surroundCamera : null);
+            _cameras.Install(KartCameraSlot.Ready, _readyCamera != null ? _readyCamera : null);
+        }
+
+        /// <summary>
+        /// Installs the cameraman the race asks for, unless the debug top-down view
+        /// is on, which overrides it.
+        ///
+        /// Called every frame: the phase changes under it, and selecting a slot that
+        /// is already installed does nothing.
+        /// </summary>
         private void ApplyViewMode()
         {
+            InstallCameramen();
+
             // Only which camera is live. The clear mode, the skybox and the
             // lighting are URP's own defaults and are left alone.
-            bool topDown = _viewMode == SimulatorViewMode.TopDown;
+            KartCameraSlot slot = _viewMode == SimulatorViewMode.TopDown
+                ? KartCameraSlot.TopDown
+                : KartCameraDirector.SlotFor(_flow.Phase);
 
-            if (_chaseCamera != null) _chaseCamera.gameObject.SetActive(!topDown);
-            if (_topDownCamera != null) _topDownCamera.gameObject.SetActive(topDown);
+            _cameras.Select(slot, _state);
         }
     }
 }

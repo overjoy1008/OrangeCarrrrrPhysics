@@ -249,10 +249,13 @@ namespace OrangeCarrrrr.UI
 
             KartCourseProgress progress = Simulator.Progress;
 
+            KartRaceFlow race = Simulator.Race;
+
             _builder.Clear();
             _builder.AppendFormat(
-                "LAP {0} | node {1}/{2} {3:F0}m | advance {4}",
+                "LAP {0}/{1} | node {2}/{3} {4:F0}m | advance {5}",
                 progress.Lap,
+                Simulator.LapCount,
                 progress.NodeId,
                 Simulator.Course.NodeCount,
                 progress.NodeDistance,
@@ -263,6 +266,14 @@ namespace OrangeCarrrrr.UI
                 _builder.AppendFormat(" | best {0:F2}s", progress.BestLapMs * 0.001f);
             }
             if (progress.WrongWay) _builder.Append(" | WRONG WAY");
+
+            // F2's setting, and what the race is doing under it.
+            _builder.AppendFormat(
+                " | {0}", race.Mode == KartRaceMode.Race ? "RACE" : "FREE");
+            if (race.Finished)
+            {
+                _builder.AppendFormat(" | FINISHED {0:F2}s", race.FinishTimeMs * 0.001f);
+            }
 
             _labels[6].SetText(_builder);
             _labels[6].color = progress.WrongWay ? HudPalette.StatusWrongWay : HudPalette.StatusDim;

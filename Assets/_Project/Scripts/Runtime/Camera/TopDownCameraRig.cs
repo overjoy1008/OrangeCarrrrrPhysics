@@ -15,7 +15,7 @@ namespace OrangeCarrrrr.Runtime
     /// </summary>
     [ExecuteAlways]
     [RequireComponent(typeof(Camera))]
-    public sealed class TopDownCameraRig : MonoBehaviour
+    public sealed class TopDownCameraRig : MonoBehaviour, IKartCameraman
     {
         public const float ViewHalfWidth = 55.0f;
         public const float ViewHalfHeight = 38.0f;
@@ -41,6 +41,16 @@ namespace OrangeCarrrrr.Runtime
             _camera.orthographic = true;
             _camera.nearClipPlane = ScreenLineBatch.NearDepth;
         }
+
+        public void Activate(KartSimulationState kart) => gameObject.SetActive(true);
+
+        public void Deactivate() => gameObject.SetActive(false);
+
+        /// <summary>
+        /// The projection is a function of where the kart is and of nothing else,
+        /// so the frame's length is not read.
+        /// </summary>
+        void IKartCameraman.Step(KartSimulationState kart, uint elapsedMs) => Step(kart);
 
         public void Step(KartSimulationState kart)
         {

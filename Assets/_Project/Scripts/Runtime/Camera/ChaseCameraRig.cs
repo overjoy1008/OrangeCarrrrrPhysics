@@ -16,14 +16,14 @@ namespace OrangeCarrrrr.Runtime
     /// </summary>
     [ExecuteAlways]
     [RequireComponent(typeof(Camera))]
-    public sealed class ChaseCameraRig : MonoBehaviour
+    public sealed class ChaseCameraRig : MonoBehaviour, IKartCameraman
     {
         /// <summary>
-        /// <c>project_point</c> puts the vanishing point at 0.52 of the client
-        /// height rather than 0.50, so the horizon sits slightly below centre.
-        /// Reproduced as a projection-matrix shift.
+        /// The renderer's off-centre vanishing point. Kept here as the name older
+        /// scenes and notes refer to; <see cref="CameraProjection"/> owns it now,
+        /// since every cameraman renders through the same projection.
         /// </summary>
-        public const float VerticalCenterFraction = 0.52f;
+        public const float VerticalCenterFraction = CameraProjection.VerticalCenterFraction;
 
         [Header("Follow")]
         [Tooltip("400 ms is the Overhead Chase Cameraman; 100 ms is the Front one.")]
@@ -73,6 +73,15 @@ namespace OrangeCarrrrr.Runtime
 
         public void ResetFollow() => _follow.Reset();
 
+        /// <summary>
+        /// Installed as the live cameraman. The follow is not reset here: enabling
+        /// the object runs <see cref="OnEnable"/>, which already snaps it, and the
+        /// race's own reset snaps it again.
+        /// </summary>
+        public void Activate(KartSimulationState kart) => gameObject.SetActive(true);
+
+        public void Deactivate() => gameObject.SetActive(false);
+
         /// <summary>Places the camera for one frame of the demo's fixed 16 ms tick.</summary>
         public void Step(KartSimulationState kart, uint elapsedMs)
         {
@@ -108,23 +117,7 @@ namespace OrangeCarrrrr.Runtime
             ApplyVerticalCenterShift();
         }
 
-        /// <summary>
-        /// The original's principal point sits 0.52 of the way down the client
-        /// rect. Moving it down by 0.02 of the height moves the image down by
-        /// 0.04 in NDC, which is a constant added to the projection's y row.
-        /// </summary>
         private void ApplyVerticalCenterShift()
-        {
-            if (!_applyVerticalCenterShift)
-            {
-                Camera.ResetProjectionMatrix();
-                return;
-            }
-
-            Camera.ResetProjectionMatrix();
-            Matrix4x4 projection = Camera.projectionMatrix;
-            projection[1, 2] += (VerticalCenterFraction - 0.5f) * 2f;
-            Camera.projectionMatrix = projection;
-        }
+            => CameraProjection.ApplyVerticalCenterShift(Camera, _applyVerticalCenterShift);
     }
 }
