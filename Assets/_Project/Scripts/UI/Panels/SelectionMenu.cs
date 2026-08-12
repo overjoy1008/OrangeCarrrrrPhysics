@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OrangeCarrrrr.Core;
 using OrangeCarrrrr.Runtime;
 using TMPro;
 using UnityEngine;
@@ -51,6 +52,21 @@ namespace OrangeCarrrrr.UI
         /// </summary>
         [SerializeField] private SimulatorRoot _simulator;
 
+        /// <summary>
+        /// A beat between the result times and this list opening.
+        ///
+        /// The race's own timings are recovered — the times come up three seconds
+        /// after the finish and the original leaves its stage at eight — but where
+        /// the original cuts to another screen this port opens a menu over the one
+        /// that is already there, and landing it straight onto the result reads as
+        /// an interruption. The pause is the port's, and it is here to be tuned.
+        /// </summary>
+        [Tooltip("Seconds between the race's exit cue and the track list opening.")]
+        [SerializeField, Range(0f, 5f)] private float _raceExitDelaySeconds = 1.5f;
+
+        /// <summary>Counts that beat down; negative when nothing is pending.</summary>
+        private float _raceExitCountdown = -1f;
+
         public void Bind(SimulatorRoot simulator) => _simulator = simulator;
 
         /// <summary>
@@ -66,6 +82,7 @@ namespace OrangeCarrrrr.UI
             if (_simulator == null) _simulator = FindFirstObjectByType<SimulatorRoot>();
             if (_simulator == null) return;
             Subscribe(_simulator);
+            StepRaceExit();
 
             if (Step())
             {
@@ -113,8 +130,20 @@ namespace OrangeCarrrrr.UI
         /// </summary>
         private void OnRaceExitDue()
         {
-            if (IsOpen || _simulator == null) return;
-            OpenTracks();
+            if (IsOpen || _raceExitCountdown >= 0f) return;
+            _raceExitCountdown = _raceExitDelaySeconds;
+        }
+
+        /// <summary>Opens the list once the beat after the exit cue has passed.</summary>
+        private void StepRaceExit()
+        {
+            if (_raceExitCountdown < 0f) return;
+
+            _raceExitCountdown -= Time.deltaTime;
+            if (_raceExitCountdown > 0f) return;
+
+            _raceExitCountdown = -1f;
+            if (!IsOpen) OpenTracks();
         }
 
         private void OpenTracks()
@@ -132,7 +161,7 @@ namespace OrangeCarrrrr.UI
             {
                 TrackSpecAsset track = catalog.At(i);
                 names[i] = track != null
-                    ? $"{track.DisplayName}   ({track.AssetName})   {track.RaceMode}"
+                    ? $"{track.DisplayName}   ({track.AssetName})   {track.RaceMode}{Mark(track.Source)}"
                     : "-";
                 if (track == _simulator.Track) current = i;
             }
@@ -156,7 +185,7 @@ namespace OrangeCarrrrr.UI
             {
                 KartSpecAsset kart = catalog.At(i);
                 names[i] = kart != null
-                    ? $"{kart.AssetName}   {kart.Width:F3} x {kart.Length:F3}"
+                    ? $"{kart.AssetName}   {kart.Width:F3} x {kart.Length:F3}{Mark(kart.Source)}"
                     : "-";
                 if (kart == _simulator.Kart) current = i;
             }
@@ -164,6 +193,16 @@ namespace OrangeCarrrrr.UI
             _simulator.MenuOpen = true;
             Open("SELECT KART", names, current, index => _simulator.SelectKart(catalog.At(index)));
         }
+
+        /// <summary>
+        /// The tag a row carries when it is not the demo's.
+        ///
+        /// The 2004 content is unmarked because it is the baseline; anything from
+        /// the later client says so, so that picking one is a deliberate act and
+        /// not something that happens by accident in a list of look-alikes.
+        /// </summary>
+        private static string Mark(KartAssetSource source)
+            => source == KartAssetSource.Demo ? string.Empty : "   [TC]";
 
         /// <summary>
         /// Opens the list. <paramref name="chosen"/> is called with the picked
@@ -198,6 +237,14 @@ namespace OrangeCarrrrr.UI
             Build();
             if (_title != null) _title.SetText(title);
             IsOpen = true;
+
+            // Last sibling, so the list draws over everything else on the canvas.
+            // It matters at the end of a race: the menu opens eight seconds after
+            // the finish, while WINNER and the times are still up, and a canvas
+            // draws its children in hierarchy order — whoever was created last
+            // would otherwise sit on top.
+            transform.SetAsLastSibling();
+
             Show(true);
             Paint();
         }

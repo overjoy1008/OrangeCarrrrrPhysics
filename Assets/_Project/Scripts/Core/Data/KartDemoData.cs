@@ -6,6 +6,24 @@ namespace OrangeCarrrrr.Core
     /// <summary>
     /// How much of a track's start pose is actually supported by evidence.
     /// </summary>
+    /// <summary>
+    /// Which client an asset came out of.
+    ///
+    /// The recovery only ever argues from the 2004 demo, and the later TC Games
+    /// client is explicitly not evidence for it. Content from that client is kept
+    /// anyway — it is the only way to drive a course the demo never shipped — so
+    /// the two are marked apart here as well as on disk. Anything asking "is this
+    /// number the original's?" reads this first.
+    /// </summary>
+    public enum KartAssetSource
+    {
+        /// <summary>The 2004 demo. Everything the recovery argues from.</summary>
+        Demo = 0,
+
+        /// <summary>The later TC Games client. Never evidence for the demo.</summary>
+        TCGames = 1,
+    }
+
     public enum KartTrackStartKind
     {
         /// <summary>No road-flagged start quad in the scene; spawn at the bounds centre.</summary>
@@ -30,6 +48,10 @@ namespace OrangeCarrrrr.Core
     public sealed class KartSpec
     {
         public string AssetName;
+
+        /// <summary>Which client the body and its numbers came from.</summary>
+        public KartAssetSource Source;
+
         public KartDynamicsConfig Dynamics;
         public KartSimulationGeometry Geometry;
         public float ModelHeight;
@@ -62,9 +84,25 @@ namespace OrangeCarrrrr.Core
     public sealed class TrackSpec
     {
         public string AssetName;
+
+        /// <summary>Which client the mesh and its numbers came from.</summary>
+        public KartAssetSource Source;
+
         public string DisplayName;
         public string RaceMode;
         public uint Difficulty;
+
+        /// <summary>
+        /// How many laps the track is raced over, from the theme archive's own
+        /// <c>track.xml</c> — <c>&lt;Track name='village_R01' folder='village_R01' laps='2'/&gt;</c>.
+        /// The demo's four themes carry one each, and this is that number.
+        ///
+        /// A challenge can override it: <c>track.rho</c>'s <c>challenge.xml</c> gives
+        /// its two time challenges <c>lap='1'</c>. Only the track's own value is
+        /// held here, because the challenges name two courses the demo does not
+        /// ship the geometry for.
+        /// </summary>
+        public uint Laps;
         public KartVec3 Minimum;
         public KartVec3 Maximum;
 
@@ -107,9 +145,11 @@ namespace OrangeCarrrrr.Core
             KartDynamicsConfig dynamics,
             float halfWidth,
             float halfLength,
-            float height) => new KartSpec
+            float height,
+            KartAssetSource source = KartAssetSource.Demo) => new KartSpec
             {
                 AssetName = assetName,
+                Source = source,
                 Dynamics = dynamics,
                 Geometry = new KartSimulationGeometry
                 {
@@ -156,6 +196,26 @@ namespace OrangeCarrrrr.Core
             Kart("solid3", KartDynamicsConfig.Solid(), 0.8325483f, 1.08305655f, 0.81284374f),
             Kart("solid4", KartDynamicsConfig.Solid(), 0.79691135f, 1.0517733f, 0.81284374f),
             Kart("solid5", KartDynamicsConfig.Solid(), 0.93279995f, 1.1436093f, 0.9673969f),
+
+            // --- not the demo's ------------------------------------------------
+            //
+            // Paragon bodies from the later TC Games client, kept so the kart list
+            // can show them. The geometry is theirs — half width, half length and
+            // model height measured off their own exported meshes — but the
+            // dynamics are NOT: their param.xml is a different physics model
+            // altogether, naming only six of the sixteen values the recovered
+            // engine needs and giving those on another scale entirely
+            // (ForwardAccelForce 147 against the demo's 3300, DragFactor -0.0768
+            // against +0.725, no Mass, no grip or brake forces at all). Feeding
+            // those numbers to this engine would not be that kart's handling, it
+            // would be noise, so these run the demo's Standard bench instead and
+            // what is driven here is the body and nothing more.
+            Kart("paragonV1", KartDynamicsConfig.Standard(), 0.8316438f, 1.1356342f, 0.7178360f, KartAssetSource.TCGames),
+            Kart("paragonV1_gold", KartDynamicsConfig.Standard(), 0.7299818f, 1.1196411f, 0.7898212f, KartAssetSource.TCGames),
+            Kart("paragonX", KartDynamicsConfig.Standard(), 0.7698725f, 1.1795354f, 0.7005107f, KartAssetSource.TCGames),
+            Kart("paragonX_gold", KartDynamicsConfig.Standard(), 0.7709029f, 1.2039901f, 0.7005107f, KartAssetSource.TCGames),
+            Kart("paragon_9th", KartDynamicsConfig.Standard(), 0.7847314f, 1.1000245f, 0.8232949f, KartAssetSource.TCGames),
+            Kart("paragon_9th_golden", KartDynamicsConfig.Standard(), 0.7847314f, 1.1683116f, 0.9376051f, KartAssetSource.TCGames),
         };
 
         /// <summary>
@@ -201,6 +261,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "desert_I01",
+                Laps = 3u,
                 DisplayName = "사막 지옥의 모래구덩이",
                 RaceMode = "아이템",
                 Difficulty = 2,
@@ -214,6 +275,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "desert_I02",
+                Laps = 3u,
                 DisplayName = "사막 피라미드 탐험",
                 RaceMode = "아이템",
                 Difficulty = 2,
@@ -227,6 +289,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "desert_R01",
+                Laps = 2u,
                 DisplayName = "사막 빙글빙글 공사장",
                 RaceMode = "스피드",
                 Difficulty = 4,
@@ -240,6 +303,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "forest_I01",
+                Laps = 3u,
                 DisplayName = "포레스트 통나무",
                 RaceMode = "아이템",
                 Difficulty = 1,
@@ -253,6 +317,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "forest_I02",
+                Laps = 2u,
                 DisplayName = "포레스트 버섯동굴",
                 RaceMode = "아이템",
                 Difficulty = 2,
@@ -266,6 +331,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "forest_R02",
+                Laps = 2u,
                 DisplayName = "포레스트 지그재그",
                 RaceMode = "스피드",
                 Difficulty = 4,
@@ -279,6 +345,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "ice_I01",
+                Laps = 3u,
                 DisplayName = "아이스 갈라진 빙산",
                 RaceMode = "아이템→현재 스피드",
                 Difficulty = 4,
@@ -292,6 +359,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "ice_I02",
+                Laps = 3u,
                 DisplayName = "아이스 상어의 무덤",
                 RaceMode = "아이템",
                 Difficulty = 1,
@@ -305,6 +373,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "ice_R01",
+                Laps = 2u,
                 DisplayName = "아이스 설산 다운힐",
                 RaceMode = "스피드",
                 Difficulty = 5,
@@ -318,6 +387,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "village_I01",
+                Laps = 3u,
                 DisplayName = "빌리지 시계탑",
                 RaceMode = "아이템",
                 Difficulty = 2,
@@ -331,6 +401,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "village_I02",
+                Laps = 3u,
                 DisplayName = "빌리지 손가락",
                 RaceMode = "아이템→현재 스피드",
                 Difficulty = 3,
@@ -344,6 +415,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "village_R01",
+                Laps = 2u,
                 DisplayName = "빌리지 고가의 질주",
                 RaceMode = "스피드",
                 Difficulty = 2,
@@ -357,6 +429,7 @@ namespace OrangeCarrrrr.Core
             new TrackSpec
             {
                 AssetName = "village_R03",
+                Laps = 1u,
                 DisplayName = "빌리지 붐힐터널",
                 RaceMode = "스피드",
                 Difficulty = 4,
@@ -366,6 +439,68 @@ namespace OrangeCarrrrr.Core
                 StartKind = KartTrackStartKind.AxisClear,
                 StartAxis = KartTrackStartAxis.Y,
                 StartLine = new KartVec3(215.792f, 600.6079f, 27.30944f),
+            },
+
+            // --- not the demo's ------------------------------------------------
+            //
+            // Two courses from the later TC Games client, kept so they can be
+            // driven. The bounds are measured off their own exported meshes and are
+            // theirs; nothing about the start is.
+            //
+            // Both carry a course in the same format the demo's tracks use - the
+            // same `the::ToRoad` objects and the same `course` tag of `road`
+            // children - so their checkpoints and their start pose are read out of
+            // the asset exactly as the thirteen above are. The tables are generated
+            // by the same tool into kart_course_data_tcgames.c, kept apart from the
+            // demo's so that reading one is never reading the other.
+            //
+            // StartKind is None on both, and that is not a shrug: neither track
+            // paints the flat "start"-textured stripe the demo's do - every
+            // start-textured mesh in them is a vertical banner - so there is no
+            // start quad, which is exactly what None says.
+            //
+            // It also has to be None, because the height the gates were baked
+            // against follows from it. derive_course_gates.py drops every gate by
+            // the start stripe's Z where there is one and by the mesh AABB's
+            // minimum Z where there is not, and SceneGroundZ has to make the same
+            // choice or the two end up in different spaces - which is precisely
+            // what happened when this said AxisClear: the scene was dropped by the
+            // start gate's Z and the checkpoints floated 433 units over northeu and
+            // 95 over castle.
+            //
+            // StartLine is kept as the course's own start gate for the record. It
+            // is not read while the course is loaded, since the kart is placed by
+            // KartCourse.StartPose.
+            new TrackSpec
+            {
+                AssetName = "northeu_R01",
+                Source = KartAssetSource.TCGames,
+                DisplayName = "노르테유 익스프레스",
+                RaceMode = "스피드",
+                Difficulty = 0,
+                Minimum = new KartVec3(-25.168457f, -32.016785f, -49.353912f),
+                Maximum = new KartVec3(1689.1127f, 1952.6205f, 480.42487f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.None,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(795.53918f, 1421.47546f, 383.58554f),
+                Laps = 1u,
+            },
+            new TrackSpec
+            {
+                AssetName = "castle_R01",
+                Source = KartAssetSource.TCGames,
+                DisplayName = "대저택 은밀한 지하실",
+                RaceMode = "스피드",
+                Difficulty = 0,
+                Minimum = new KartVec3(54.815975f, 12.568909f, 43.814198f),
+                Maximum = new KartVec3(1131.1954f, 1477.7528f, 226.89317f),
+                HasScene = true,
+                StartKind = KartTrackStartKind.None,
+                StartAxis = KartTrackStartAxis.Y,
+                StartLine = new KartVec3(486.71613f, 1025.87616f, 138.92685f),
+
+                Laps = 2u,
             },
         };
 
@@ -401,6 +536,14 @@ namespace OrangeCarrrrr.Core
             Minimap("village_I02", 259.2857f, 356.454651f, 0.3f),
             Minimap("village_R01", 631.49884f, 744.7253f, 0.144852176f),
             Minimap("village_R03", 573.462f, 769.314758f, 0.1878337f),
+
+            // The later client's two, read out of their own track.1s by the same
+            // layout: a the::ToMinimap payload of origin, scale, width and height.
+            // The reader was checked against four of the thirteen above before it
+            // was pointed at these, and it reproduced their recovered values to the
+            // float; 256x256 here as well.
+            Minimap("northeu_R01", 823.046692f, 913.042908f, 0.13309437f),
+            Minimap("castle_R01", 696.28717f, 945.925293f, 0.246547982f),
         };
 
         public static IReadOnlyList<TrackSpec> Tracks { get; } = TrackTable;

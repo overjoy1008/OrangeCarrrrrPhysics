@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: practice1
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
   _assetName: practice1
+  _source: 0
   _modelPrefab: {fileID: -3992997455865706138, guid: 2344a3b3c7315ac45a41dbfb6766ac6f, type: 3}
   _skinTemplate: {fileID: 2800000, guid: 170844de7a032aa449ba845268ecc4d3, type: 3}
   _halfWidth: 0.7644821

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: saber5
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
   _assetName: saber5
+  _source: 0
   _modelPrefab: {fileID: -5892140899399952696, guid: 184bb49bd3261c04abcd4fe9fe01b0b6, type: 3}
   _skinTemplate: {fileID: 2800000, guid: f97dff1d3c0712b4995e38ea7c142705, type: 3}
   _halfWidth: 0.8918933

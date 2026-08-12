@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: cotten3
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
   _assetName: cotten3
+  _source: 0
   _modelPrefab: {fileID: 4758095120874827110, guid: 41dc5c266969e6f4b8eb45fae2c0d7d3, type: 3}
   _skinTemplate: {fileID: 2800000, guid: c3341887bcf18914cb6435dc8077f51d, type: 3}
   _halfWidth: 0.8656463

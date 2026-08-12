@@ -1,0 +1,646 @@
+{
+  "track": "northeu_R01",
+  "theme": "northeu",
+  "referenced": 116,
+  "written": 104,
+  "unmatched": [
+    "ad_board_a",
+    "ad_board_b",
+    "ad_board_c",
+    "ad_start",
+    "no_ob_c_right",
+    "no_sideset_c",
+    "nort_animal02",
+    "transparency",
+    "부스터존",
+    "부스터존발판",
+    "점프존1",
+    "점프존발판"
+  ],
+  "textures": [
+    {
+      "name": "fac_light_blue",
+      "width": 32,
+      "height": 16,
+      "transparent": true
+    },
+    {
+      "name": "n_precipice_fog",
+      "width": 128,
+      "height": 64,
+      "transparent": true
+    },
+    {
+      "name": "noI04_start_ob",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_building_a",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_building_b",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_building_c",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_fence_R01_a",
+      "width": 128,
+      "height": 64,
+      "transparent": true
+    },
+    {
+      "name": "no_fence_R01_k copy",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "no_fence_a",
+      "width": 128,
+      "height": 32,
+      "transparent": true
+    },
+    {
+      "name": "no_fence_c",
+      "width": 128,
+      "height": 32,
+      "transparent": true
+    },
+    {
+      "name": "no_ob_R01_a",
+      "width": 128,
+      "height": 256,
+      "transparent": true
+    },
+    {
+      "name": "no_ob_R01_b",
+      "width": 128,
+      "height": 256,
+      "transparent": true
+    },
+    {
+      "name": "no_ob_b",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_ob_dfz",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "no_ob_xz",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "no_portal",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_f-1",
+      "width": 128,
+      "height": 64,
+      "transparent": true
+    },
+    {
+      "name": "no_r01_road_M01",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_a",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "no_r01_road_b",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_c",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_e",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_i",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_i _1",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_i_1",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_i_2",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "no_r01_road_ioo",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "no_r01_road_k",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_k-3",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "no_r01_road_m",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_m_1",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_m_2",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_m_n",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_r01_road_o",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_ro_d_00",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_ro_e_00",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "no_road_a",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_road_a_a",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_road_a_a_corner",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_road_b",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_road_ob001",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_sideset",
+      "width": 64,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "no_sideset_A01",
+      "width": 64,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "no_sideset_A02",
+      "width": 64,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "no_start_ob",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_start_ob_1",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_stick_A",
+      "width": 256,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "no_stick_B",
+      "width": 256,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "no_stone",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "no_stone_top",
+      "width": 64,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "no_내부01",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "no_내부01_1",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "noi04-finish",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "noi04-finish_b",
+      "width": 256,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "noi04_fence_c",
+      "width": 128,
+      "height": 32,
+      "transparent": true
+    },
+    {
+      "name": "noi04_obj_a",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "noi04_road_d",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "noi04_road_obj",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "noi04_stone_road",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nor_building_c00",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nor_fence01",
+      "width": 128,
+      "height": 32,
+      "transparent": true
+    },
+    {
+      "name": "nor_obj00",
+      "width": 64,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nor_road03",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nor_road09_1",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "nor_sideset",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nor_sideset_corner",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nor_sign00",
+      "width": 256,
+      "height": 64,
+      "transparent": true
+    },
+    {
+      "name": "nor_signl",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "nor_signtwo",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "nor_signu",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "nor_signz",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "nor_stick00",
+      "width": 256,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "nor_ston00_0",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nor_ston02",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nor_ston03",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nor_ston05",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nort_arrowb",
+      "width": 256,
+      "height": 64,
+      "transparent": true
+    },
+    {
+      "name": "nort_build20",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nort_build21",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nort_build23",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nort_build26",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nort_build33",
+      "width": 256,
+      "height": 256,
+      "transparent": true
+    },
+    {
+      "name": "nort_finwall03",
+      "width": 256,
+      "height": 256,
+      "transparent": true
+    },
+    {
+      "name": "nort_finwall05",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "nort_flight",
+      "width": 128,
+      "height": 64,
+      "transparent": true
+    },
+    {
+      "name": "nort_r01_road_m",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nort_r01_road_m_1",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nort_ston06",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nort_stone007",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nort_stone008",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "nort_stone009",
+      "width": 256,
+      "height": 256,
+      "transparent": true
+    },
+    {
+      "name": "nort_subway2",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "nort_wall06",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "광고틀",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "영상판",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "우주선내부출입문",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "우주선돔바닥",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "우주선돔벽",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "우주선방향표시",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "우주선방향표시_01",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "우주선복도",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "우주선외부",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "타키그림",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "터널",
+      "width": 32,
+      "height": 64,
+      "transparent": true
+    }
+  ]
+}

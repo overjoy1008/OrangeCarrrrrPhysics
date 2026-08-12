@@ -37,6 +37,18 @@ namespace OrangeCarrrrr.Runtime
         private AudioSource _impact;
         private AudioSource _countdown;
 
+        /// <summary>
+        /// The final lap's cue.
+        ///
+        /// It lives on the player rather than in a <see cref="KartSoundSet"/>
+        /// because it is not part of an engine preset: the original opens the
+        /// <c>etc</c> archive and plays <c>ufo_lab</c> whatever kart is being driven.
+        /// </summary>
+        private AudioSource _race;
+
+        [Tooltip("The final lap cue, sound_fx_etc's ufo_lab. Left empty, it is resolved from the project.")]
+        [SerializeField] private AudioClip _finalLap;
+
         private KartSoundDriver _driver;
         private uint _instantBoostActivations;
         private bool _started;
@@ -145,6 +157,7 @@ namespace OrangeCarrrrr.Runtime
             if (_instantBoost == null) _instantBoost = AddVoice("Instant boost", loop: false);
             if (_impact == null) _impact = AddVoice("Impact", loop: false);
             if (_countdown == null) _countdown = AddVoice("Countdown", loop: false);
+            if (_race == null) _race = AddVoice("Race", loop: false);
         }
 
         private AudioSource AddVoice(string label, bool loop)
@@ -255,6 +268,30 @@ namespace OrangeCarrrrr.Runtime
         {
             if (!_started || _sounds == null) return;
             Loop(_boosterIdle, _sounds.BoosterIdle, on);
+        }
+
+        /// <summary>
+        /// The final lap cue, from <c>0x00456...</c>'s lap branch: when the kart's
+        /// lap counter reaches the course's lap count the stage opens the
+        /// <c>etc</c> sound archive and plays <c>ufo_lab</c>, then runs the
+        /// <c>finallap</c> action.
+        /// </summary>
+        public void PlayFinalLap()
+        {
+            if (!_started) return;
+            PlayOnce(_race, ResolveFinalLap(), 1f);
+        }
+
+        private AudioClip ResolveFinalLap()
+        {
+#if UNITY_EDITOR
+            if (_finalLap == null)
+            {
+                _finalLap = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(
+                    "Assets/_Project/Audio/Race/ufo_lab.wav");
+            }
+#endif
+            return _finalLap;
         }
 
         /// <summary>The 3 / 2 / 1 / GO cues.</summary>

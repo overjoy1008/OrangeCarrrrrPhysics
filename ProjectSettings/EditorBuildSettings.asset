@@ -47,5 +47,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/village_R03.unity
     guid: 701bcfa3030b8de42a017981738a9bbc
+  - enabled: 1
+    path: Assets/_Project/Scenes/northeu_R01.unity
+    guid: e7858d46a130fe4409b40b0642a0e812
+  - enabled: 1
+    path: Assets/_Project/Scenes/castle_R01.unity
+    guid: 38107989f58809f40988f692f9982dd7
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

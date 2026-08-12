@@ -71,6 +71,23 @@ namespace OrangeCarrrrr.Editor
             return false;
         }
 
+        /// <summary>
+        /// Where a track's art lives.
+        ///
+        /// The demo's thirteen sit directly under the art directory; anything from
+        /// the later client is kept in a folder of its own so the two sets never
+        /// blur together on disk. The demo is checked first, so a name in both
+        /// resolves to the demo's.
+        /// </summary>
+        private static string ArtFolder(string id)
+        {
+            string demo = $"{ArtDirectory}/{id}";
+            if (Directory.Exists(Path.GetFullPath(demo))) return demo;
+
+            string later = $"{ArtDirectory}/TCGames/{id}";
+            return Directory.Exists(Path.GetFullPath(later)) ? later : demo;
+        }
+
         public static void Build()
         {
             if (_building) return;
@@ -103,8 +120,9 @@ namespace OrangeCarrrrr.Editor
                     // Written through SerializedObject because the asset exposes
                     // the map read-only: nothing outside this pipeline should be
                     // choosing which artwork a track carries.
+                    string art = ArtFolder(id);
                     var minimap = AssetDatabase.LoadAssetAtPath<Texture2D>(
-                        $"{ArtDirectory}/{id}/{id}_minimap.png");
+                        $"{art}/{id}_minimap.png");
                     if (minimap != null) ++minimaps;
 
                     var course = AssetDatabase.LoadAssetAtPath<TrackCourseAsset>(
@@ -122,7 +140,7 @@ namespace OrangeCarrrrr.Editor
                     // The scene name is the id, so both of these are checks rather
                     // than lookups: a missing one is reported, never guessed at.
                     if (recovered.HasScene &&
-                        File.Exists(Path.GetFullPath($"{ArtDirectory}/{id}/track_{id}.ktrk")))
+                        File.Exists(Path.GetFullPath($"{art}/track_{id}.ktrk")))
                     {
                         ++meshes;
                     }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: solid1
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
   _assetName: solid1
+  _source: 0
   _modelPrefab: {fileID: -2071268210477724009, guid: 33e2962eb5947854fb6e7dc9e8f4d1d2, type: 3}
   _skinTemplate: {fileID: 2800000, guid: 0bbcd7d62ef518445997df719b990abb, type: 3}
   _halfWidth: 0.7267921

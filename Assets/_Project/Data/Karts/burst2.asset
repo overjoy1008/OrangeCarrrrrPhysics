@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: burst2
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
   _assetName: burst2
+  _source: 0
   _modelPrefab: {fileID: -8121086349364841707, guid: 4d7bf5f4cf4b89647933491ec4f31492, type: 3}
   _skinTemplate: {fileID: 2800000, guid: e9b3d04b83561e54ab8e9f920d3434d2, type: 3}
   _halfWidth: 0.7489265

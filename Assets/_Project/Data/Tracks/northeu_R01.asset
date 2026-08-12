@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f60a80785b91443b31de24ee82a3b0, type: 3}
+  m_Name: northeu_R01
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
+  _assetName: northeu_R01
+  _displayName: "\uB178\uB974\uD14C\uC720 \uC775\uC2A4\uD504\uB808\uC2A4"
+  _raceMode: "\uC2A4\uD53C\uB4DC"
+  _difficulty: 0
+  _source: 1
+  _laps: 1
+  _minimum: {x: -25.168457, y: -32.016785, z: -49.353912}
+  _maximum: {x: 1689.1127, y: 1952.6205, z: 480.42487}
+  _hasScene: 1
+  _startKind: 0
+  _startAxis: 2
+  _startLine: {x: 795.5392, y: 1421.4755, z: 383.58554}
+  _minimap: {fileID: 2800000, guid: aee77c56623073d439a1230d87064407, type: 3}
+  _course: {fileID: 11400000, guid: 8027d01389ab91b469b475bc7671e52a, type: 2}

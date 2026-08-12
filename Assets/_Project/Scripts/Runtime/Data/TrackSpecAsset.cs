@@ -23,6 +23,12 @@ namespace OrangeCarrrrr.Runtime
         [SerializeField] private string _raceMode = "테스트";
         [SerializeField, Range(0, 5)] private int _difficulty;
 
+        [Tooltip("Which client the mesh and its numbers came from.")]
+        [SerializeField] private KartAssetSource _source;
+
+        [Tooltip("Laps, from the theme archive's track.xml. Zero falls back to the shipped table.")]
+        [SerializeField, Range(0, 9)] private int _laps;
+
         [Header("Bounds, engine frame (X/Y ground, Z up)")]
         [SerializeField] private Vector3 _minimum = new Vector3(-448.1955f, -403.5915f, 0f);
         [SerializeField] private Vector3 _maximum = new Vector3(448.1955f, 403.5915f, 120f);
@@ -45,6 +51,30 @@ namespace OrangeCarrrrr.Runtime
         [SerializeField] private TrackCourseAsset _course;
 
         public string AssetName => _assetName;
+
+        /// <summary>
+        /// Which client this came out of. Serialised as Demo on an asset that
+        /// predates the field, so the shipped table is asked instead — the same
+        /// fallback the lap count uses.
+        /// </summary>
+        public KartAssetSource Source => _source != KartAssetSource.Demo
+            ? _source
+            : KartDemoData.FindTrack(_assetName)?.Source ?? KartAssetSource.Demo;
+
+        /// <summary>
+        /// How many laps this track is raced over.
+        ///
+        /// The original keeps it in the theme archive's <c>track.xml</c>, one line
+        /// per track, and it is not the same for all of them: the R courses run 2
+        /// — <c>village_R03</c> only 1 — while most I courses run 3.
+        ///
+        /// A zero here means the asset predates the field, so the shipped table is
+        /// used instead. That keeps the thirteen authored assets right without
+        /// re-running their builder.
+        /// </summary>
+        public uint Laps => _laps > 0
+            ? (uint)_laps
+            : KartDemoData.FindTrack(_assetName)?.Laps ?? 0u;
 
         /// <summary>
         /// The scene that holds this track's geometry and collision, which is the
@@ -97,7 +127,9 @@ namespace OrangeCarrrrr.Runtime
             AssetName = _assetName,
             DisplayName = _displayName,
             RaceMode = _raceMode,
+            Source = Source,
             Difficulty = (uint)_difficulty,
+            Laps = Laps,
             Minimum = Minimum,
             Maximum = Maximum,
             HasScene = _hasScene,
@@ -111,7 +143,9 @@ namespace OrangeCarrrrr.Runtime
             _assetName = spec.AssetName;
             _displayName = spec.DisplayName;
             _raceMode = spec.RaceMode;
+            _source = spec.Source;
             _difficulty = (int)spec.Difficulty;
+            _laps = (int)spec.Laps;
             _minimum = new Vector3(spec.Minimum.X, spec.Minimum.Y, spec.Minimum.Z);
             _maximum = new Vector3(spec.Maximum.X, spec.Maximum.Y, spec.Maximum.Z);
             _hasScene = spec.HasScene;

@@ -1,0 +1,628 @@
+{
+  "track": "castle_R01",
+  "theme": "castle",
+  "referenced": 128,
+  "written": 98,
+  "unmatched": [
+    "F_ back",
+    "M_chain",
+    "M_spider",
+    "ad_board_a",
+    "ad_board_b",
+    "ad_fence_a",
+    "ad_fence_b",
+    "ad_fence_c",
+    "ad_start",
+    "chair_00_j",
+    "chair_01_j",
+    "gate_03_j",
+    "house_badac01_t",
+    "house_boilerbadac00_t",
+    "house_oj_t_01",
+    "house_oj_t_70",
+    "house_roadcenter_t",
+    "house_toproad02_t",
+    "house_wallside_t",
+    "light_02_j",
+    "object_09_j",
+    "object_11_j",
+    "road_09_j",
+    "side_01_j",
+    "t02",
+    "t13",
+    "t_ob_E",
+    "table_00_j",
+    "table_01_j",
+    "wine_02"
+  ],
+  "textures": [
+    {
+      "name": "box_00_j",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "box_01_j",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "door_00_j",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "fanset00",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "fanset01",
+      "width": 64,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "fence_00_j",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "fencepot_00_j",
+      "width": 64,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "gate_01_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "gate_02_j",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "gate_04_j",
+      "width": 128,
+      "height": 32,
+      "transparent": false
+    },
+    {
+      "name": "gate_05_j",
+      "width": 64,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "gate_06_j",
+      "width": 128,
+      "height": 32,
+      "transparent": false
+    },
+    {
+      "name": "house_badac_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_boiler01_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_boiler02_t",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "house_boiler_t",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_boilerbadac02_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_boilerdoor_t",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_boilerwall06_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_boilerwall07_t",
+      "width": 256,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "house_dari01_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_dari_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_door_t_02",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_gidung05_t",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_gidung06_t",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_gidung07_t",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_gidung08_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_gidung_t_00",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_gunmool01_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_gunmool02_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_light_t",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_00",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_04",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_60",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_63",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_67",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_72",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "house_oj_t_74",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_79",
+      "width": 128,
+      "height": 32,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_94",
+      "width": 128,
+      "height": 32,
+      "transparent": false
+    },
+    {
+      "name": "house_oj_t_98",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "house_outroof_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_outwall_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_side_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_sky_t",
+      "width": 32,
+      "height": 32,
+      "transparent": true
+    },
+    {
+      "name": "house_skywall_t",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "house_toproad00_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_toproad04_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_toproad06_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_topwall02_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_topwall03_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_topwall04_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_topwall05_t",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_topwall06_t",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "house_zihalight_t",
+      "width": 32,
+      "height": 16,
+      "transparent": true
+    },
+    {
+      "name": "image_00_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "image_01_j",
+      "width": 64,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "light_03_j",
+      "width": 64,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "object_10_j",
+      "width": 64,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "road12_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "road13_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "road14_j",
+      "width": 128,
+      "height": 64,
+      "transparent": true
+    },
+    {
+      "name": "road_01_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "road_03_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "road_06_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "road_07_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "road_08_j",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "road_10_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "road_15_j",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "roadcenter_01_j",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "roadcenter_02_j",
+      "width": 128,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "side11_j",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "side12_j",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "side14_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side15_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side16_j",
+      "width": 256,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "side_03_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side_05_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side_06_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side_07_j",
+      "width": 64,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side_08_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side_09_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side_17_j",
+      "width": 64,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "side_18_j",
+      "width": 64,
+      "height": 64,
+      "transparent": false
+    },
+    {
+      "name": "side_50_j",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "sign03_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "sign04_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "t25",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "t28",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "t30",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "t32",
+      "width": 256,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "t34",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "t36",
+      "width": 256,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "transparency",
+      "width": 32,
+      "height": 32,
+      "transparent": true
+    },
+    {
+      "name": "wine_00_j",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "wine_01_j",
+      "width": 128,
+      "height": 256,
+      "transparent": false
+    },
+    {
+      "name": "winebarrel_00_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
+      "name": "winebarrel_01_j",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    }
+  ]
+}

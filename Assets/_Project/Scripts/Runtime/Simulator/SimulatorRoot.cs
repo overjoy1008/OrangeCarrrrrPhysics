@@ -75,17 +75,17 @@ namespace OrangeCarrrrr.Runtime
         [SerializeField] private SimulatorViewMode _viewMode = SimulatorViewMode.Chase;
 
         /// <summary>
-        /// How many laps the race is.
+        /// Overrides the track's own lap count. Zero uses the track's.
         ///
-        /// <b>Not recovered.</b> The original does not hold this in code: the time
-        /// challenge reads it out of the selected challenge's descriptor and hands
-        /// it to the course's setter at <c>0x004247E0</c> (the call at
-        /// <c>0x004564B5</c> passes the stage's <c>+0xD8</c>, filled from an asset).
-        /// Three is what the reference C port ran with and what the demo's
-        /// challenges are; the number itself is content this port has not extracted.
+        /// The number itself is content, not code: the original reads it out of the
+        /// theme archive's <c>track.xml</c> and hands it to the course's setter at
+        /// <c>0x004247E0</c>. It is not the same for every track — the R courses run
+        /// 2 laps and <c>village_R03</c> only 1 — so it is carried per track in
+        /// <see cref="TrackSpecAsset.Laps"/> and this is only here for trying
+        /// another number without editing the asset.
         /// </summary>
-        [Tooltip("Laps before the finish. Content-driven in the original; 3 in the demo's challenges.")]
-        [SerializeField] private uint _lapCount = 3u;
+        [Tooltip("0 uses the track's own lap count. Anything else overrides it.")]
+        [SerializeField] private uint _lapCountOverride;
 
         [Tooltip("F in the original: the ground-drag trigger, x4 on entry and x0.25 on exit.")]
         [SerializeField] private bool _dragTriggerActive;
@@ -134,6 +134,9 @@ namespace OrangeCarrrrr.Runtime
         private TrackCourseAsset _courseBuiltFrom;
         private KartCourseProgress _progress;
 
+        /// <summary>The lap <see cref="LapStarted"/> was last raised for.</summary>
+        private uint _announcedLap;
+
         /// <summary>
         /// Where the kart was at the end of the previous step. The course walks
         /// the segment between two consecutive positions, so it needs the pair
@@ -172,6 +175,21 @@ namespace OrangeCarrrrr.Runtime
         /// <summary>Raised on the frame the final gate closed the race.</summary>
         public event Action Finished;
 
+        /// <summary>
+        /// Raised when the track already being raced is picked again, which is a
+        /// replay rather than a track change.
+        /// </summary>
+        public event Action Replayed;
+
+        /// <summary>
+        /// Raised on the crossing that starts a lap, with the lap now being driven.
+        ///
+        /// The original checks the same thing in its own stage loop: when the lap
+        /// counter turns over and equals the course's lap count it plays the final
+        /// lap cue and runs the <c>finallap</c> action.
+        /// </summary>
+        public event Action<uint> LapStarted;
+
         /// <summary>Raised three seconds later, when the result panel is due.</summary>
         public event Action ResultsShown;
 
@@ -206,6 +224,21 @@ namespace OrangeCarrrrr.Runtime
 
         /// <summary>Laid-down skid quads, as the original's <c>skids</c> read-out counts them.</summary>
         public int SkidMarkSegments => _skidMarks != null ? _skidMarks.SegmentCount : 0;
+
+        /// <summary>The skid face being laid, as the HUD reads it.</summary>
+        public string SkidStyleName => _skidMarks != null ? _skidMarks.StyleName : "none";
+
+        /// <summary>
+        /// The <c>F3</c> key: the next skid face. Not the original's — the 2004 game
+        /// lays one mark and has no way to change it — so it sits with the other
+        /// port-only keys on the function row.
+        /// </summary>
+        public void NextSkidStyle()
+        {
+            if (_skidMarks == null) return;
+            _skidMarks.NextStyle();
+            _skidMarks.Clear();
+        }
 
         /// <summary>The race-start countdown, as the HUD reads it.</summary>
         public KartCountdown Countdown => _flow.Countdown;
@@ -244,8 +277,13 @@ namespace OrangeCarrrrr.Runtime
 
         public bool CourseReady => _course != null && _course.NodeCount != 0;
 
-        /// <summary>Laps before the finish, as the HUD reads it.</summary>
-        public uint LapCount => _lapCount;
+        /// <summary>
+        /// Laps before the finish, as the HUD and the course read it: the track's
+        /// own number unless the inspector overrides it.
+        /// </summary>
+        public uint LapCount => _lapCountOverride != 0u
+            ? _lapCountOverride
+            : (_track != null ? _track.Laps : 0u);
 
         /// <summary>
         /// True while a selection menu owns the keyboard. The drive inputs are
@@ -407,7 +445,15 @@ namespace OrangeCarrrrr.Runtime
         /// </summary>
         public void LoadTrack(TrackSpecAsset track)
         {
-            if (track == null || track == _track) return;
+            if (track == null) return;
+
+            // Picking the track already loaded is a replay: there is no scene to
+            // load, so the race is simply put back on the grid.
+            if (track == _track)
+            {
+                Replay();
+                return;
+            }
 
             if (string.IsNullOrWhiteSpace(track.SceneName))
             {
@@ -417,6 +463,21 @@ namespace OrangeCarrrrr.Runtime
 
             if (!Application.isPlaying) return;
             SceneManager.LoadScene(track.SceneName);
+        }
+
+        /// <summary>
+        /// Runs the same track again from the grid.
+        ///
+        /// The same reset <c>R</c> uses, plus a signal for the things that should
+        /// treat it as a fresh race rather than a mid-race respawn — the music
+        /// picks another theme track off it.
+        /// </summary>
+        public void Replay()
+        {
+            if (!Application.isPlaying) return;
+
+            ResetSimulation();
+            Replayed?.Invoke();
         }
 
         /// <summary>
@@ -739,6 +800,7 @@ namespace OrangeCarrrrr.Runtime
             // choices above do: it is a setting about what is being run, not part
             // of the race.
             _raceClockMs = 0u;
+            _announcedLap = 0u;
             _flow.Start(_raceClockMs);
 
             _dragTriggerActive = false;
@@ -790,7 +852,7 @@ namespace OrangeCarrrrr.Runtime
 
             // Set every time rather than only on a rebuild, so changing the field
             // in the inspector takes effect on the next reset.
-            _course?.SetLapCount(_lapCount);
+            _course?.SetLapCount(LapCount);
 
             if (_gateView != null) _gateView.Course = _course;
         }
@@ -1059,7 +1121,32 @@ namespace OrangeCarrrrr.Runtime
             }
 
             _previousPosition = state.Position;
+            AnnounceLap();
             FinishIfRaceIsRun();
+        }
+
+        /// <summary>
+        /// Raises <see cref="LapStarted"/> once per lap, and plays the final lap
+        /// cue with it.
+        ///
+        /// The cue is the original's: the lap branch of the time challenge's state
+        /// machine opens the <c>etc</c> sound archive and plays <c>ufo_lab</c> when
+        /// the lap counter reaches the course's lap count.
+        /// </summary>
+        private void AnnounceLap()
+        {
+            if (_progress.Lap == _announcedLap) return;
+
+            _announcedLap = _progress.Lap;
+            if (_progress.Lap == 0u) return;
+
+            LapStarted?.Invoke(_progress.Lap);
+
+            if (_flow.Phase == KartRacePhase.Running &&
+                LapCount != 0u && _progress.Lap == LapCount && _sound != null)
+            {
+                _sound.PlayFinalLap();
+            }
         }
 
         /// <summary>

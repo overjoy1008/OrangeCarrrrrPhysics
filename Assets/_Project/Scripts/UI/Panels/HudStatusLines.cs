@@ -141,6 +141,9 @@ namespace OrangeCarrrrr.UI
             _builder.AppendFormat(
                 "  B: {0} model bounds", Simulator.ShowBounds ? "hide" : "show");
             _builder.AppendFormat("  F1: fps [{0}]", Simulator.FrameRateCapName);
+            _builder.AppendFormat(
+                "  F2: race [{0}]", Simulator.RaceMode == KartRaceMode.Race ? "race" : "free");
+            _builder.AppendFormat("  F3: skid [{0}]", Simulator.SkidStyleName);
 
             _labels[2].SetText(_builder);
             _labels[2].color = HudPalette.StatusText;
@@ -217,14 +220,15 @@ namespace OrangeCarrrrr.UI
             _builder.Clear();
             _builder.AppendFormat(
                 "DRIFT {0} | ITEM {1} {2:F2}s | INSTANT READY {3:F2}s | INSTANT {4} | " +
-                "drag x{5:F2} | skids {6}",
+                "drag x{5:F2} | skids {6} [{7}]",
                 drifting ? "ON" : "off",
                 kart.TimedBoost.Active ? "ON" : "off",
                 kart.TimedBoost.RemainingMs * 0.001f,
                 kart.InstantBoost.OpportunityTimer,
                 kart.InstantBoost.Active ? "ON" : "off",
                 kart.GroundedDragScale,
-                Simulator.SkidMarkSegments);
+                Simulator.SkidMarkSegments,
+                Simulator.SkidStyleName);
 
             _labels[5].SetText(_builder);
             _labels[5].color = boosting

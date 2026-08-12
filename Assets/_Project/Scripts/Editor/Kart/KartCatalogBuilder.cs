@@ -100,7 +100,16 @@ namespace OrangeCarrrrr.Editor
                 string skinPath = $"{SkinDirectory}/{name}.png";
                 MakeReadable(skinPath);
 
+                // The demo's own models sit flat in the directory; anything from
+                // the later client is kept in a folder of its own, so the two sets
+                // never blur together on disk. Demo first, so a name in both wins
+                // for the demo.
                 var model = AssetDatabase.LoadAssetAtPath<GameObject>($"{ModelDirectory}/{name}.ktrk");
+                if (model == null)
+                {
+                    model = AssetDatabase.LoadAssetAtPath<GameObject>(
+                        $"{ModelDirectory}/TCGames/{name}.ktrk");
+                }
                 var skin = AssetDatabase.LoadAssetAtPath<Texture2D>(skinPath);
                 if (model != null) ++models;
                 if (skin != null) ++skins;

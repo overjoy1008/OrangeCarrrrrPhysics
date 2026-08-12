@@ -95,6 +95,56 @@ namespace OrangeCarrrrr.Runtime
 
         private const string DefaultTexturePath = "Assets/_Project/Art/Effects/skidmark.png";
 
+        /// <summary>
+        /// The skid faces the port can lay, in cycle order.
+        ///
+        /// The first is the demo's own <c>effect.rho/skidmark/skidmark.tga</c>. The
+        /// rest are not the demo's — <c>rainbow</c> comes from the later client's
+        /// <c>stuff.rho/skidMark</c>, which is why it lives under a <c>TCGames</c>
+        /// folder of its own — and the 2004 game has no way to change the mark at
+        /// all, so the cycle itself is the port's.
+        /// </summary>
+        private static readonly (string Name, string Path)[] Styles =
+        {
+            ("demo", DefaultTexturePath),
+            ("rainbow", "Assets/_Project/Art/Effects/TCGames/rainbow.png"),
+        };
+
+        [Tooltip("Which of the skid faces is being laid. Cycled by the simulator's key.")]
+        [SerializeField] private int _style;
+
+        /// <summary>The face now being laid, for the HUD.</summary>
+        public string StyleName => Styles[Wrap(_style)].Name;
+
+        public int StyleCount => Styles.Length;
+
+        private static int Wrap(int style)
+            => ((style % Styles.Length) + Styles.Length) % Styles.Length;
+
+        /// <summary>
+        /// Moves to the next face. The marks already on the ground keep the one
+        /// they were laid with only until the next clear — they share a material —
+        /// so this changes the whole trail at once.
+        /// </summary>
+        public void NextStyle()
+        {
+            _style = Wrap(_style + 1);
+            _texture = null;
+            ApplyStyle();
+        }
+
+        /// <summary>Puts the current face on the material.</summary>
+        private void ApplyStyle()
+        {
+            ResolveDefaultTexture();
+
+            Material material = ResolveMaterial();
+            if (material == null) return;
+
+            material.mainTexture = _texture;
+            material.color = _texture != null ? Color.white : (Color)UntexturedColor;
+        }
+
         private Mesh _mesh;
         private MeshFilter _filter;
         private MeshRenderer _renderer;
@@ -156,7 +206,8 @@ namespace OrangeCarrrrr.Runtime
 #if UNITY_EDITOR
             if (_texture == null)
             {
-                _texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(DefaultTexturePath);
+                _texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(
+                    Styles[Wrap(_style)].Path);
             }
 #endif
         }

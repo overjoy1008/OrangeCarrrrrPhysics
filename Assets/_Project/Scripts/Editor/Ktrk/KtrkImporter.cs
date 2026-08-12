@@ -40,18 +40,46 @@ namespace OrangeCarrrrr.Editor
         // frame here and baked into the artifact, so a mapping change that does
         // not force a reimport leaves the meshes in the old frame while every
         // transform around them has moved to the new one.
-        private const int Version = 16;
+        private const int Version = 19;
 
         /// <summary>
-        /// The one track whose sign boards are mapped upside down in the 2004
-        /// asset. See <see cref="TurnSignFacesUpright"/>.
+        /// The tracks whose sign boards are mapped upside down. See
+        /// <see cref="TurnSignFacesUpright"/>.
+        ///
+        /// ice_R01 is the 2004 demo's only one, and that was established from the
+        /// data across all thirteen. The two later-client tracks are here because
+        /// the same defect is visible on them on screen; nobody has counted their
+        /// faces the way the demo's were, so this is an observation rather than a
+        /// measurement, and a track added later should be checked before it is
+        /// added to the list.
         /// </summary>
-        private const string UpsideDownSignTrack = "track_ice_R01";
+        private static readonly string[] UpsideDownSignTracks =
+        {
+            "track_ice_R01",
+            "track_northeu_R01",
+            "track_castle_R01",
+        };
 
         /// <summary>Written beside the PNGs by the texture converter.</summary>
         private const string ManifestFile = "textures.json";
 
         private const string DefaultTextureDirectory = "Textures";
+
+        /// <summary>
+        /// The texture name a track gives a face that is meant to be invisible.
+        ///
+        /// It names no image and none is shipped: it is a marker, and the faces
+        /// carrying it are blockers and filler the original never draws. Left to
+        /// the ordinary path they take the untextured fallback and come out as
+        /// solid panels standing in the middle of the course, which is what
+        /// castle_R01's yellow walls were.
+        ///
+        /// Matched by name rather than by a missing file, because a texture that
+        /// is merely absent — the ad boards are, in the demo's tracks as well as
+        /// these — is a different thing: that face is meant to be drawn and only
+        /// its image is gone.
+        /// </summary>
+        private const string InvisibleTexture = "transparency";
 
         [Tooltip("Material for parts with no texture of their own. Leave empty for the import-time default.")]
         public Material material;
@@ -94,9 +122,11 @@ namespace OrangeCarrrrr.Editor
             // Keyed on the asset rather than exposed as a setting: this is one
             // track's authoring defect, not a choice, and a checkbox would invite
             // someone to turn it on somewhere it does not belong.
-            _fixUpsideDownSigns = assetName == UpsideDownSignTrack;
+            _fixUpsideDownSigns = System.Array.IndexOf(UpsideDownSignTracks, assetName) >= 0;
 
-            Material sharedMaterial = material != null ? material : DefaultMaterial();
+            Material sharedMaterial = material != null
+                ? material
+                : BuildFallback(context, LitShader());
             Dictionary<string, Material> materials = BuildMaterials(context, scene);
 
             int textured = 0;
@@ -201,6 +231,16 @@ namespace OrangeCarrrrr.Editor
                 if (string.IsNullOrEmpty(name) || materials.ContainsKey(name)) continue;
 
                 Texture2D texture = LoadTexture(context, root, name);
+
+                // The invisible marker gets a material of its own rather than a
+                // texture: fully transparent, and left out of the depth buffer so
+                // it cannot hide what is behind it.
+                if (IsInvisible(name))
+                {
+                    materials[name] = BuildInvisible(context, shader, name);
+                    continue;
+                }
+
                 if (texture == null) continue;
 
                 bool cutout = cutouts.Contains(name);
@@ -258,6 +298,42 @@ namespace OrangeCarrrrr.Editor
         /// there, so a texture that appears later brings the scene back through
         /// here.
         /// </summary>
+        /// <summary>
+        /// The material an invisible face gets: clear, and lit by nothing.
+        ///
+        /// Transparent alone is not enough. URP's Lit shader still runs its
+        /// specular and reflection terms on a surface whose alpha is zero, so a
+        /// clear pane picks up a highlight and reads as glass — which is what the
+        /// mirrored sheen on castle_R01 was. Turning both terms off, and the
+        /// smoothness with them, leaves nothing for a light to catch.
+        /// </summary>
+        private static Material BuildInvisible(
+            AssetImportContext context, Shader shader, string name)
+        {
+            var blank = new Material(shader) { name = name };
+            blank.SetColor(BaseColorId, new Color(1f, 1f, 1f, 0f));
+            blank.SetFloat(SurfaceId, 1f);
+            blank.SetFloat(AlphaClipId, 0f);
+            blank.SetFloat(SmoothnessId, 0f);
+            blank.SetFloat(MetallicId, 0f);
+            blank.SetInt("_ZWrite", 0);
+
+            // The keyword is what the pass reads; the float is what the inspector
+            // shows. URP needs both set or the term stays on.
+            blank.SetFloat("_SpecularHighlights", 0f);
+            blank.SetFloat("_EnvironmentReflections", 0f);
+            blank.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+            blank.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
+
+            blank.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            context.AddObjectToAsset($"material_{name}", blank);
+            return blank;
+        }
+
+        /// <summary>Whether a texture name is the invisible marker.</summary>
+        private static bool IsInvisible(string name)
+            => string.Equals(name, InvisibleTexture, StringComparison.OrdinalIgnoreCase);
+
         private static Texture2D LoadTexture(AssetImportContext context, string root, string name)
         {
             Texture2D found = null;
@@ -648,6 +724,32 @@ namespace OrangeCarrrrr.Editor
         /// The pipeline's own default material asset. Creating one here instead
         /// would leak an object the import never takes ownership of.
         /// </summary>
+        /// <summary>
+        /// The material a face gets when its texture is not in the archives - the
+        /// ad boards, and a dozen more on the later client's courses.
+        ///
+        /// Built here rather than taken from the pipeline, which is what it used to
+        /// do: that default is one shared asset used all over the editor, so it
+        /// could not be given a colour of its own without changing everything else
+        /// that draws with it. Plain white, unlit by any highlight, so an
+        /// untextured face reads as blank rather than as a grey panel that looks
+        /// deliberate.
+        /// </summary>
+        private static Material BuildFallback(AssetImportContext context, Shader shader)
+        {
+            var fallback = new Material(shader) { name = "Untextured" };
+            fallback.SetColor(BaseColorId, Color.white);
+            fallback.SetFloat(SurfaceId, 0f);
+            fallback.SetFloat(SmoothnessId, 0f);
+            fallback.SetFloat(MetallicId, 0f);
+            fallback.SetFloat(CullId, (float)CullMode.Off);
+            fallback.SetFloat(RenderFaceId, RenderFaceBoth);
+            fallback.doubleSidedGI = true;
+
+            context.AddObjectToAsset("material_untextured", fallback);
+            return fallback;
+        }
+
         private static Material DefaultMaterial()
             => GraphicsSettings.currentRenderPipeline != null
                 ? GraphicsSettings.currentRenderPipeline.defaultMaterial

@@ -25,11 +25,12 @@ namespace OrangeCarrrrr.Runtime
     ///   S  save a screenshot
     ///   R  respawn onto the checkpoint the kart is at, half a second later
     ///
-    /// F1 caps the frame rate and F2 switches between the original's race rule and
-    /// the bench. Neither is in the original: the port has to be frame-rate
-    /// independent, and being able to pin 60 or 40 on demand is how that gets
-    /// checked rather than assumed; and a bench that ends after three laps is not
-    /// a bench.
+    /// F1 caps the frame rate, F2 switches between the original's race rule and
+    /// the bench, and F3 cycles the skid face. None of the three is in the original,
+    /// which is why they sit on the function row: the port has to be frame-rate
+    /// independent and pinning 60 or 40 on demand is how that gets checked rather
+    /// than assumed; a bench that ends after three laps is not a bench; and the
+    /// 2004 game lays one skid mark with no way to change it.
     /// </summary>
     [RequireComponent(typeof(SimulatorRoot))]
     public sealed class SimulatorKeys : MonoBehaviour
@@ -76,6 +77,7 @@ namespace OrangeCarrrrr.Runtime
             if (keyboard.hKey.wasPressedThisFrame) _simulator.ToggleUnlimitedBoosters();
             if (keyboard.f1Key.wasPressedThisFrame) _simulator.CycleFrameRateCap();
             if (keyboard.f2Key.wasPressedThisFrame) _simulator.ToggleRaceMode();
+            if (keyboard.f3Key.wasPressedThisFrame) _simulator.NextSkidStyle();
             if (keyboard.sKey.wasPressedThisFrame) CaptureScreenshot();
         }
 

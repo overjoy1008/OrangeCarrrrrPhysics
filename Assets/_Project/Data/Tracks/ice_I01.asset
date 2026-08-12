@@ -16,6 +16,8 @@ MonoBehaviour:
   _displayName: "\uC544\uC774\uC2A4 \uAC08\uB77C\uC9C4 \uBE59\uC0B0"
   _raceMode: "\uC544\uC774\uD15C\u2192\uD604\uC7AC \uC2A4\uD53C\uB4DC"
   _difficulty: 4
+  _source: 0
+  _laps: 3
   _minimum: {x: 24.31265, y: 60.53888, z: 1.654024}
   _maximum: {x: 1107.896, y: 1165.535, z: 318.2377}
   _hasScene: 1

@@ -110,6 +110,15 @@ namespace OrangeCarrrrr.Core
         public uint FinishMs { get; private set; }
 
         /// <summary>
+        /// Where the kart came in, counting from one.
+        ///
+        /// There is only ever one kart in this port, so it is always first; the
+        /// value is carried rather than assumed so the result reads WINNER or
+        /// FINISH off the race instead of off a constant in the HUD.
+        /// </summary>
+        public uint FinishPlace { get; private set; } = 1u;
+
+        /// <summary>
         /// The finishing time, measured from GO rather than from the grid.
         ///
         /// The original stamps it as <c>now - raceStart</c> at <c>0x00456F...</c>'s
@@ -140,6 +149,7 @@ namespace OrangeCarrrrr.Core
             Countdown = default;
             Countdown.Start(nowMs);
             FinishMs = 0u;
+            FinishPlace = 1u;
             _resultsShown = false;
             _exitRaised = false;
         }
@@ -200,12 +210,13 @@ namespace OrangeCarrrrr.Core
         /// of the same gate both do nothing.
         /// </summary>
         /// <returns>True when this call ended the race.</returns>
-        public bool Finish(uint nowMs)
+        public bool Finish(uint nowMs, uint place = 1u)
         {
             if (Mode != KartRaceMode.Race || Phase != KartRacePhase.Running) return false;
 
             Phase = KartRacePhase.Finished;
             FinishMs = nowMs;
+            FinishPlace = place < 1u ? 1u : place;
             return true;
         }
     }

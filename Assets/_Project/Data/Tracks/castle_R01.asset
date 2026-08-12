@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36f60a80785b91443b31de24ee82a3b0, type: 3}
+  m_Name: castle_R01
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
+  _assetName: castle_R01
+  _displayName: "\uB300\uC800\uD0DD \uC740\uBC00\uD55C \uC9C0\uD558\uC2E4"
+  _raceMode: "\uC2A4\uD53C\uB4DC"
+  _difficulty: 0
+  _source: 1
+  _laps: 2
+  _minimum: {x: 54.815975, y: 12.568909, z: 43.814198}
+  _maximum: {x: 1131.1954, y: 1477.7528, z: 226.89317}
+  _hasScene: 1
+  _startKind: 0
+  _startAxis: 2
+  _startLine: {x: 486.71613, y: 1025.8762, z: 138.92685}
+  _minimap: {fileID: 2800000, guid: 69882f0904a176646aeca84123fb1e7b, type: 3}
+  _course: {fileID: 11400000, guid: 4fbc4f436f0ccbb4d87cc1267934d88f, type: 2}

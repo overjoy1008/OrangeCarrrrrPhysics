@@ -34,6 +34,25 @@ namespace OrangeCarrrrr.Editor
     {
         private const string SceneDirectory = "Assets/_Project/Scenes";
         private const string ArtDirectory = "Assets/_Project/Art/Tracks";
+
+        /// <summary>
+        /// Where a track's mesh is.
+        ///
+        /// The demo's thirteen sit directly under the art directory; anything from
+        /// the later client is kept in a folder of its own so the two sets never
+        /// blur together on disk. The demo is checked first, so a name in both
+        /// resolves to the demo's. <see cref="TrackCatalogBuilder"/> resolves the
+        /// same way, and the two have to agree or a track builds a catalog entry
+        /// with no scene behind it.
+        /// </summary>
+        internal static string KtrkPath(string id)
+        {
+            string demo = $"{ArtDirectory}/{id}/track_{id}.ktrk";
+            if (File.Exists(Path.GetFullPath(demo))) return demo;
+
+            string later = $"{ArtDirectory}/TCGames/{id}/track_{id}.ktrk";
+            return File.Exists(Path.GetFullPath(later)) ? later : demo;
+        }
         private const string SpecDirectory = "Assets/_Project/Data/Tracks";
 
         /// <summary>The scene copied for every track that has none.</summary>
@@ -101,7 +120,7 @@ namespace OrangeCarrrrr.Editor
         private static bool TryBuild(
             string id, string templatePath, string scenePath, out string reason)
         {
-            string ktrkPath = $"{ArtDirectory}/{id}/track_{id}.ktrk";
+            string ktrkPath = KtrkPath(id);
             string specPath = $"{SpecDirectory}/{id}.asset";
 
             if (!File.Exists(Path.GetFullPath(ktrkPath))) { reason = "no KTRK mesh"; return false; }

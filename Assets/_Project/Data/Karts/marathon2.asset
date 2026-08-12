@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: marathon2
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
   _assetName: marathon2
+  _source: 0
   _modelPrefab: {fileID: 8246487678324334942, guid: ea959dcbd79ffde4b84ae38ac41ed6d1, type: 3}
   _skinTemplate: {fileID: 2800000, guid: b82bd8caa35032e4780211a4c57bcf3d, type: 3}
   _halfWidth: 0.78619003

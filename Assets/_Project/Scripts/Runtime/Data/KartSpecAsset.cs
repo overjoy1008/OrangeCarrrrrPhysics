@@ -21,6 +21,9 @@ namespace OrangeCarrrrr.Runtime
         [Tooltip("Asset name inside the original kart.rho. The archive spells Cotton as \"cotten\".")]
         [SerializeField] private string _assetName = "cotten5";
 
+        [Tooltip("Which client the body and its numbers came from.")]
+        [SerializeField] private KartAssetSource _source;
+
         [Header("Model")]
         [Tooltip("Imported KTRK model root. Instantiated by KartView.")]
         [SerializeField] private GameObject _modelPrefab;
@@ -44,6 +47,15 @@ namespace OrangeCarrrrr.Runtime
         [SerializeField] private uint _maxBoosters = KartDemoData.DefaultMaxBoosters;
 
         public string AssetName => _assetName;
+
+        /// <summary>
+        /// Which client this came out of. Serialised as Demo on an asset that
+        /// predates the field, so the shipped table is asked instead — the same
+        /// fallback the lap count uses.
+        /// </summary>
+        public KartAssetSource Source => _source != KartAssetSource.Demo
+            ? _source
+            : KartDemoData.FindKart(_assetName)?.Source ?? KartAssetSource.Demo;
         public GameObject ModelPrefab => _modelPrefab;
 
         /// <summary>
@@ -70,6 +82,7 @@ namespace OrangeCarrrrr.Runtime
         public KartSpec ToSpec() => new KartSpec
         {
             AssetName = _assetName,
+            Source = Source,
             Dynamics = _dynamics,
             Geometry = Geometry,
             ModelHeight = _modelHeight,
@@ -80,6 +93,7 @@ namespace OrangeCarrrrr.Runtime
         public void ApplySpec(KartSpec spec)
         {
             _assetName = spec.AssetName;
+            _source = spec.Source;
             _dynamics = spec.Dynamics;
             _halfWidth = spec.Geometry.HalfWidth;
             _halfLength = spec.Geometry.HalfLength;
