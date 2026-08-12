@@ -15,7 +15,7 @@ MonoBehaviour:
   _assetName: paragonX_gold
   _source: 1
   _modelPrefab: {fileID: 3609999473697261534, guid: ea8b413fb2a29d14cb77d80a062a7c29, type: 3}
-  _skinTemplate: {fileID: 0}
+  _skinTemplate: {fileID: 2800000, guid: c1c34b9774930b54ca5105d526374e25, type: 3}
   _halfWidth: 0.7709029
   _halfLength: 1.2039901
   _modelHeight: 0.7005107

@@ -15,7 +15,7 @@ MonoBehaviour:
   _assetName: paragonV1
   _source: 1
   _modelPrefab: {fileID: 5111518001564963553, guid: 8eeac2266aa1bd34e9b465567e363982, type: 3}
-  _skinTemplate: {fileID: 0}
+  _skinTemplate: {fileID: 2800000, guid: ac766b59e99adfe4f9b69c0bd2c8e401, type: 3}
   _halfWidth: 0.8316438
   _halfLength: 1.1356342
   _modelHeight: 0.717836

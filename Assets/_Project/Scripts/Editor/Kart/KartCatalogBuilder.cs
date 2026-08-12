@@ -97,19 +97,28 @@ namespace OrangeCarrrrr.Editor
 
                 spec.ApplySpec(recovered);
 
-                string skinPath = $"{SkinDirectory}/{name}.png";
-                MakeReadable(skinPath);
-
                 // The demo's own models sit flat in the directory; anything from
                 // the later client is kept in a folder of its own, so the two sets
                 // never blur together on disk. Demo first, so a name in both wins
-                // for the demo.
+                // for the demo. The atlas is split the same way, and for the same
+                // reason.
                 var model = AssetDatabase.LoadAssetAtPath<GameObject>($"{ModelDirectory}/{name}.ktrk");
                 if (model == null)
                 {
                     model = AssetDatabase.LoadAssetAtPath<GameObject>(
                         $"{ModelDirectory}/TCGames/{name}.ktrk");
                 }
+
+                // The later client ships two images beside model.1s. The body
+                // atlas is 1.png — it carries the same magenta filler and the same
+                // 45x20 block of blue the painter keys off. 0.png is alpha 0 all
+                // the way through on every one of them, so it is not brought over.
+                string skinPath = $"{SkinDirectory}/{name}.png";
+                if (AssetDatabase.LoadAssetAtPath<Texture2D>(skinPath) == null)
+                {
+                    skinPath = $"{SkinDirectory}/TCGames/{name}.png";
+                }
+                MakeReadable(skinPath);
                 var skin = AssetDatabase.LoadAssetAtPath<Texture2D>(skinPath);
                 if (model != null) ++models;
                 if (skin != null) ++skins;

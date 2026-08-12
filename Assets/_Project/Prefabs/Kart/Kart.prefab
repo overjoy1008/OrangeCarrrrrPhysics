@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81de543adc139c545a591a096c7a601e, type: 3}
   m_Name:
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartView
-  _kart: {fileID: 11400000, guid: 1a5cb325282fcb44386c0d0f720f89d3, type: 2}
+  _kart: {fileID: 11400000, guid: ccd1371f2f1ce3941ab2ad9069cc5370, type: 2}
   _modelRoot: {fileID: 6410275839201553002}
-  _colourIndex: 8
+  _colourIndex: 0
   _stampNumberPlate: 1
   _plate: {fileID: 0}
   _number: {fileID: 0}

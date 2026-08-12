@@ -124,26 +124,30 @@ namespace OrangeCarrrrr.UI
         {
             _builder.Clear();
             _builder.Append(
-                "Arrows: drive/instant  Shift/W: drift  Ctrl/D: boost  C: camera  ");
+                "Arrows: grip drive  Shift/W: drift  Ctrl/D: booster  ");
             _builder.Append("P: parameters  K: karts  T: tracks  ");
-            _builder.AppendFormat("U: engine [{0}]  ", Simulator.EngineSoundPreset);
-            _builder.Append("F: drag trigger");
+            _builder.Append("F: drag trigger  R: respawn");
 
             _labels[1].SetText(_builder);
             _labels[1].color = HudPalette.StatusText;
 
             _builder.Clear();
-            _builder.Append("S: screenshot  R: respawn  ");
             _builder.AppendFormat(
-                "L: colour {0} [{1}]", Simulator.KartColourIndex, Simulator.KartColourName);
+                "C: color [{0} {1}]", Simulator.KartColourIndex, Simulator.KartColourName);
+            _builder.AppendFormat("  I: skid [{0}]", Simulator.SkidStyleName);
             _builder.AppendFormat(
-                "  N: {0} checkpoints", Simulator.ShowCheckpoints ? "hide" : "show");
-            _builder.AppendFormat(
-                "  B: {0} model bounds", Simulator.ShowBounds ? "hide" : "show");
-            _builder.AppendFormat("  F1: fps [{0}]", Simulator.FrameRateCapName);
-            _builder.AppendFormat(
-                "  F2: race [{0}]", Simulator.RaceMode == KartRaceMode.Race ? "race" : "free");
-            _builder.AppendFormat("  F3: skid [{0}]", Simulator.SkidStyleName);
+                "  F1: race mode [{0}]",
+                Simulator.RaceMode == KartRaceMode.Race ? "race" : "free");
+            _builder.Append("  F2: screenshot");
+
+            // Written out rather than showing the state: both of these are things
+            // you can see on screen, so the label says what the key does instead
+            // of repeating what is already in front of you.
+            _builder.Append("  F3: show/hide checkpoints");
+            _builder.Append("  F4: show/hide kart bounds");
+
+            _builder.Append("  F5: camera");
+            _builder.AppendFormat("  F6: fps [{0}]", Simulator.FrameRateCapName);
 
             _labels[2].SetText(_builder);
             _labels[2].color = HudPalette.StatusText;
@@ -152,12 +156,21 @@ namespace OrangeCarrrrr.UI
         }
 
         /// <summary>
-        /// The inferred layers, word for word as the original labels them: the
-        /// gauge's charging model, the booster storage cap, and the two boost
-        /// models. None of these is recovered behaviour — they are hypotheses the
+        /// The inferred layers: the gauge's charging model, the short booster off
+        /// a drift exit, the storage cap, and what starts and stops an item boost.
+        /// None of these is recovered behaviour — they are hypotheses the
         /// simulator can be run against — and the purple is what says so at a
         /// glance.
         ///
+        /// They are the only things on the number row, so which keys change a
+        /// hypothesis and which only change the view is readable from the keyboard
+        /// rather than from this line.
+        ///
+        /// Every bracket carries live state. The short booster's is two values —
+        /// the model and how many charges are banked under it — because with the
+        /// stored model an empty bank is the reason a press does nothing, and a
+        /// label naming only the model would leave that off screen. How many
+        /// boosters are in storage is the gauge panel's job, not this line's.
         /// </summary>
         private void WriteExperimental()
         {
@@ -168,15 +181,17 @@ namespace OrangeCarrrrr.UI
             _builder.AppendFormat(
                 " E: gear [{0}]",
                 Simulator.Gearbox.Mode == KartGearMode.Multi ? "multi" : "single");
-            _builder.AppendFormat(" G: gauge [{0}]", KartGauge.ModelName(gauge.Model));
+            _builder.AppendFormat(" 1: gauge [{0}]", KartGauge.ModelName(gauge.Model));
             _builder.AppendFormat(
-                " H: storage [{0}]", gauge.UnlimitedBoosters ? "unlimited" : "capped");
-            _builder.AppendFormat(
-                " Q: instant [{0}, {1}]",
+                " 2: short booster [{0}, {1}]",
                 Simulator.StoredInstantBoost ? "stored" : "window",
                 Simulator.StoredInstantBoostCount);
             _builder.AppendFormat(
-                " M: stop [{0}]", Simulator.ReverseInputEndsBoost ? "reverse" : "release");
+                " 3: storage [{0}]", gauge.UnlimitedBoosters ? "unlimited" : "capped");
+            _builder.AppendFormat(
+                " 4: starter [{0}]", Simulator.NoDelayBoost ? "no delay" : "one press");
+            _builder.AppendFormat(
+                " 5: stopper [{0}]", Simulator.ReverseInputEndsBoost ? "reverse" : "release");
 
             _labels[3].SetText(_builder);
             _labels[3].color = HudPalette.StatusExperimental;
@@ -198,8 +213,13 @@ namespace OrangeCarrrrr.UI
             }
             if (kartSpec != null)
             {
+                // The engine set sits with the kart rather than up on the key
+                // line: it is no longer something a key does, it is one more thing
+                // the chosen kart brings with it.
                 _builder.AppendFormat(
-                    " | kart {0} {1:F3} x {2:F3}", kartSpec.AssetName, kartSpec.Width, kartSpec.Length);
+                    " | kart {0} {1:F3} x {2:F3} | engine {3}",
+                    kartSpec.AssetName, kartSpec.Width, kartSpec.Length,
+                    Simulator.EngineSoundPreset);
             }
             _builder.AppendFormat(" | h {0:F2}", kart.Position.Z);
 

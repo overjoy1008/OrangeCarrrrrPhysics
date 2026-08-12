@@ -16,7 +16,7 @@ namespace OrangeCarrrrr.Runtime
         Surround = 2,
 
         /// <summary>
-        /// The <c>C</c> key's top-down projection. Not one of the original's
+        /// The <c>F5</c> key's top-down projection. Not one of the original's
         /// cameramen — it is the port's own debug view, and it overrides whichever
         /// cameraman the race would otherwise have installed.
         /// </summary>

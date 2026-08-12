@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 namespace OrangeCarrrrr.Runtime
 {
     /// <summary>
-    /// The <c>N</c> key: every gate of the course graph drawn as the quad it is.
+    /// The <c>F3</c> key: every gate of the course graph drawn as the quad it is.
     ///
     /// Ported from <c>draw_course_gates</c>, which outlines the two triangles
     /// <c>kart_course_gate_crossing</c> tests the trail segment against, edge by

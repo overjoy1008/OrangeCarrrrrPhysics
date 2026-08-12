@@ -8,8 +8,8 @@ namespace OrangeCarrrrr.Editor
 {
     /// <summary>
     /// Builds a <see cref="KartSoundSet"/> for every engine preset from the
-    /// samples as they import, gathers them into the catalog the <c>U</c> key
-    /// walks, and gives the samples the import settings the originals need.
+    /// samples as they import, gathers them into the catalog a kart's engine is
+    /// looked up in, and gives the samples the import settings the originals need.
     ///
     /// The demo's samples are 16-bit mono 22050 Hz PCM. Unity's defaults would
     /// compress them to Vorbis and load them streaming, which adds latency to a
@@ -17,11 +17,12 @@ namespace OrangeCarrrrr.Editor
     /// 64 ms. Decompressed PCM, preloaded, is what keeps them behaving like the
     /// waveOut mixer's buffers.
     ///
-    /// The thirteen presets are the original's own list and order. Each one is
-    /// four samples — motor, booster, instant boost, booster idle — and the bike
-    /// variants differ only in the first two, which is why they sit beside their
-    /// car in the order rather than in a group of their own. The kart and
-    /// countdown samples are shared: they are not part of the engine note.
+    /// The presets are the original's own list and order — classic, sr, z7, ht,
+    /// new, jiu, x, v1. Each one is four samples — motor, booster, instant boost,
+    /// booster idle — and the bike variants differ only in the first two, which is
+    /// why they sit beside their car in the order rather than in a group of their
+    /// own, and why a bike folder carries a copy of its car's last two. The kart
+    /// and countdown samples are shared: they are not part of the engine note.
     ///
     /// Wiring the assets here rather than leaving them to be dragged in is
     /// deliberate: an unattached sound set is a silent simulator with nothing to
@@ -45,6 +46,7 @@ namespace OrangeCarrrrr.Editor
             "Sr", "SrBike",
             "Z7", "Z7Bike",
             "Ht", "HtBike",
+            "New", "NewBike",
             "Jiu", "JiuBike",
             "X", "XBike",
             "V1", "V1Bike",

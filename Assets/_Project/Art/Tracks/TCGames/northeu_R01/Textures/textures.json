@@ -2,7 +2,7 @@
   "track": "northeu_R01",
   "theme": "northeu",
   "referenced": 116,
-  "written": 104,
+  "written": 108,
   "unmatched": [
     "ad_board_a",
     "ad_board_b",
@@ -11,11 +11,7 @@
     "no_ob_c_right",
     "no_sideset_c",
     "nort_animal02",
-    "transparency",
-    "부스터존",
-    "부스터존발판",
-    "점프존1",
-    "점프존발판"
+    "transparency"
   ],
   "textures": [
     {
@@ -583,6 +579,18 @@
       "transparent": false
     },
     {
+      "name": "부스터존",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "부스터존발판",
+      "width": 128,
+      "height": 128,
+      "transparent": false
+    },
+    {
       "name": "영상판",
       "width": 128,
       "height": 128,
@@ -629,6 +637,18 @@
       "width": 256,
       "height": 256,
       "transparent": false
+    },
+    {
+      "name": "점프존1",
+      "width": 128,
+      "height": 128,
+      "transparent": true
+    },
+    {
+      "name": "점프존발판",
+      "width": 128,
+      "height": 128,
+      "transparent": true
     },
     {
       "name": "타키그림",

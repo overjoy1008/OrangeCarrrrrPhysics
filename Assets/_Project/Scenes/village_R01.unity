@@ -657,7 +657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56cb9eab7f4bb0141a2c301fc4ab2248, type: 3}
   m_Name: 
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.SimulatorRoot
-  _kart: {fileID: 11400000, guid: 1a5cb325282fcb44386c0d0f720f89d3, type: 2}
+  _kart: {fileID: 11400000, guid: ccd1371f2f1ce3941ab2ad9069cc5370, type: 2}
   _track: {fileID: 11400000, guid: f546555dc2a1b53448690587dc24b902, type: 2}
   _trackCollision: {fileID: 368030039}
   _chaseCamera: {fileID: 1024659007}

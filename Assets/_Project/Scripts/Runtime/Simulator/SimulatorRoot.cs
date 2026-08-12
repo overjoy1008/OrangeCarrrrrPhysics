@@ -229,7 +229,7 @@ namespace OrangeCarrrrr.Runtime
         public string SkidStyleName => _skidMarks != null ? _skidMarks.StyleName : "none";
 
         /// <summary>
-        /// The <c>F3</c> key: the next skid face. Not the original's — the 2004 game
+        /// The <c>I</c> key: the next skid face. Not the original's — the 2004 game
         /// lays one mark and has no way to change it — so it sits with the other
         /// port-only keys on the function row.
         /// </summary>
@@ -318,11 +318,11 @@ namespace OrangeCarrrrr.Runtime
         /// </summary>
         public void SetDynamics(in KartDynamicsConfig config) => State.Config = config;
 
-        /// <summary>The <c>G</c> key: the next charging hypothesis.</summary>
+        /// <summary>The <c>1</c> key: the next charging hypothesis.</summary>
         public void NextGaugeModel() => _gauge.NextModel();
 
         /// <summary>
-        /// The <c>Q</c> key: whether a drift exit opens the accelerator window or
+        /// The <c>2</c> key: whether a drift exit opens the accelerator window or
         /// banks a charge to spend later. Clearing the window with it, so the two
         /// models never overlap on the same drift.
         /// </summary>
@@ -334,7 +334,7 @@ namespace OrangeCarrrrr.Runtime
         }
 
         /// <summary>
-        /// The <c>M</c> key: whether releasing the throttle ends a boost, or only
+        /// The <c>5</c> key: whether releasing the throttle ends a boost, or only
         /// pressing reverse does.
         /// </summary>
         public void ToggleBoostCutoffModel()
@@ -347,7 +347,22 @@ namespace OrangeCarrrrr.Runtime
 
         public bool ReverseInputEndsBoost => State.ReverseInputEndsBoost;
 
-        /// <summary>The <c>H</c> key: booster storage capped by the kart, or not.</summary>
+        /// <summary>
+        /// Whether a held booster key re-arms itself, chaining one charge
+        /// straight into the next. Off is the recovered behaviour.
+        ///
+        /// Two gates have to give way together, one on each side of the step: the
+        /// gauge's one-charge-per-grant latch in <see cref="SpendGaugeCharge"/>,
+        /// and the press edge the engine itself takes in
+        /// <c>KartSimulation.SimulateMilliseconds</c>. Dropping only the first
+        /// spends the charge and starts nothing.
+        /// </summary>
+        public bool NoDelayBoost => State.NoDelayBoost;
+
+        /// <summary>The <c>4</c> key: chain boosters, or one press per booster.</summary>
+        public void ToggleNoDelayBoost() => State.NoDelayBoost = !State.NoDelayBoost;
+
+        /// <summary>The <c>3</c> key: booster storage capped by the kart, or not.</summary>
         public void ToggleUnlimitedBoosters()
         {
             _gauge.UnlimitedBoosters = !_gauge.UnlimitedBoosters;
@@ -379,7 +394,7 @@ namespace OrangeCarrrrr.Runtime
         /// <summary>The camera currently rendering, whichever cameraman is installed.</summary>
         public Camera ActiveCamera => _cameras.ActiveCamera;
 
-        /// <summary>The <c>N</c> key: draw the checkpoint gates over the track.</summary>
+        /// <summary>The <c>F3</c> key: draw the checkpoint gates over the track.</summary>
         public bool ShowCheckpoints
         {
             get => _gateView != null && _gateView.Show;
@@ -387,7 +402,7 @@ namespace OrangeCarrrrr.Runtime
         }
 
         /// <summary>
-        /// The <c>B</c> key: the kart model's three bounding boxes.
+        /// The <c>F4</c> key: the kart model's three bounding boxes.
         ///
         /// The original's B is the <em>model</em> bounds, not the track's. The
         /// track's AABB wall is drawn unconditionally by <c>draw_track</c> and was
@@ -403,16 +418,41 @@ namespace OrangeCarrrrr.Runtime
         /// <summary>Row of <c>colortable.xml</c>, or the shipped default.</summary>
         public int KartColourIndex => _kartView != null
             ? _kartView.ColourIndex
-            : KartColorTable.DefaultIndex;
+            : KartColorTable.SimulatorIndex;
 
         public string KartColourName => _kartView != null
             ? _kartView.ColourName
-            : KartColorTable.NameAt(KartColorTable.DefaultIndex);
+            : KartColorTable.NameAt(KartColorTable.SimulatorIndex);
 
-        /// <summary>The <c>L</c> key: the next of the ten paints.</summary>
+        /// <summary>
+        /// The paint the current kart opens on: the colour its series wears in
+        /// the gallery, so a kart looks the same wherever it is met.
+        /// </summary>
+        public int DefaultKartColourIndex => _kart != null
+            ? KartGalleryLayout.ColourOf(_kart.AssetName)
+            : KartColorTable.SimulatorIndex;
+
+        /// <summary>The <c>C</c> list: one of the ten paints, chosen outright.</summary>
+        public void SetKartColour(int index)
+        {
+            if (_kartView != null) _kartView.ColourIndex = index;
+        }
+
+        /// <summary>The next of the ten paints. No key walks it any more.</summary>
         public void NextKartColour()
         {
             if (_kartView != null) _kartView.NextColour();
+        }
+
+        /// <summary>
+        /// Puts the current kart into its series colour.
+        ///
+        /// Called when the kart changes rather than every frame, so a colour
+        /// picked from the <c>C</c> list survives until the next kart is chosen.
+        /// </summary>
+        private void ApplyDefaultKartColour()
+        {
+            if (_kartView != null) _kartView.ColourIndex = DefaultKartColourIndex;
         }
 
         /// <summary>The <c>T</c> key's list, resolved from the project when unset.</summary>
@@ -496,11 +536,16 @@ namespace OrangeCarrrrr.Runtime
         }
 
         /// <summary>
-        /// Switches to a kart.
+        /// Switches to a kart, without interrupting the run.
         ///
-        /// A kart is not a scene, so nothing is loaded — but its geometry is, so
-        /// the simulation has to be re-initialised rather than nudged. The
-        /// original resets the kart to the line on a change too.
+        /// Nothing is loaded and nothing is reset: the new body and dynamics are
+        /// swapped in underneath, and the speed, the drift gauge, the stored
+        /// boosters, the race clock and the lap all keep going. That is a bench
+        /// choice, not the original's — the original puts the kart back on the
+        /// line — and it is the whole point of the <c>K</c> list, which is there
+        /// to compare karts through the same corner rather than one run each.
+        ///
+        /// <c>R</c> is still the way back to the line.
         /// </summary>
         public void SelectKart(KartSpecAsset kart)
         {
@@ -509,10 +554,33 @@ namespace OrangeCarrrrr.Runtime
             _kart = kart;
             if (_kartView != null) _kartView.Kart = kart;
             if (_boostFlame != null) _boostFlame.Kart = kart;
+            ApplyEngineSound();
+            ApplyDefaultKartColour();
 
-            // Half width and half length feed the suspension and the body box, so
-            // the state has to be rebuilt from the new geometry.
-            ResetSimulation();
+            // Swapped under the running simulation rather than resetting it: the
+            // speed, the gauge, the stored boosters and the lap all carry over, so
+            // two karts can be taken through the same corner back to back instead
+            // of from the grid each time.
+            if (_state != null)
+            {
+                KartSpec spec = kart.ToSpec();
+                KartSimulation.Rekart(_state, spec.Dynamics, spec.Geometry);
+
+                // Storage is per kart, so a swap onto a kart that holds fewer has
+                // to drop what no longer fits — the same trim the H key does.
+                if (!_gauge.UnlimitedBoosters && _gauge.Boosters > spec.MaxBoosters)
+                {
+                    _gauge.Boosters = spec.MaxBoosters;
+                }
+
+                // The new body is a different size, so the view is placed from the
+                // state now rather than a frame later.
+                if (_kartView != null) _kartView.Apply(_state);
+            }
+            else
+            {
+                ResetSimulation();
+            }
         }
 
         private KartCatalog ResolveKartCatalog()
@@ -545,23 +613,30 @@ namespace OrangeCarrrrr.Runtime
             _sound != null && _sound.Sounds != null ? _sound.Sounds.Preset : "none";
 
         /// <summary>
-        /// The <c>U</c> key: the next of the thirteen engine sound presets.
+        /// Puts the current kart's own engine on the sound player.
         ///
-        /// Only the four samples change. The pitch and volume laws under them are
-        /// the recovered ones whichever preset is loaded, so this is a change of
-        /// timbre and nothing else.
+        /// The preset follows the kart rather than a key, because it is a property
+        /// of the kart: the later client ships one engine set per generation and
+        /// a paragon has never sounded like a cotten. This used to be the <c>U</c>
+        /// key cycling all thirteen sets by hand.
+        ///
+        /// A preset the project has not imported leaves the player on whatever it
+        /// already had, which is the demo's classic — the wrong timbre is a better
+        /// outcome than a kart that goes silent.
         /// </summary>
-        public void NextEngineSound()
+        private void ApplyEngineSound()
         {
-            KartSoundCatalog catalog = ResolveSoundCatalog();
-            if (catalog == null || catalog.Count < 2 || _sound == null)
-            {
-                Debug.LogWarning("No other engine sound preset to switch to.", this);
-                return;
-            }
+            if (_sound == null) return;
 
-            KartSoundSet next = catalog.Next(_sound.Sounds);
-            if (next != null) _sound.Sounds = next;
+            string wanted = KartEnginePreset.For(_kart != null ? _kart.AssetName : null);
+            if (_sound.Sounds != null && KartEnginePreset.Matches(_sound.Sounds.Preset, wanted)) return;
+
+            KartSoundCatalog catalog = ResolveSoundCatalog();
+            if (catalog == null) return;
+
+            KartSoundSet set = catalog.Find(wanted);
+            if (set != null) _sound.Sounds = set;
+            else Debug.LogWarning($"No '{wanted}' engine sound set in the catalog.", this);
         }
 
         private TrackCatalog ResolveTrackCatalog()
@@ -577,7 +652,7 @@ namespace OrangeCarrrrr.Runtime
         }
 
         /// <summary>
-        /// The frame-rate caps the <c>F1</c> key walks, in cycle order.
+        /// The frame-rate caps the <c>F6</c> key walks, in cycle order.
         ///
         /// Not something the original has. It is here because the port has to be
         /// frame-rate independent and that is otherwise untestable: the skid marks
@@ -599,7 +674,7 @@ namespace OrangeCarrrrr.Runtime
 
         public string FrameRateCapName => FrameRateCap == 0 ? "off" : FrameRateCap.ToString();
 
-        /// <summary>The <c>F1</c> key.</summary>
+        /// <summary>The <c>F6</c> key.</summary>
         public void CycleFrameRateCap()
         {
             _frameRateCapIndex = (_frameRateCapIndex + 1) % FrameRateCaps.Length;
@@ -633,6 +708,12 @@ namespace OrangeCarrrrr.Runtime
         {
             EnsureEffects();
             EnsureRaceCameras();
+
+            // After EnsureEffects, which is what finds or creates the player the
+            // preset goes on, and before the first frame is heard.
+            ApplyEngineSound();
+            ApplyDefaultKartColour();
+
             ResetSimulation();
             ApplyViewMode();
 
@@ -772,16 +853,18 @@ namespace OrangeCarrrrr.Runtime
             KartSpec kartSpec = _kart != null ? _kart.ToSpec() : KartDemoData.DefaultKart;
             TrackSpec trackSpec = _track != null ? _track.ToSpec() : KartDemoData.DefaultTrack;
 
-            // The two bench choices survive the reset, the way the original's
+            // The three bench choices survive the reset, the way the original's
             // reset_kart carries them across kart_simulation_init: they are
             // settings about what is being compared, not part of the kart.
             bool storedModel = _state != null && _state.InstantBoost.StoredModel;
             bool reverseEndsBoost = _state != null && _state.ReverseInputEndsBoost;
+            bool noDelayBoost = _state != null && _state.NoDelayBoost;
 
             _state ??= new KartSimulationState();
             KartSimulation.Init(_state, kartSpec.Dynamics, kartSpec.Geometry);
             _state.InstantBoost.StoredModel = storedModel;
             _state.ReverseInputEndsBoost = reverseEndsBoost;
+            _state.NoDelayBoost = noDelayBoost;
 
             _flatGround.Height = trackSpec.Minimum.Z;
             BuildCourse();
@@ -1061,6 +1144,13 @@ namespace OrangeCarrrrr.Runtime
         /// Retried every frame the key is held rather than only on the press
         /// edge: a hold that could not fire yet — no charge, or off the throttle —
         /// fires as soon as it can.
+        ///
+        /// <see cref="NoDelayBoost"/> drops the first condition and only that one.
+        /// The hold then re-arms itself, so the frame a boost's 3000 ms runs out
+        /// the next charge is taken and the two run back to back for as long as
+        /// there are charges left. <b>The one-at-a-time condition stays</b>: without
+        /// it the retry fires every frame instead of every boost, and a full gauge
+        /// empties in three frames with nothing to show for it.
         /// </summary>
         private void SpendGaugeCharge()
         {
@@ -1070,7 +1160,7 @@ namespace OrangeCarrrrr.Runtime
             {
                 _boostPressAllowed = false;
             }
-            else if (!_boostPressAllowed &&
+            else if ((NoDelayBoost || !_boostPressAllowed) &&
                      !State.TimedBoost.Active &&
                      _controls.ForwardInput != 0f)
             {
@@ -1132,6 +1222,13 @@ namespace OrangeCarrrrr.Runtime
         /// The cue is the original's: the lap branch of the time challenge's state
         /// machine opens the <c>etc</c> sound archive and plays <c>ufo_lab</c> when
         /// the lap counter reaches the course's lap count.
+        ///
+        /// A one-lap course has no final lap to announce. Its counter turns over
+        /// to 1 on the crossing that starts the race, so the reached-the-last-lap
+        /// test is true on the start line and the cue fires under the countdown —
+        /// village_R03 and northeu_R01 both did this. The banner already declines
+        /// the same way, in <c>RaceBannerDisplay.ShowLap</c>: there is no lap to
+        /// call the last one when the whole race is one lap.
         /// </summary>
         private void AnnounceLap()
         {
@@ -1143,7 +1240,7 @@ namespace OrangeCarrrrr.Runtime
             LapStarted?.Invoke(_progress.Lap);
 
             if (_flow.Phase == KartRacePhase.Running &&
-                LapCount != 0u && _progress.Lap == LapCount && _sound != null)
+                LapCount >= 2u && _progress.Lap == LapCount && _sound != null)
             {
                 _sound.PlayFinalLap();
             }

@@ -170,6 +170,146 @@ namespace OrangeCarrrrr.Tests
         }
 
         [Test]
+        public void CyanArtworkIsNotMistakenForAnAnchor()
+        {
+            // A run of near-cyan is neon, not a marker: paragon_9th's glow lines
+            // are 401 texels that quantise to the key. Near-cyan rather than
+            // exact, because that is what anti-aliased artwork actually is — an
+            // exact run is the New generation's paint area instead.
+            KartSkinPainter.Image skin = Solid(20, 20, 0, 0, 0, 255);
+            Set(skin, 5, 8, 4, 253, 250, 255);
+            Set(skin, 6, 8, 4, 253, 250, 255);
+
+            var number = Solid(
+                KartSkinPainter.DigitWidth * 10, KartSkinPainter.DigitHeight, 0, 0, 0, 255);
+
+            KartColorSet red = KartColorTable.At(0);
+            KartSkinPainter.Paint(skin, red, default, number);
+
+            Assert.AreEqual(0, Get(skin, 0, 0).R, "No digit is stamped off a two-texel run.");
+
+            // And the run itself survives, rather than being cleared to its
+            // neighbours the way a real anchor is.
+            Assert.AreEqual((byte)253, Get(skin, 5, 8).G);
+            Assert.AreEqual((byte)250, Get(skin, 6, 8).B);
+        }
+
+        [Test]
+        public void ALoneTexelBesideCyanArtworkIsNotAnAnchorEither()
+        {
+            // paragonV1_gold's neon leaves single cyan texels a few off the edge
+            // of the glow, which touch nothing but are still art. An anchor is
+            // alone inside the box its own digit covers, because two that close
+            // would stamp their numbers on top of each other.
+            KartSkinPainter.Image skin = Solid(30, 30, 0, 0, 0, 255);
+            Set(skin, 10, 10, 4, 253, 250, 255);
+            Set(skin, 11, 10, 4, 253, 250, 255);
+            Set(skin, 14, 12, 4, 253, 250, 255);   // detached, inside the digit box
+            Set(skin, 25, 25, 0, 255, 255, 255);   // exact and clear of everything
+
+            var number = Solid(
+                KartSkinPainter.DigitWidth * 10, KartSkinPainter.DigitHeight, 0, 0, 0, 255);
+
+            KartColorSet red = KartColorTable.At(0);
+            KartSkinPainter.Paint(skin, red, default, number);
+
+            Assert.AreEqual((byte)253, Get(skin, 14, 12).G, "The fringe texel is left as art.");
+            Assert.AreEqual(
+                red.BaseRed, Get(skin, 20, 17).R,
+                "The one clear of the artwork is still an anchor and still stamps.");
+        }
+
+        [Test]
+        public void AFlatFillOfExactCyanTakesTheDriversColour()
+        {
+            // From the New generation on, the atlas marks the colourable area with
+            // a flat fill of cyan instead of with alpha. Left alone it reaches the
+            // screen as cyan, which put a sky-blue coat over all five New karts.
+            KartSkinPainter.Image skin = Solid(20, 20, 0, 0, 0, 255);
+            for (int y = 4; y < 12; ++y)
+            {
+                for (int x = 4; x < 12; ++x) Set(skin, x, y, 0, 255, 255, 255);
+            }
+
+            KartColorSet red = KartColorTable.At(0);
+            KartSkinPainter.Paint(skin, red, default, default);
+
+            var texel = Get(skin, 8, 8);
+            Assert.AreEqual(red.BaseRed, texel.R, "the fill is where the driver's colour goes");
+            Assert.AreEqual(red.BaseGreen, texel.G);
+            Assert.AreEqual(red.BaseBlue, texel.B);
+            Assert.AreEqual((byte)255, texel.A);
+
+            // The black around it is opaque art and must not have been touched.
+            Assert.AreEqual(0, Get(skin, 0, 0).R);
+        }
+
+        [Test]
+        public void OnACyanKeyedAtlasTheTransparentAreaIsAFixedWhiteBody()
+        {
+            // The other half of the swap, and the one that is easy to miss: on a
+            // demo atlas a transparent texel is where the driver's colour shows,
+            // and on a cyan-keyed one it is the fixed white body. Reading it the
+            // demo's way put the driver's colour over the whole kart.
+            KartSkinPainter.Image skin = Solid(20, 20, 255, 255, 255, 0);
+            for (int y = 4; y < 12; ++y)
+            {
+                for (int x = 4; x < 12; ++x) Set(skin, x, y, 0, 255, 255, 255);
+            }
+
+            KartColorSet red = KartColorTable.At(0);
+            KartSkinPainter.Paint(skin, red, default, default);
+
+            var body = Get(skin, 0, 0);
+            Assert.AreEqual((byte)255, body.R, "the transparent area stays white");
+            Assert.AreEqual((byte)255, body.G);
+            Assert.AreEqual((byte)255, body.B);
+            Assert.AreEqual((byte)255, body.A);
+
+            Assert.AreEqual(red.BaseRed, Get(skin, 8, 8).R, "and the cyan fill takes the colour");
+        }
+
+        [Test]
+        public void WithoutCyanTheTransparentAreaIsStillTheDriversColour()
+        {
+            // The demo's own reading, unchanged: no cyan in the atlas means alpha
+            // is the paint key and all twenty-six keep behaving as they did.
+            KartSkinPainter.Image skin = Solid(8, 8, 255, 255, 255, 0);
+
+            KartColorSet red = KartColorTable.At(0);
+            KartSkinPainter.Paint(skin, red, default, default);
+
+            var texel = Get(skin, 4, 4);
+            Assert.AreEqual(red.BaseRed, texel.R);
+            Assert.AreEqual(red.BaseGreen, texel.G);
+            Assert.AreEqual(red.BaseBlue, texel.B);
+        }
+
+        [Test]
+        public void NearCyanIsArtworkAndKeepsItsColour()
+        {
+            // Neon is anti-aliased, so its texels only land on the key once
+            // ToRgb565 rounds them. Not one of paragon_9th's 401 near-cyan texels
+            // is exact 8-bit, and painting them would flatten the glow.
+            KartSkinPainter.Image skin = Solid(20, 20, 0, 0, 0, 255);
+            for (int y = 4; y < 12; ++y)
+            {
+                for (int x = 4; x < 12; ++x) Set(skin, x, y, 4, 253, 250, 255);
+            }
+
+            Assert.AreEqual(
+                KartSkinPainter.KeyCyan, KartSkinPainter.ToRgb565(4, 253, 250),
+                "this colour must still match the key in 16 bits, or the test proves nothing");
+
+            KartSkinPainter.Paint(skin, KartColorTable.At(0), default, default);
+
+            var texel = Get(skin, 8, 8);
+            Assert.AreEqual(4, texel.R, "near-cyan artwork is left as it was");
+            Assert.AreEqual(253, texel.G);
+            Assert.AreEqual(250, texel.B);
+        }
+
+        [Test]
         public void RacingNumberFollowsTheKartsGrade()
         {
             // Simulator-side: the original stamps 0 on every kart it builds.

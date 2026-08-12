@@ -5,7 +5,7 @@ namespace OrangeCarrrrr.Runtime
     /// <summary>
     /// One engine preset's samples, plus the shared effect and countdown cues.
     ///
-    /// The demo ships seven engine presets — classic, sr, z7, ht, jiu, x, v1 —
+    /// There are eight engine presets — classic, sr, z7, ht, new, jiu, x, v1 —
     /// each with a kart and a bike set of four slots. This holds one of them, so
     /// swapping preset later is swapping the asset rather than rewiring anything.
     ///

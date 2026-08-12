@@ -90,6 +90,15 @@ namespace OrangeCarrrrr.Runtime
         public string SceneName => _assetName;
         public string DisplayName => _displayName;
         public string RaceMode => _raceMode;
+
+        /// <summary>
+        /// The track's difficulty, one to five, as the original's track list shows
+        /// it. Zero means the archives gave none: the synthetic flat track, and
+        /// the two TC courses whose theme archive carries no <c>track.xml</c> —
+        /// the same gap the lap count has.
+        /// </summary>
+        public uint Difficulty => (uint)_difficulty;
+
         public bool HasScene => _hasScene;
 
         /// <summary>

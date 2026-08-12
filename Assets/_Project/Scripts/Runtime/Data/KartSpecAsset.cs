@@ -49,6 +49,15 @@ namespace OrangeCarrrrr.Runtime
         public string AssetName => _assetName;
 
         /// <summary>
+        /// What the kart is called — 버스트 SR, 뉴 코튼, 골든 파라곤 9.
+        ///
+        /// Derived from the asset name rather than stored beside it, the way
+        /// <see cref="TrackSpecAsset.SceneName"/> is: there is one right answer
+        /// per kart and a second editable copy could only drift out of step.
+        /// </summary>
+        public string DisplayName => KartDisplayName.For(_assetName);
+
+        /// <summary>
         /// Which client this came out of. Serialised as Demo on an asset that
         /// predates the field, so the shipped table is asked instead — the same
         /// fallback the lap count uses.

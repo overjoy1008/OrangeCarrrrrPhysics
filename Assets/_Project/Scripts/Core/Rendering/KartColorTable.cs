@@ -45,6 +45,13 @@ namespace OrangeCarrrrr.Core
         /// <summary>The index riderData.1s ships.</summary>
         public const int DefaultIndex = 8;
 
+        /// <summary>
+        /// The paint the simulator opens on. Simulator-side, not the archive's:
+        /// <see cref="DefaultIndex"/> is what riderData.1s actually ships, and it
+        /// stays where it is so the recovered value is still readable.
+        /// </summary>
+        public const int SimulatorIndex = 0;
+
         private static readonly KartColorSet[] Sets =
         {
             new KartColorSet("red",    232,  39,   6, 255, 186,   0),
@@ -67,7 +74,7 @@ namespace OrangeCarrrrr.Core
 
         public static string NameAt(int index) => At(index).Name;
 
-        /// <summary>Steps the <c>L</c> key's cycle.</summary>
+        /// <summary>Steps the <c>C</c> key's cycle.</summary>
         public static int Next(int index) => (index + 1) % Sets.Length;
     }
 }

@@ -118,6 +118,95 @@ namespace OrangeCarrrrr.Tests
         }
 
         [Test]
+        public void ItemBoost_NoDelayLetsAHeldKeyStartTheNextOne()
+        {
+            // The recovered engine takes the press edge, which is what stops a
+            // hold from retriggering. The bench toggle drops that edge — and only
+            // that: IsBoosting still has to be clear, so the second boost starts
+            // when the first expires rather than stacking on top of it.
+            KartSimulationState state = CreateCotten5(out KartFlatGround ground);
+            state.NoDelayBoost = true;
+            Run(state, ground, new KartSimulationControls { ForwardInput = 1f }, frames: 60);
+
+            var boosting = new KartSimulationControls { ForwardInput = 1f, BoostActive = true };
+            KartSimulation.SimulateMilliseconds(state, boosting, ground, 16u);
+            Assert.That(state.TimedBoost.Active, Is.True);
+
+            // Halfway through, the hold must not have restarted it: a retrigger
+            // every frame would keep RemainingMs pinned at the full duration.
+            Run(state, ground, boosting, frames: 90);
+            Assert.That(state.TimedBoost.Active, Is.True);
+            Assert.That(
+                state.TimedBoost.RemainingMs,
+                Is.LessThan(KartConstants.ItemBoostDurationMs - 1000u),
+                "one boost at a time: the running one must keep draining");
+
+            // Past the full 3000 ms the key is still down, and that is now enough.
+            Run(state, ground, boosting, frames: 120);
+            Assert.That(
+                state.TimedBoost.Active, Is.True,
+                "the hold should have started the next boost as the first expired");
+        }
+
+        [Test]
+        public void Rekart_KeepsTheRunAndChangesOnlyTheKart()
+        {
+            KartSimulationState state = CreateCotten5(out KartFlatGround ground);
+            var driving = new KartSimulationControls { ForwardInput = 1f, BoostActive = true };
+            Run(state, ground, driving, frames: 120);
+
+            KartVec3 position = state.Position;
+            KartVec3 velocity = state.LinearVelocity;
+            uint boostLeft = state.TimedBoost.RemainingMs;
+
+            Assert.That(velocity.Magnitude, Is.GreaterThan(1f), "it should be moving before the swap");
+
+            KartSpec other = KartDemoData.FindKart("paragon_9th");
+            KartSimulation.Rekart(state, other.Dynamics, other.Geometry);
+
+            // What the kart is doing carries over untouched.
+            Assert.AreEqual(position.X, state.Position.X);
+            Assert.AreEqual(position.Y, state.Position.Y);
+            Assert.AreEqual(position.Z, state.Position.Z);
+            Assert.AreEqual(velocity.Magnitude, state.LinearVelocity.Magnitude);
+            Assert.AreEqual(boostLeft, state.TimedBoost.RemainingMs, "the boost keeps running");
+            Assert.That(state.TimedBoost.Active, Is.True);
+
+            // What the kart is has changed.
+            Assert.AreEqual(other.Geometry.HalfLength, state.Geometry.HalfLength);
+            Assert.AreNotEqual(
+                KartDemoData.Cotten5.Geometry.HalfLength, state.Geometry.HalfLength,
+                "the two karts must differ, or this proves nothing");
+
+            // And it keeps driving from there rather than falling over.
+            Run(state, ground, driving, frames: 30);
+            Assert.That(state.LinearVelocity.Magnitude, Is.GreaterThan(1f));
+            Assert.That(state.Grounded, Is.True);
+        }
+
+        [Test]
+        public void Rekart_CarriesTheDragTriggerAcrossTheSwap()
+        {
+            // The trigger writes its multiplier into the same field the kart's own
+            // scale lives in, so a naive copy would clear it.
+            KartSimulationState state = CreateCotten5(out KartFlatGround ground);
+            Run(state, ground, new KartSimulationControls { ForwardInput = 1f }, frames: 60);
+
+            KartSimulation.MultiplyGroundedDragScale(state, 4f);
+            float inTrigger = state.GroundedDragScale;
+
+            KartSpec other = KartDemoData.FindKart("paragon_9th");
+            KartSimulation.Rekart(state, other.Dynamics, other.Geometry);
+
+            Assert.AreEqual(
+                inTrigger / KartDemoData.Cotten5.Geometry.GroundedDragScale
+                    * other.Geometry.GroundedDragScale,
+                state.GroundedDragScale,
+                0.0001f,
+                "the trigger's x4 must survive the swap");
+        }
+
+        [Test]
         public void ItemBoost_DoesNotStartWithoutThrottle()
         {
             KartSimulationState state = CreateCotten5(out KartFlatGround ground);

@@ -79,6 +79,42 @@ namespace OrangeCarrrrr.Core
         }
 
         /// <summary>
+        /// Puts a different kart under a simulation that is already running.
+        /// Everything the kart is doing — where it is, how fast, what it has
+        /// stored, how far through the race — carries over; only what the kart
+        /// <em>is</em> changes.
+        ///
+        /// Simulator-side: the original has no way to change kart mid-race, and
+        /// the bench wants one so two karts can be compared through the same
+        /// corner at the same speed rather than through two separate runs.
+        ///
+        /// The drag scale is the one field that cannot simply be copied.
+        /// <see cref="MultiplyGroundedDragScale"/> writes the trigger's 4.0 or
+        /// 0.25 into it at runtime, so the stored value is the kart's own scale
+        /// times whatever the trigger has done; carrying the ratio across keeps a
+        /// kart swapped inside a trigger volume from leaving with the multiplier
+        /// silently reset.
+        /// </summary>
+        public static void Rekart(
+            KartSimulationState state,
+            in KartDynamicsConfig config,
+            in KartSimulationGeometry geometry)
+        {
+            if (state == null) return;
+
+            float previousBase = state.Geometry.GroundedDragScale;
+            float trigger = previousBase != 0f ? state.GroundedDragScale / previousBase : 1f;
+
+            state.Config = config;
+            state.Geometry = geometry;
+            state.GroundedDragScale = geometry.GroundedDragScale * trigger;
+
+            // The wheel contacts belong to the old body's ray positions. They are
+            // recast at the top of the next step, so they are left alone rather
+            // than cleared — zeroing them would read as one frame airborne.
+        }
+
+        /// <summary>
         /// Original trigger callbacks 0x00441A10/0x00441AA0 multiply the runtime
         /// field by 4.0 on entry and 0.25 on exit.
         /// </summary>
@@ -175,7 +211,13 @@ namespace OrangeCarrrrr.Core
             // Only the timed boost blocks a new one: an item boost may start while
             // the instant boost is still running and the two overlap. The forward
             // multiplier does not stack either way.
-            if (boostPressed && !state.PreviousBoostInput && !state.TimedBoost.Active)
+            //
+            // NoDelayBoost drops the press edge and nothing else, so a hold starts
+            // the next boost as soon as the last expires. IsBoosting still gates
+            // it, which is what keeps one boost running at a time.
+            if (boostPressed &&
+                (state.NoDelayBoost || !state.PreviousBoostInput) &&
+                !state.TimedBoost.Active)
             {
                 KartDynamics.TimedBoostStart(
                     ref state.TimedBoost, controls.ForwardInput, KartConstants.ItemBoostDurationMs);

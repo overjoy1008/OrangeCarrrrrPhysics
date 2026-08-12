@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.TrackSpecAsset
   _assetName: village_I02
   _displayName: "\uBE4C\uB9AC\uC9C0 \uC190\uAC00\uB77D"
-  _raceMode: "\uC544\uC774\uD15C\u2192\uD604\uC7AC \uC2A4\uD53C\uB4DC"
+  _raceMode: "\uC544\uC774\uD15C\u2192\uC2A4\uD53C\uB4DC"
   _difficulty: 3
   _source: 0
   _laps: 3

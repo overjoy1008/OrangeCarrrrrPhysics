@@ -210,6 +210,113 @@ namespace OrangeCarrrrr.Core
             // those numbers to this engine would not be that kart's handling, it
             // would be noise, so these run the demo's Standard bench instead and
             // what is driven here is the body and nothing more.
+            // The five families again, four generations on: SR, Z7, HT and New.
+            // Which generation a kart belongs to is not in its own files — the
+            // client's etc_/itemTable.kml gives every kart a grade, and grades 6,
+            // 7, 8 and 9 are those four. Confirmed against the engine each kart
+            // asks for: every grade 6 in the table names sound_fx_kart's
+            // engine_cotton6, which is byte for byte the SR motor, and 7, 8 and 9
+            // line up on cotton7, cotton8 and cotton85 the same way.
+            //
+            // One per family per generation, the lowest item id whose atlas
+            // follows the demo's own template — a single 45x20 block of blue for
+            // the plate. Some do not: marathon10 is the grade 7 marathon by id but
+            // its atlas scatters 322 blue texels across the sheet, which the
+            // painter reads as hundreds of plates, so the Z7 marathon here is
+            // marathon11.
+            // The practice kart's own later generations. It has no SR, Z7 or HT —
+            // the client ships none, so those cells of the gallery grid are empty
+            // rather than filled with a stand-in.
+            Kart("practice5", KartDynamicsConfig.Standard(), 0.8075599f, 0.8641108f, 0.8123864f, KartAssetSource.TCGames),
+            Kart("practice6", KartDynamicsConfig.Standard(), 1.0420398f, 0.8702103f, 0.8168229f, KartAssetSource.TCGames),
+            Kart("practice7speed", KartDynamicsConfig.Standard(), 0.7667912f, 0.8172281f, 0.8168228f, KartAssetSource.TCGames),
+            Kart("practiceX", KartDynamicsConfig.Standard(), 0.9546319f, 0.8172281f, 0.8168228f, KartAssetSource.TCGames),
+            Kart("practiceV1", KartDynamicsConfig.Standard(), 0.7667912f, 0.8172282f, 0.8168228f, KartAssetSource.TCGames),
+
+            Kart("burst6", KartDynamicsConfig.Standard(), 0.9460745f, 1.2260115f, 1.0596181f, KartAssetSource.TCGames),
+            Kart("cotton6", KartDynamicsConfig.Standard(), 0.8389550f, 1.1673752f, 1.0164448f, KartAssetSource.TCGames),
+            Kart("marathon6", KartDynamicsConfig.Standard(), 1.0383530f, 1.2315742f, 1.1696565f, KartAssetSource.TCGames),
+            Kart("saber6", KartDynamicsConfig.Standard(), 0.8466103f, 1.2621722f, 0.9318620f, KartAssetSource.TCGames),
+            Kart("solid6", KartDynamicsConfig.Standard(), 0.9127760f, 1.1719963f, 1.2301522f, KartAssetSource.TCGames),
+
+            Kart("burst10", KartDynamicsConfig.Standard(), 0.8989704f, 1.2167832f, 0.9898931f, KartAssetSource.TCGames),
+            Kart("cotton11", KartDynamicsConfig.Standard(), 0.8712808f, 1.2135422f, 0.7847726f, KartAssetSource.TCGames),
+            Kart("marathon11", KartDynamicsConfig.Standard(), 0.8811701f, 1.0676949f, 1.0326597f, KartAssetSource.TCGames),
+            Kart("saber9", KartDynamicsConfig.Standard(), 0.9176239f, 1.0510765f, 0.8756897f, KartAssetSource.TCGames),
+            Kart("solid10", KartDynamicsConfig.Standard(), 1.0749470f, 1.0613898f, 1.0411136f, KartAssetSource.TCGames),
+
+            Kart("burst11", KartDynamicsConfig.Standard(), 1.1061465f, 1.0435683f, 0.7921901f, KartAssetSource.TCGames),
+            Kart("cotton15", KartDynamicsConfig.Standard(), 1.1061465f, 1.0572168f, 0.6325581f, KartAssetSource.TCGames),
+            Kart("marathon12", KartDynamicsConfig.Standard(), 1.0221243f, 1.0370643f, 0.8917569f, KartAssetSource.TCGames),
+            Kart("saber14", KartDynamicsConfig.Standard(), 0.7839933f, 1.1342074f, 0.9194841f, KartAssetSource.TCGames),
+            Kart("solid13", KartDynamicsConfig.Standard(), 1.0749470f, 1.0490999f, 0.7921466f, KartAssetSource.TCGames),
+
+            Kart("burst12", KartDynamicsConfig.Standard(), 1.0242368f, 1.0593692f, 0.7235377f, KartAssetSource.TCGames),
+            Kart("cotton19", KartDynamicsConfig.Standard(), 0.8802847f, 1.0707635f, 0.6469434f, KartAssetSource.TCGames),
+            Kart("marathon13", KartDynamicsConfig.Standard(), 0.8968862f, 1.0662979f, 0.7484834f, KartAssetSource.TCGames),
+            Kart("saber18_newsaber", KartDynamicsConfig.Standard(), 0.9665504f, 1.1319618f, 0.7786494f, KartAssetSource.TCGames),
+            Kart("solid17", KartDynamicsConfig.Standard(), 0.9571924f, 1.0500170f, 0.7691338f, KartAssetSource.TCGames),
+
+            // And on again: grades 10, 11 and 12 are 9th, X and V1. The paragons
+            // pin those three down — paragon_9th is a 10, paragonX an 11 and
+            // paragonV1 a 12 — so each row here is its five families followed by
+            // the paragon of the same generation.
+            Kart("burst22", KartDynamicsConfig.Standard(), 0.9049896f, 1.2720674f, 1.0156562f, KartAssetSource.TCGames),
+            Kart("cotton_9th", KartDynamicsConfig.Standard(), 0.7847314f, 1.0397646f, 0.6488689f, KartAssetSource.TCGames),
+            Kart("marathon19", KartDynamicsConfig.Standard(), 0.9180359f, 1.0614497f, 0.7524322f, KartAssetSource.TCGames),
+            Kart("saber23", KartDynamicsConfig.Standard(), 0.7304656f, 1.2050567f, 0.7201244f, KartAssetSource.TCGames),
+            Kart("solid26", KartDynamicsConfig.Standard(), 0.9180358f, 1.1253081f, 0.9087122f, KartAssetSource.TCGames),
+
+            Kart("burstX", KartDynamicsConfig.Standard(), 0.9457878f, 1.3068718f, 0.9045712f, KartAssetSource.TCGames),
+            Kart("cottonX", KartDynamicsConfig.Standard(), 0.8856018f, 1.3208936f, 0.6877102f, KartAssetSource.TCGames),
+            Kart("marathonX", KartDynamicsConfig.Standard(), 0.8697337f, 1.2375733f, 0.6488579f, KartAssetSource.TCGames),
+            Kart("saberX", KartDynamicsConfig.Standard(), 0.8291401f, 1.2123429f, 0.8229239f, KartAssetSource.TCGames),
+            Kart("solidX", KartDynamicsConfig.Standard(), 0.8732705f, 1.1557720f, 0.8760540f, KartAssetSource.TCGames),
+
+            Kart("burstV1", KartDynamicsConfig.Standard(), 0.7814291f, 1.0150550f, 0.8646233f, KartAssetSource.TCGames),
+            Kart("cottonV1", KartDynamicsConfig.Standard(), 0.7738793f, 1.0959912f, 0.8402521f, KartAssetSource.TCGames),
+            Kart("marathonV1", KartDynamicsConfig.Standard(), 0.8022178f, 1.0297855f, 0.8512509f, KartAssetSource.TCGames),
+            Kart("saberV1", KartDynamicsConfig.Standard(), 0.8316438f, 1.1284210f, 0.8647720f, KartAssetSource.TCGames),
+            Kart("solidV1", KartDynamicsConfig.Standard(), 0.7912624f, 1.0775935f, 0.9202930f, KartAssetSource.TCGames),
+
+            // Six more series, at the three generations they run to. Their asset
+            // names give the game away even less than the families' do: the black
+            // knight is slrPro, and the golden storm blade was a bike — bike22 at
+            // Z7 — before it became stormbladeV1_gold. Both were read off the
+            // Korean names the client leaves as comments beside the kart ids in
+            // etc_/itemFeatureCheckFilter@kr.xml.
+            // The spector runs X and V1 only. Its 9th does not exist: itemTable
+            // grades spector1 an HT and then jumps to spectorX, and the archives
+            // hold no spector between them.
+            Kart("spectorX", KartDynamicsConfig.Standard(), 0.7656200f, 1.2475919f, 0.7705901f, KartAssetSource.TCGames),
+            Kart("spectorV1", KartDynamicsConfig.Standard(), 0.7734287f, 1.0953910f, 0.7391441f, KartAssetSource.TCGames),
+
+            Kart("slrPro7", KartDynamicsConfig.Standard(), 0.7847314f, 1.1198838f, 0.7498067f, KartAssetSource.TCGames),
+            Kart("slrProX", KartDynamicsConfig.Standard(), 0.7241175f, 1.1418474f, 0.7897016f, KartAssetSource.TCGames),
+            Kart("slrProV1", KartDynamicsConfig.Standard(), 0.8316438f, 1.1823408f, 0.8344692f, KartAssetSource.TCGames),
+
+            Kart("whiteKnight9", KartDynamicsConfig.Standard(), 0.7847314f, 1.1940834f, 0.8139313f, KartAssetSource.TCGames),
+            Kart("whiteKnightX", KartDynamicsConfig.Standard(), 0.7626978f, 1.1925570f, 0.7947394f, KartAssetSource.TCGames),
+            Kart("whiteKnightV1", KartDynamicsConfig.Standard(), 0.8316437f, 1.2170348f, 0.7618236f, KartAssetSource.TCGames),
+
+            Kart("goldKnight9", KartDynamicsConfig.Standard(), 0.7847314f, 1.1198838f, 0.7162648f, KartAssetSource.TCGames),
+            Kart("goldKnightX", KartDynamicsConfig.Standard(), 0.7367682f, 1.1446823f, 0.7939006f, KartAssetSource.TCGames),
+            Kart("goldKnightV1", KartDynamicsConfig.Standard(), 0.7706116f, 1.1776764f, 0.8035386f, KartAssetSource.TCGames),
+
+            Kart("mantis3", KartDynamicsConfig.Standard(), 1.0080677f, 1.2065067f, 0.9858533f, KartAssetSource.TCGames),
+            Kart("mantisX", KartDynamicsConfig.Standard(), 0.7681713f, 1.1943751f, 0.7822225f, KartAssetSource.TCGames),
+            Kart("mantisV1", KartDynamicsConfig.Standard(), 0.8464372f, 1.1844064f, 0.8862696f, KartAssetSource.TCGames),
+
+            // The golden storm blade, V1 only. bike22 is its Z7, but the 9th and
+            // the X have no model: bike52 is in no pack at all, and bike58, bike60
+            // and bike62 ship as param.xml and nothing else. Checked against the
+            // installed client, not just the extraction.
+            Kart("stormbladeV1_gold", KartDynamicsConfig.Standard(), 0.7847314f, 1.1125719f, 1.2776275f, KartAssetSource.TCGames),
+
+            Kart("artemis9", KartDynamicsConfig.Standard(), 0.7903447f, 1.0078738f, 0.7872070f, KartAssetSource.TCGames),
+            Kart("artemisX", KartDynamicsConfig.Standard(), 0.8588632f, 1.1163976f, 0.8065005f, KartAssetSource.TCGames),
+            Kart("artemisV1", KartDynamicsConfig.Standard(), 0.8316437f, 1.1895822f, 0.7886570f, KartAssetSource.TCGames),
+
             Kart("paragonV1", KartDynamicsConfig.Standard(), 0.8316438f, 1.1356342f, 0.7178360f, KartAssetSource.TCGames),
             Kart("paragonV1_gold", KartDynamicsConfig.Standard(), 0.7299818f, 1.1196411f, 0.7898212f, KartAssetSource.TCGames),
             Kart("paragonX", KartDynamicsConfig.Standard(), 0.7698725f, 1.1795354f, 0.7005107f, KartAssetSource.TCGames),
@@ -219,10 +326,17 @@ namespace OrangeCarrrrr.Core
         };
 
         /// <summary>
-        /// The kart the simulator opens on. The demo's own kartlist.xml offers
-        /// only burst3; cotten5 is a simulator-side choice.
+        /// Kept as a named row because the tests and the flat-ground bench are
+        /// written against its geometry. It was the kart the simulator opened on
+        /// until <see cref="DefaultKart"/> moved to the paragon.
         /// </summary>
         public static readonly KartSpec Cotten5 = FindKart("cotten5");
+
+        /// <summary>
+        /// The kart the simulator opens on. The demo's own kartlist.xml offers
+        /// only burst3, so whichever one this is, it is a simulator-side choice.
+        /// </summary>
+        public static readonly KartSpec Paragon9th = FindKart("paragon_9th");
 
         /// <summary>
         /// The synthetic reference track: no mesh, so the simulator falls back to
@@ -347,7 +461,7 @@ namespace OrangeCarrrrr.Core
                 AssetName = "ice_I01",
                 Laps = 3u,
                 DisplayName = "아이스 갈라진 빙산",
-                RaceMode = "아이템→현재 스피드",
+                RaceMode = "아이템→스피드",
                 Difficulty = 4,
                 Minimum = new KartVec3(24.31265f, 60.53888f, 1.654024f),
                 Maximum = new KartVec3(1107.896f, 1165.535f, 318.2377f),
@@ -403,7 +517,7 @@ namespace OrangeCarrrrr.Core
                 AssetName = "village_I02",
                 Laps = 3u,
                 DisplayName = "빌리지 손가락",
-                RaceMode = "아이템→현재 스피드",
+                RaceMode = "아이템→스피드",
                 Difficulty = 3,
                 Minimum = new KartVec3(-2.671448f, 11.83069f, -1.29806f),
                 Maximum = new KartVec3(561.3079f, 682.4102f, 49.30659f),
@@ -563,7 +677,7 @@ namespace OrangeCarrrrr.Core
             return null;
         }
 
-        public static KartSpec DefaultKart => Cotten5;
+        public static KartSpec DefaultKart => Paragon9th;
 
         public static TrackSpec DefaultTrack => FlatTest;
 

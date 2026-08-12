@@ -96,6 +96,7 @@ namespace OrangeCarrrrr.UI
 
             if (keyboard.tKey.wasPressedThisFrame) OpenTracks();
             else if (keyboard.kKey.wasPressedThisFrame) OpenKarts();
+            else if (keyboard.cKey.wasPressedThisFrame) OpenColours();
         }
 
         /// <summary>
@@ -161,7 +162,8 @@ namespace OrangeCarrrrr.UI
             {
                 TrackSpecAsset track = catalog.At(i);
                 names[i] = track != null
-                    ? $"{track.DisplayName}   ({track.AssetName})   {track.RaceMode}{Mark(track.Source)}"
+                    ? $"{track.DisplayName}   ({track.AssetName})   {track.RaceMode}   " +
+                      $"{DifficultyText(track.Difficulty)}{Mark(track.Source)}"
                     : "-";
                 if (track == _simulator.Track) current = i;
             }
@@ -179,20 +181,115 @@ namespace OrangeCarrrrr.UI
                 return;
             }
 
-            var names = new string[catalog.Count];
+            // Walked by generation, not in the catalog's own order. KARTS[] is the
+            // archive's order and that is family-major — burst1 to burst5 together
+            // — so the list would read down one family at a time. The gallery is
+            // laid out by generation for the same reason, and this keeps the two
+            // saying the same thing.
+            int[] order = GenerationOrder(catalog);
+
+            var names = new string[order.Length];
             int current = 0;
-            for (int i = 0; i < catalog.Count; ++i)
+            for (int i = 0; i < order.Length; ++i)
             {
-                KartSpecAsset kart = catalog.At(i);
+                KartSpecAsset kart = catalog.At(order[i]);
+                // Display name first, asset name after it, the way the track list
+                // reads. The asset name stays on the row because it is what the
+                // archive, the model and the spec are all still called — the
+                // display name is a mapping over the top of it, not a rename.
                 names[i] = kart != null
-                    ? $"{kart.AssetName}   {kart.Width:F3} x {kart.Length:F3}{Mark(kart.Source)}"
+                    ? $"{kart.DisplayName}   ({kart.AssetName})   " +
+                      $"{kart.Width:F3} x {kart.Length:F3}{Mark(kart.Source)}"
                     : "-";
                 if (kart == _simulator.Kart) current = i;
             }
 
             _simulator.MenuOpen = true;
-            Open("SELECT KART", names, current, index => _simulator.SelectKart(catalog.At(index)));
+            Open("SELECT KART", names, current,
+                index => _simulator.SelectKart(catalog.At(order[index])));
         }
+
+        /// <summary>
+        /// The ten paints of <c>colortable.xml</c>, as a list rather than as a
+        /// cycle. <c>C</c> used to step through them one press at a time, which is
+        /// nine presses to see the tenth.
+        ///
+        /// The row a kart opens on is marked, since that is the one the choice is
+        /// departing from.
+        /// </summary>
+        private void OpenColours()
+        {
+            var names = new string[KartColorTable.Count];
+            for (int i = 0; i < names.Length; ++i)
+            {
+                bool isDefault = i == _simulator.DefaultKartColourIndex;
+                names[i] = $"{i}   {KartColorTable.NameAt(i)}{(isDefault ? "   [default]" : string.Empty)}";
+            }
+
+            _simulator.MenuOpen = true;
+            Open("SELECT COLOUR", names, _simulator.KartColourIndex,
+                index => _simulator.SetKartColour(index));
+        }
+
+        /// <summary>
+        /// Catalog indices, sorted into the gallery's reading order: down the
+        /// generations, and across the series within each.
+        ///
+        /// Sorted by the grid cell rather than by the catalog, because the catalog
+        /// is the archive's order and that is neither. It is family-major for the
+        /// demo — burst1 to burst5 together — so the list would read down one
+        /// series at a time; and the later practice karts were appended after the
+        /// families, so sorting by index would put 연습카트 PRO at the end of its
+        /// own row instead of at the front of it.
+        ///
+        /// A kart with no cell goes last rather than being dropped — the list is
+        /// how you find out it is there.
+        ///
+        /// The catalog index is the last part of the key, so the sort is total and
+        /// does not depend on <see cref="Array.Sort{TKey,TValue}"/> being stable,
+        /// which it is not.
+        /// </summary>
+        private static int[] GenerationOrder(KartCatalog catalog)
+        {
+            var order = new int[catalog.Count];
+            var cells = new long[catalog.Count];
+
+            for (int i = 0; i < catalog.Count; ++i)
+            {
+                order[i] = i;
+
+                KartSpecAsset kart = catalog.At(i);
+                int row = -1;
+                int column = -1;
+                if (kart != null) KartGalleryLayout.Find(kart.AssetName, out row, out column);
+                if (row < 0)
+                {
+                    row = KartGalleryLayout.RowCount;
+                    column = KartGalleryLayout.ColumnCount;
+                }
+
+                cells[i] = ((long)row << 48) | ((long)column << 32) | (uint)i;
+            }
+
+            Array.Sort(cells, order);
+            return order;
+        }
+
+        /// <summary>
+        /// The difficulty a row shows, one to five as the original's track list
+        /// rates it.
+        ///
+        /// Zero is not a rating, it is the absence of one — the synthetic flat
+        /// track and the two TC courses, whose theme archive ships no
+        /// <c>track.xml</c> to read it from. Printed as a dash so it does not read
+        /// as an easiest-possible track.
+        ///
+        /// Written out rather than drawn as stars: the row's font is a static
+        /// atlas and only reaches a star glyph through the dynamic Korean
+        /// fallback, in a different weight. Digits are already in the atlas.
+        /// </summary>
+        private static string DifficultyText(uint difficulty)
+            => difficulty == 0u ? "난이도 -" : $"난이도 {difficulty}";
 
         /// <summary>
         /// The tag a row carries when it is not the demo's.

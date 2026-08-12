@@ -110,8 +110,17 @@ namespace OrangeCarrrrr.Runtime
             ("rainbow", "Assets/_Project/Art/Effects/TCGames/rainbow.png"),
         };
 
-        [Tooltip("Which of the skid faces is being laid. Cycled by the simulator's key.")]
-        [SerializeField] private int _style;
+        [Tooltip(
+            "Which of the skid faces is being laid. Cycled by the simulator's key. " +
+            "Opens on rainbow; I goes back to the demo's own mark.")]
+        [SerializeField] private int _style = RainbowStyle;
+
+        /// <summary>
+        /// The face the simulator opens on. Index into <see cref="Styles"/>, whose
+        /// first entry is the demo's — so this is deliberately not the recovered
+        /// one, the same way the opening kart and paint are not.
+        /// </summary>
+        private const int RainbowStyle = 1;
 
         /// <summary>The face now being laid, for the HUD.</summary>
         public string StyleName => Styles[Wrap(_style)].Name;

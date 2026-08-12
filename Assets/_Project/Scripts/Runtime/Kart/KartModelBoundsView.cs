@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 namespace OrangeCarrrrr.Runtime
 {
     /// <summary>
-    /// The <c>B</c> key: the kart model's own bounding boxes, drawn as wireframe.
+    /// The <c>F4</c> key: the kart model's own bounding boxes, drawn as wireframe.
     ///
     /// Ported from <c>draw_kart_model_bounds</c>. Three volumes, the same three
     /// the model catalogue tabulates, in the original's colours — full yellow,

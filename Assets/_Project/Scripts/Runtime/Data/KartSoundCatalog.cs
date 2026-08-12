@@ -1,15 +1,20 @@
 using System;
+using OrangeCarrrrr.Core;
 using UnityEngine;
 
 namespace OrangeCarrrrr.Runtime
 {
     /// <summary>
-    /// The engine sound presets the <c>U</c> key walks, in the original's order.
+    /// Every engine sound preset, in the original's order.
     ///
-    /// The 2004 demo registers thirteen of them — classic, and six engines each
-    /// with a bike variant — and swaps which four samples the sound driver is
-    /// holding. Nothing about the driving changes: the pitch and volume laws are
-    /// the recovered ones either way, and only the waveform under them differs.
+    /// Fifteen of them — classic, and seven engines each with a bike variant —
+    /// swapping which four samples the sound driver is holding. Which one plays
+    /// follows the kart, through <see cref="Find"/> and
+    /// <c>OrangeCarrrrr.Core.KartEnginePreset</c>; it used to be the <c>U</c> key
+    /// walking the list by hand.
+    ///
+    /// Nothing about the driving changes: the pitch and volume laws are the
+    /// recovered ones either way, and only the waveform under them differs.
     ///
     /// Rebuilt from the sample folders on disk, so adding a preset is adding its
     /// four samples rather than editing a list by hand.
@@ -36,6 +41,25 @@ namespace OrangeCarrrrr.Runtime
                 if (_presets[i] == set) return i;
             }
             return -1;
+        }
+
+        /// <summary>
+        /// The set whose <c>Preset</c> is this name, or null.
+        ///
+        /// Matched on the name rather than an index because the catalog is built
+        /// from whatever engine folders the project imported — the bike sets sit
+        /// in the same list, and the order is the builder's, not something to
+        /// depend on.
+        /// </summary>
+        public KartSoundSet Find(string preset)
+        {
+            if (_presets == null || string.IsNullOrWhiteSpace(preset)) return null;
+
+            foreach (KartSoundSet set in _presets)
+            {
+                if (set != null && KartEnginePreset.Matches(set.Preset, preset)) return set;
+            }
+            return null;
         }
 
         /// <summary>The preset after this one, wrapping.</summary>

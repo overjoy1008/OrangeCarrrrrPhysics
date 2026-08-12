@@ -34,8 +34,10 @@ namespace OrangeCarrrrr.Runtime
         [SerializeField] private Transform _modelRoot;
 
         [Header("Paint")]
-        [Tooltip("Row of colortable.xml. riderData.1s ships 8 (pink).")]
-        [SerializeField] private int _colourIndex = KartColorTable.DefaultIndex;
+        [Tooltip(
+            "Row of colortable.xml. The simulator opens on 0 (red); riderData.1s " +
+            "itself ships 8 (pink), which KartColorTable.DefaultIndex still holds.")]
+        [SerializeField] private int _colourIndex = KartColorTable.SimulatorIndex;
 
         [Tooltip(
             "The NEXON plate, stamped over its key block the way 0x00417160 does. " +
@@ -117,10 +119,10 @@ namespace OrangeCarrrrr.Runtime
             }
         }
 
-        /// <summary>The HUD's <c>[pink]</c>.</summary>
+        /// <summary>The HUD's <c>[0 red]</c>.</summary>
         public string ColourName => KartColorTable.NameAt(_colourIndex);
 
-        /// <summary>The <c>L</c> key.</summary>
+        /// <summary>The <c>C</c> key.</summary>
         public void NextColour() => ColourIndex = KartColorTable.Next(_colourIndex);
 
         public bool ShowModelBounds

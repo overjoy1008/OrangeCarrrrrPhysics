@@ -12,6 +12,7 @@ namespace OrangeCarrrrr.Core
     ///
     ///   magenta (255, 0, 255)  the atlas filler, keyed out to transparent
     ///   cyan    (0, 255, 255)  anchors the racing number, one 10x17 digit
+    ///                          — an isolated texel, see <see cref="IsAnchor"/>
     ///   blue    (0, 0, 255)    top-left of the 45x20 number plate
     ///
     /// Everything else is alpha-composited over the driver's <c>base</c> colour,
@@ -126,15 +127,116 @@ namespace OrangeCarrrrr.Core
         {
             if (!skin.IsValid) throw new ArgumentException("Skin image is empty.", nameof(skin));
 
-            PaintBody(skin, colour);
+            // From the New generation on, an atlas keys its paint with cyan — and
+            // when it does, the two roles are the other way round from the demo's.
+            // See KeyPaintAreas.
+            bool cyanKeyed = KeyPaintAreas(skin, colour);
+
+            if (cyanKeyed) PaintBody(skin, FixedBody, FixedBody, FixedBody);
+            else PaintBody(skin, colour.BaseRed, colour.BaseGreen, colour.BaseBlue);
+
             Stamp(skin, colour, plate, number, digit, mirrorStamps);
         }
 
         /// <summary>
-        /// The body: the template composited over a solid <c>base</c>, weighted by
-        /// the template's own alpha, with the filler keyed out.
+        /// The body colour a cyan-keyed atlas shows where it is transparent.
+        ///
+        /// Not invented: those texels already hold white in the atlas. Every one
+        /// of the demo's twenty-six keeps its paint area as white at alpha 0 —
+        /// the colour is ignored there because the alpha is what carries the key
+        /// — and the New atlases keep the same white. On them it is the value
+        /// that reaches the screen rather than a placeholder.
         /// </summary>
-        private static void PaintBody(Image skin, KartColorSet colour)
+        private const byte FixedBody = 255;
+
+        /// <summary>
+        /// Finds the later client's cyan paint areas and lays the driver's colour
+        /// into them. Answers whether this atlas is one that uses them.
+        ///
+        /// <b>The New generation swaps the two roles the demo uses.</b> On a demo
+        /// atlas, alpha is the paint key — a transparent texel lets <c>base</c>
+        /// through — and there is no cyan but the racing number's anchor. From the
+        /// New generation on:
+        ///
+        /// <list type="bullet">
+        /// <item>a flat fill of exact cyan is where <c>base</c> goes;</item>
+        /// <item>the transparent areas are a fixed white body, not <c>base</c>.
+        /// </item>
+        /// </list>
+        ///
+        /// Reading those the demo's way is wrong twice over, and both were seen on
+        /// screen: leaving the cyan alone put a sky-blue coat on all five, and
+        /// then painting the transparent areas put the driver's colour everywhere
+        /// the white body should have been.
+        ///
+        /// Two passes, and that is load-bearing. <see cref="IsAnchor"/> reads the
+        /// colour of the neighbours, so writing as we went would leave the second
+        /// texel of a pair looking isolated once the first had been overwritten —
+        /// and turn a paint area into a racing number.
+        /// </summary>
+        private static bool KeyPaintAreas(Image skin, KartColorSet colour)
+        {
+            byte[] pixels = skin.Pixels;
+            int count = skin.Width * skin.Height;
+
+            bool[] paint = null;
+            for (int y = 0; y < skin.Height; ++y)
+            {
+                for (int x = 0; x < skin.Width; ++x)
+                {
+                    int i = y * skin.Width + x;
+                    if (!IsExactCyan(pixels, i * 4)) continue;
+                    if (IsAnchor(skin, x, y)) continue;
+
+                    paint ??= new bool[count];
+                    paint[i] = true;
+                }
+            }
+
+            // Nothing on the demo's twenty-six, so they never pay for the second
+            // pass or the allocation, and they keep the demo's own reading.
+            if (paint == null) return false;
+
+            for (int i = 0; i < count; ++i)
+            {
+                if (!paint[i]) continue;
+
+                int o = i * 4;
+                pixels[o] = colour.BaseRed;
+                pixels[o + 1] = colour.BaseGreen;
+                pixels[o + 2] = colour.BaseBlue;
+
+                // Opaque, so the body pass carries it through untouched rather
+                // than blending the white body back into it.
+                pixels[o + 3] = 255;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Cyan as the atlas author typed it, before the 16-bit match widens it.
+        ///
+        /// This is what separates a key from artwork. All twenty-six demo anchors
+        /// are exactly (0, 255, 255), and so is every texel of the New
+        /// generation's paint areas — 17,390 of 17,390 on cotton19. Neon is never
+        /// exact: it is anti-aliased, so its edge texels only land on the key
+        /// after <see cref="ToRgb565"/> rounds them, and not one of paragon_9th's
+        /// 401 near-cyan texels is exact. Matching on the quantised value alone
+        /// cannot tell the two apart, which is why both tests are here.
+        /// </summary>
+        private static bool IsExactCyan(byte[] pixels, int offset)
+            => pixels[offset] == 0 && pixels[offset + 1] == 255 && pixels[offset + 2] == 255;
+
+        /// <summary>
+        /// The body: the template composited over a solid colour, weighted by the
+        /// template's own alpha, with the filler keyed out.
+        ///
+        /// What it sits over is the driver's <c>base</c> on a demo atlas and the
+        /// fixed white body on a cyan-keyed one — the two conventions disagree
+        /// about what a transparent texel means, and this is where that is
+        /// settled. See <see cref="KeyPaintAreas"/>.
+        /// </summary>
+        private static void PaintBody(Image skin, byte underRed, byte underGreen, byte underBlue)
         {
             byte[] pixels = skin.Pixels;
             int count = skin.Width * skin.Height;
@@ -154,9 +256,9 @@ namespace OrangeCarrrrr.Core
                 }
 
                 byte alpha = pixels[o + 3];
-                pixels[o] = Blend(colour.BaseRed, red, alpha);
-                pixels[o + 1] = Blend(colour.BaseGreen, green, alpha);
-                pixels[o + 2] = Blend(colour.BaseBlue, blue, alpha);
+                pixels[o] = Blend(underRed, red, alpha);
+                pixels[o + 1] = Blend(underGreen, green, alpha);
+                pixels[o + 2] = Blend(underBlue, blue, alpha);
                 pixels[o + 3] = 255;
             }
         }
@@ -182,7 +284,7 @@ namespace OrangeCarrrrr.Core
                     int o = (y * width + x) * 4;
                     ushort key = ToRgb565(pixels[o], pixels[o + 1], pixels[o + 2]);
 
-                    if (key == KeyCyan)
+                    if (key == KeyCyan && IsAnchor(skin, x, y))
                     {
                         // Cleared first, then stamped over. The anchor sits in the
                         // middle of the roundel, which is exactly where digit 0
@@ -199,6 +301,53 @@ namespace OrangeCarrrrr.Core
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Whether a cyan texel is the racing number's anchor rather than art or
+        /// a paint area.
+        ///
+        /// Two things have to hold. It must be exact 8-bit cyan, which rules out
+        /// anti-aliased neon (see <see cref="IsExactCyan"/>). And it must be alone
+        /// inside the box its own digit would cover — which follows from what an
+        /// anchor is: it marks the middle of one 10x17 stamp, so a second anchor
+        /// that close would put two numbers on top of each other, and a flat fill
+        /// of the colour is a paint area rather than a marker. All twenty-six demo
+        /// atlases hold to both: theirs are exact, and isolated a hundred texels
+        /// apart.
+        ///
+        /// The later client's karts need the distinction made. Their atlases key
+        /// off the same magenta and the same 45x20 block of blue, but their
+        /// artwork has neon in it, and bright cyan neon quantises to the key.
+        /// paragon_9th's glow lines are 401 such texels in blobs up to 150
+        /// across; paragonV1_gold's are a blob plus the stray dots its
+        /// anti-aliasing leaves a few texels off the edge. Neither kart has a
+        /// racing number — plain paragonV1 carries no cyan at all — and reading
+        /// the neon as anchors carpets the glow with digits.
+        /// </summary>
+        private static bool IsAnchor(Image skin, int x, int y)
+        {
+            byte[] pixels = skin.Pixels;
+
+            if (!IsExactCyan(pixels, (y * skin.Width + x) * 4)) return false;
+
+            for (int row = 0; row < DigitHeight; ++row)
+            {
+                int ny = y + DigitOffsetY + row;
+                if (ny < 0 || ny >= skin.Height) continue;
+
+                for (int column = 0; column < DigitWidth; ++column)
+                {
+                    int nx = x + DigitOffsetX + column;
+                    if (nx < 0 || nx >= skin.Width) continue;
+                    if (nx == x && ny == y) continue;
+
+                    int o = (ny * skin.Width + nx) * 4;
+                    if (ToRgb565(pixels[o], pixels[o + 1], pixels[o + 2]) == KeyCyan) return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>

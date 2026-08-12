@@ -139,6 +139,18 @@ namespace OrangeCarrrrr.Core
         /// </summary>
         public bool ReverseInputEndsBoost;
 
+        /// <summary>
+        /// Lets a held booster key start the next boost the moment the last one
+        /// expires, instead of needing a fresh press.
+        ///
+        /// Simulator-side, not recovered — the original's item input caller at
+        /// <c>0x00457ac0</c> takes the press edge, which is exactly what stops a
+        /// hold from retriggering. Survives <c>Init</c> for the same reason
+        /// <see cref="ReverseInputEndsBoost"/> does: it is a choice about the
+        /// bench, not part of the kart's state.
+        /// </summary>
+        public bool NoDelayBoost;
+
         /// <summary>Finite-differenced by the simulator, not integrated. HUD only.</summary>
         public KartVec3 Acceleration;
 

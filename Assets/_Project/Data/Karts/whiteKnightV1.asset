@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afacce84b39ac7f4488d00dea27cb5f6, type: 3}
+  m_Name: whiteKnightV1
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
+  _assetName: whiteKnightV1
+  _source: 1
+  _modelPrefab: {fileID: 7863761972090759150, guid: e6c5deb1606e0fe45afcbd8412bdfd93, type: 3}
+  _skinTemplate: {fileID: 2800000, guid: d56398ba110731143a22bb6daaff620d, type: 3}
+  _halfWidth: 0.8316437
+  _halfLength: 1.2170348
+  _modelHeight: 0.7618236
+  _suspensionRange: 0.5
+  _groundedDragScale: 1
+  _dynamics:
+    Mass: 100
+    AirFriction: 3
+    DragFactor: 0.725
+    ForwardAccelForce: 3300
+    BackwardAccelForce: 2000
+    GripBrakeForce: 2000
+    SlipBrakeForce: 1500
+    MaxSteerAngleDeg: 10
+    SteerConstraint: 28
+    FrontGripFactor: 5
+    RearGripFactor: 5
+    DriftTriggerFactor: 0.2
+    DriftTriggerTime: 0.2
+    DriftSlipFactor: 0.2
+    DriftEscapeForce: 4000
+    CornerDrawFactor: 0.05
+    DriftLeanFactor: 0.07
+    SteerLeanFactor: 0.01
+    JumpSpringMillionPerM: 1.2
+    JumpMaxCrouchDistance: 0.18
+    JumpGaugeSweepTime: 0.75
+    JumpPushDuration: 0.09
+    JumpMinEfficiency: 0.2
+    JumpMaxEfficiency: 1
+    JumpVelocityDirectionBias: 0.12
+    JumpBodyUpBlend: 0.25
+    JumpTorqueScale: 0.02
+    JumpMaxSlopeDeg: 45
+    JumpLandingCooldown: 0.12
+    JumpLandingDamping: 1200
+  _maxBoosters: 2

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace OrangeCarrrrr.Runtime
 {
     /// <summary>
-    /// The <c>C</c> key's top-down projection, as an orthographic Unity camera.
+    /// The <c>F5</c> key's top-down projection, as an orthographic Unity camera.
     ///
     /// <c>world_to_screen</c> fits a 110 x 76 unit window inside the client rect
     /// less a 45 px margin, keeping the aspect by taking the smaller of the two
