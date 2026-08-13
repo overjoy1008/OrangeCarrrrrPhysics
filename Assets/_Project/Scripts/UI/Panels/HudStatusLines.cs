@@ -124,7 +124,11 @@ namespace OrangeCarrrrr.UI
         {
             _builder.Clear();
             _builder.Append(
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+                "Arrows: grip drive  Shift/W: drift  Cmd/D: booster  ");
+#else
                 "Arrows: grip drive  Shift/W: drift  Ctrl/D: booster  ");
+#endif
             _builder.Append("P: parameters  K: karts  T: tracks  ");
             _builder.Append("F: drag trigger  R: respawn");
 

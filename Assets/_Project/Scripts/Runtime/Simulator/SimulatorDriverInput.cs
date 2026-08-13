@@ -12,7 +12,7 @@ namespace OrangeCarrrrr.Runtime
     ///   Down          brake, then reverse once the kart has been near a stop
     ///   Left / Right  steer
     ///   Shift or W    drift
-    ///   Ctrl or D     item boost
+    ///   Ctrl or D     item boost (Cmd instead of Ctrl on macOS)
     ///
     /// Steering goes through <see cref="KartSteeringInput"/> rather than a 1D Axis
     /// composite: the recovered rule is that the most recent direction owns the
@@ -55,8 +55,14 @@ namespace OrangeCarrrrr.Runtime
             DriftHeld = keyboard.leftShiftKey.isPressed ||
                         keyboard.rightShiftKey.isPressed ||
                         keyboard.wKey.isPressed;
-            BoostHeld = keyboard.leftCtrlKey.isPressed ||
+            BoostHeld =
+#if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+                        keyboard.leftCommandKey.isPressed ||
+                        keyboard.rightCommandKey.isPressed ||
+#else
+                        keyboard.leftCtrlKey.isPressed ||
                         keyboard.rightCtrlKey.isPressed ||
+#endif
                         keyboard.dKey.isPressed;
 
             return new KartSimulationControls
