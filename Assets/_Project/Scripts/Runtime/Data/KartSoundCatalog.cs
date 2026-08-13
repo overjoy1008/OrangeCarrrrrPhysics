@@ -8,8 +8,9 @@ namespace OrangeCarrrrr.Runtime
     /// Every engine sound preset, in the original's order.
     ///
     /// Fifteen of them — classic, and seven engines each with a bike variant —
-    /// swapping which four samples the sound driver is holding. Which one plays
-    /// follows the kart, through <see cref="Find"/> and
+    /// plus mew, the guests', appended after the recovered fifteen rather than
+    /// slotted among them. Each swaps which four samples the driver is holding.
+    /// Which one plays follows the kart, through <see cref="Find"/> and
     /// <c>OrangeCarrrrr.Core.KartEnginePreset</c>; it used to be the <c>U</c> key
     /// walking the list by hand.
     ///

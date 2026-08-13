@@ -67,7 +67,7 @@ namespace OrangeCarrrrr.Tests
         {
             // Row lookup would give it Classic, so this only passes if the guest
             // table is consulted first.
-            Assert.AreEqual(KartEnginePreset.Jiu, KartEnginePreset.For(KartGuestData.Maxwell));
+            Assert.AreEqual(KartEnginePreset.Mew, KartEnginePreset.For(KartGuestData.Maxwell));
 
             foreach (KartGuestSpec guest in KartGuestData.Guests)
             {
@@ -77,6 +77,19 @@ namespace OrangeCarrrrr.Tests
 
             // And a name that is neither recovered nor a guest still falls back.
             Assert.AreEqual(KartEnginePreset.Classic, KartEnginePreset.For("something_new"));
+        }
+
+        [Test]
+        public void TheGuestEngineReachesNoRecoveredKart()
+        {
+            // Mew is a cat purring. It is in the preset list because the guests
+            // needed a set of their own, and the whole point of giving them one
+            // was that the 9th generation should not inherit it.
+            foreach (KartSpec kart in KartDemoData.Karts)
+            {
+                Assert.AreNotEqual(
+                    KartEnginePreset.Mew, KartEnginePreset.For(kart.AssetName), kart.AssetName);
+            }
         }
 
         [Test]

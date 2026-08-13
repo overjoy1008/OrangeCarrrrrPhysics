@@ -1,0 +1,76 @@
+Mew — the guest karts' engine set
+=================================
+
+Not a recovered preset. The eight engine sets beside this one came out of
+sound_fx_engine; this one did not, and it is here so the three guest cats stop
+borrowing the 9th generation's motor.
+
+Source
+------
+A 65 s vertical video, "Engine is running!" (720x1280, h264/aac), of a cat
+purring on its owner's lap. Brought in by hand; the file carries no author, no
+licence and no link, so THIS IS NOT CLEARED FOR DISTRIBUTION. Find the original
+and record it here before this repository is published, or replace the samples.
+
+The same warning the banana model carries applies with more force: that one at
+least names its author.
+
+What was done to it
+-------------------
+Everything below is measurement, not taste, except where it says otherwise.
+
+  region     58.0-64.0 s, the loudest stretch with the steadiest pulse
+             (purr rate 27.0-27.8 Hz, autocorrelation 0.39-0.53)
+  high-pass  30 Hz, to drop the DC and the room
+  loop       0.734 s from 59.98 s, chosen by maximising the correlation between
+             a 50 ms head window and the same window one loop length later
+             (0.807) — 20 purr cycles, against the recovered classic loop's 0.782 s
+  seam       20 ms equal-power crossfade
+  rate       44100 -> 22050, low-passed at 10.2 kHz first, then decimated by 2
+  level      scaled to classic's rms of 0.117
+
+The cat did not need a pitch correction: its pulse is 27.4 Hz against the
+recovered classic loop's 27.7, so the speed ramp lands it on the same firing
+rate it lands the demo's engine on, at every point of the ramp.
+
+Two things were then done on top of that, and both are taste rather than
+measurement — asked for after listening to the sweep above:
+
+  x1.30 rate  the loop resampled to 0.5646 s, so the pulse reads 35.6 Hz at
+              playback rate 1.0 instead of 27.4. A resample rather than a change
+              to MotorSlope or MotorBase: those two are recovered constants and
+              the tachometer reads the same number the mixer does, so moving them
+              would move the dial and every other kart with it. The sample
+              carries the shift; the law does not know it happened.
+  x1.50 level rms 0.1752, peak 0.766. Headroom is the reason this is done to the
+              sample too — the volume law tops out at 1.0 and cannot be asked
+              for more.
+
+The resample step is L/N exactly, N being the rounded new length, so the loop
+still wraps onto itself and the crossfaded seam survives it.
+
+boosterPlay.wav
+---------------
+Also the purr, and the only other slot that is. It is the loop held while the
+player revs on the start line, so it is the motor rather than a boost — a cat
+that idles as a cat should rev as one. The same loop played at 1.30, held for
+1.241 s to match the length classic's is, with a 30 ms crossfade at the seam and
+scaled to rms 0.20.
+
+The rate is taste, unlike everything above it. It was picked to sit above the
+idle the speed ramp gives a standing kart (0.25) without reaching the note the
+kart makes once it is moving, so the rev reads as a rev.
+
+All three cats get it: nothing overrides this slot the way BoosterOverride
+overrides the booster.
+
+booster.wav, boosterDrift.wav
+-----------------------------
+Byte copies of jiu's, which is what the guests were boosting with before this
+folder existed. Those two are one-shots fired by an event rather than the motor,
+they were never the thing that did not fit, and inventing them out of the same
+purr would have been taste standing where a measurement belongs. A bike folder
+carries a copy of its car's last two slots for the same reason.
+
+Only Maxwell hears them anyway — oiia and banana bring their own booster sample.
+All three keep the shared drift, crash and shock.

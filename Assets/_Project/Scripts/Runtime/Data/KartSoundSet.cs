@@ -6,11 +6,12 @@ namespace OrangeCarrrrr.Runtime
     /// One engine preset's samples, plus the shared effect and countdown cues.
     ///
     /// There are eight engine presets — classic, sr, z7, ht, new, jiu, x, v1 —
-    /// each with a kart and a bike set of four slots. This holds one of them, so
-    /// swapping preset later is swapping the asset rather than rewiring anything.
+    /// each with a kart and a bike set of four slots, and then mew, the guests'
+    /// own, which is none of those. This holds one of them, so swapping preset
+    /// later is swapping the asset rather than rewiring anything.
     ///
     /// Every original sample is 16-bit mono 22050 Hz PCM, which Unity imports
-    /// without conversion.
+    /// without conversion. Mew is cut to the same format for the same reason.
     /// </summary>
     [CreateAssetMenu(
         fileName = "KartSoundSet",

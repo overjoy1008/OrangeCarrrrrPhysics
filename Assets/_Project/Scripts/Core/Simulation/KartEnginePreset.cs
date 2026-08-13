@@ -30,6 +30,18 @@ namespace OrangeCarrrrr.Core
         public const string V1 = "V1";
 
         /// <summary>
+        /// The guests' own engine, and the only preset here that is not a
+        /// generation.
+        ///
+        /// It exists because the guests are all cats and the eight recovered sets
+        /// are all cars. Putting a cat's motor in <see cref="Jiu"/> — which is
+        /// where the guests borrowed theirs from — would have handed it to every
+        /// 9th generation kart as well, so it gets a folder of its own and the
+        /// recovered eight are left as they were found.
+        /// </summary>
+        public const string Mew = "Mew";
+
+        /// <summary>
         /// The preset name for a kart, matched against
         /// <c>KartSoundSet.Preset</c>.
         ///

@@ -18,8 +18,10 @@ namespace OrangeCarrrrr.Editor
     /// waveOut mixer's buffers.
     ///
     /// The presets are the original's own list and order — classic, sr, z7, ht,
-    /// new, jiu, x, v1. Each one is four samples — motor, booster, instant boost,
-    /// booster idle — and the bike variants differ only in the first two, which is
+    /// new, jiu, x, v1 — and then <c>mew</c>, the guests', which is not the
+    /// original's and is appended rather than slotted in. Each one is four
+    /// samples — motor, booster, instant boost, booster idle — and the bike
+    /// variants differ only in the first two, which is
     /// why they sit beside their car in the order rather than in a group of their
     /// own, and why a bike folder carries a copy of its car's last two. The kart
     /// and countdown samples are shared: they are not part of the engine note.
@@ -39,6 +41,11 @@ namespace OrangeCarrrrr.Editor
         /// <summary>
         /// The presets in the original's enum order: classic, then each engine
         /// with its bike variant after it.
+        ///
+        /// <c>Mew</c> is not one of them. It is the guests' own set and it goes
+        /// after the recovered fifteen for the same reason the guest karts go
+        /// after the recovered twenty-six — appended, never interleaved, so the
+        /// recovered order stays readable as the original's.
         /// </summary>
         private static readonly string[] Presets =
         {
@@ -50,6 +57,8 @@ namespace OrangeCarrrrr.Editor
             "Jiu", "JiuBike",
             "X", "XBike",
             "V1", "V1Bike",
+
+            "Mew",
         };
 
         /// <summary>The four engine slots, in the order the original loads them.</summary>

@@ -107,6 +107,13 @@ namespace OrangeCarrrrr.Core
         /// <summary>
         /// Engine set, as a <see cref="KartEnginePreset"/> name. A guest is in no
         /// generation, so this is a choice rather than something its row implies.
+        ///
+        /// All three take <see cref="KartEnginePreset.Mew"/>, whose motor is a
+        /// cat purring. They borrowed the 9th's until then, which was only ever a
+        /// stand-in: the purr's own pulse is 27.4 Hz against the recovered
+        /// classic loop's 27.7, so it sits on the speed ramp at the same firing
+        /// rate the demo's engine does without a semitone of correction. A guest
+        /// that is not a cat should say so here rather than inherit this.
         /// </summary>
         public string EnginePreset;
 
@@ -242,7 +249,7 @@ namespace OrangeCarrrrr.Core
                 // thing the mesh could not have told us.
                 ModelRotationDeg = new[] { -90f, 90f, 0f },
                 SizeReference = "paragon",
-                EnginePreset = KartEnginePreset.Jiu,
+                EnginePreset = KartEnginePreset.Mew,
 
                 // See DriftLean. The recovered row is 0.07.
                 DriftLean = 0.03f,
@@ -271,7 +278,7 @@ namespace OrangeCarrrrr.Core
                 ModelRotationDeg = null,
 
                 SizeReference = "paragon",
-                EnginePreset = KartEnginePreset.Jiu,
+                EnginePreset = KartEnginePreset.Mew,
 
                 // See DriftLean. The recovered row is 0.07.
                 DriftLean = 0.03f,
@@ -311,7 +318,7 @@ namespace OrangeCarrrrr.Core
                 ModelRotationDeg = new[] { 0f, 0f, 0f },
                 SizeHeightMeters = 1.95f,
 
-                EnginePreset = KartEnginePreset.Jiu,
+                EnginePreset = KartEnginePreset.Mew,
 
                 // See DriftLean. The recovered row is 0.07.
                 DriftLean = 0.03f,
