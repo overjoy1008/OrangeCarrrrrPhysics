@@ -13,6 +13,7 @@ namespace OrangeCarrrrr.Runtime
     ///   Left / Right  steer
     ///   Shift or W    drift
     ///   Ctrl or D     item boost (Cmd instead of Ctrl on macOS)
+    ///   Space         jump — held to wind the spring, released to let it go
     ///
     /// Steering goes through <see cref="KartSteeringInput"/> rather than a 1D Axis
     /// composite: the recovered rule is that the most recent direction owns the
@@ -32,6 +33,13 @@ namespace OrangeCarrrrr.Runtime
         public bool ReverseHeld { get; private set; }
         public bool DriftHeld { get; private set; }
         public bool BoostHeld { get; private set; }
+
+        /// <summary>
+        /// Held rather than pressed, because the jump is charged by holding. The
+        /// press edge that starts a crouch is taken by the simulation, so this
+        /// stays the raw key.
+        /// </summary>
+        public bool JumpHeld { get; private set; }
 
         private void OnDisable() => _steering.Reset();
 
@@ -64,6 +72,7 @@ namespace OrangeCarrrrr.Runtime
                         keyboard.rightCtrlKey.isPressed ||
 #endif
                         keyboard.dKey.isPressed;
+            JumpHeld = keyboard.spaceKey.isPressed;
 
             return new KartSimulationControls
             {
@@ -73,6 +82,7 @@ namespace OrangeCarrrrr.Runtime
                 ReverseSteering = false,
                 DriftInput = DriftHeld,
                 BoostActive = BoostHeld,
+                JumpInput = JumpHeld,
                 DriveDisabled = false,
             };
         }

@@ -67,6 +67,12 @@ namespace OrangeCarrrrr.Core
             if (string.IsNullOrWhiteSpace(assetName)) return string.Empty;
 
             string name = assetName.Trim();
+
+            // A guest has no cell to read a series and a generation off, so it
+            // carries its own name.
+            KartGuestSpec guest = KartGuestData.Find(name);
+            if (guest != null && !string.IsNullOrWhiteSpace(guest.DisplayName)) return guest.DisplayName;
+
             KartGalleryLayout.Find(name, out int row, out int column);
             if (row < 0) return name;
 

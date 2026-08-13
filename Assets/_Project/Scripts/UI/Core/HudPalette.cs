@@ -38,6 +38,15 @@ namespace OrangeCarrrrr.UI
         public static readonly Color GaugeCount = new Color32(255, 170, 70, 255);
         public static readonly Color GaugeLabel = new Color32(200, 212, 220, 255);
 
+        // kart_demo_draw_jump_gauge. Its own darker back and its own edge: the
+        // bar is drawn over the track rather than in the HUD's own strip, and the
+        // marker is the stock white pen.
+        public static readonly Color JumpGaugeBack = new Color32(18, 22, 30, 255);
+        public static readonly Color JumpGaugeEdge = new Color32(150, 165, 180, 255);
+        public static readonly Color JumpGaugeTarget = new Color32(80, 220, 125, 255);
+        public static readonly Color JumpGaugeMarker = new Color32(255, 255, 255, 255);
+        public static readonly Color JumpGaugeLabel = new Color32(255, 220, 245, 255);
+
         // draw_telemetry.
         public static readonly Color TelemetryPanelFill = new Color32(15, 19, 26, 255);
         public static readonly Color TelemetryPanelBorder = new Color32(54, 64, 73, 255);

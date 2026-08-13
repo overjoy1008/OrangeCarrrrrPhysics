@@ -22,6 +22,12 @@ namespace OrangeCarrrrr.Core
 
         /// <summary>The later TC Games client. Never evidence for the demo.</summary>
         TCGames = 1,
+
+        /// <summary>
+        /// Neither client's: a model brought in from outside, listed in
+        /// <see cref="KartGuestData"/>. Evidence for nothing at all.
+        /// </summary>
+        Guest = 2,
     }
 
     public enum KartTrackStartKind

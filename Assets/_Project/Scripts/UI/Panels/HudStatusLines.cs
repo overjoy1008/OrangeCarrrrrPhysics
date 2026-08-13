@@ -129,6 +129,7 @@ namespace OrangeCarrrrr.UI
 #else
                 "Arrows: grip drive  Shift/W: drift  Ctrl/D: booster  ");
 #endif
+            _builder.Append("Space: jump  ");
             _builder.Append("P: parameters  K: karts  T: tracks  ");
             _builder.Append("F: drag trigger  R: respawn");
 
@@ -196,6 +197,7 @@ namespace OrangeCarrrrr.UI
                 " 4: starter [{0}]", Simulator.NoDelayBoost ? "no delay" : "one press");
             _builder.AppendFormat(
                 " 5: stopper [{0}]", Simulator.ReverseInputEndsBoost ? "reverse" : "release");
+            _builder.AppendFormat(" L: drift lean [{0:F2}]", Simulator.DriftLean);
 
             _labels[3].SetText(_builder);
             _labels[3].color = HudPalette.StatusExperimental;

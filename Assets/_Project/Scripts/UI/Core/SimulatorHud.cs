@@ -39,6 +39,9 @@ namespace OrangeCarrrrr.UI
         /// <summary>The drift gauge along the bottom. Made on first play.</summary>
         [SerializeField] private GaugePanel _gauge;
 
+        /// <summary>The jump's timing bar above it. Made on first play.</summary>
+        [SerializeField] private JumpGaugePanel _jumpGauge;
+
         /// <summary>The engine-note dial. Made on first play.</summary>
         [SerializeField] private TachometerPanel _tachometer;
 
@@ -49,6 +52,7 @@ namespace OrangeCarrrrr.UI
         {
             EnsureSelectionMenu();
             EnsureGauge();
+            EnsureJumpGauge();
             EnsureTachometer();
             EnsureRaceBanner();
             BindAll();
@@ -113,6 +117,23 @@ namespace OrangeCarrrrr.UI
         }
 
         /// <summary>
+        /// Adds the jump's timing bar, alongside the drift gauge and for the same
+        /// reason: it builds its own bar, target and marker.
+        /// </summary>
+        private void EnsureJumpGauge()
+        {
+            if (_jumpGauge == null)
+            {
+                _jumpGauge = GetComponentInChildren<JumpGaugePanel>(includeInactive: true);
+            }
+            if (_jumpGauge != null || !Application.isPlaying) return;
+
+            var holder = new GameObject("Jump gauge", typeof(RectTransform));
+            holder.transform.SetParent(transform, worldPositionStays: false);
+            _jumpGauge = holder.AddComponent<JumpGaugePanel>();
+        }
+
+        /// <summary>
         /// Adds the selection menu to the canvas.
         ///
         /// Built here rather than authored into the prefab because its rows come
@@ -156,6 +177,7 @@ namespace OrangeCarrrrr.UI
             if (_raceBanner != null) _raceBanner.Bind(_simulator);
             if (_selectionMenu != null) _selectionMenu.Bind(_simulator);
             if (_gauge != null) _gauge.Bind(_simulator);
+            if (_jumpGauge != null) _jumpGauge.Bind(_simulator);
             if (_tachometer != null) _tachometer.Bind(_simulator);
         }
 

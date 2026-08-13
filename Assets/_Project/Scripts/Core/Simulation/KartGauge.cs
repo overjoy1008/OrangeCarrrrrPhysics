@@ -57,7 +57,15 @@ namespace OrangeCarrrrr.Core
 
         public float SuspensionMax = 1f;
 
-        public KartGaugeModel Model;
+        /// <summary>
+        /// The model the simulator opens on.
+        ///
+        /// <see cref="KartGaugeModel.Slip"/> rather than the enum's zero, because
+        /// Infinite fills the gauge from any drift at all and is a debugging
+        /// setting rather than a hypothesis. Slip is the one that integrates
+        /// something, so it is what a session should start out testing.
+        /// </summary>
+        public KartGaugeModel Model = KartGaugeModel.Slip;
         public float Value;
         public uint Boosters;
         public bool UnlimitedBoosters;

@@ -45,6 +45,74 @@ namespace OrangeCarrrrr.Core
         }
     }
 
+    /// <summary><c>KartJumpPhase</c> from <c>kart_simulation.h</c>.</summary>
+    public enum KartJumpPhase
+    {
+        /// <summary>On the ground with nothing stored, waiting for a press.</summary>
+        Ready = 0,
+
+        /// <summary>Key held: the gauge sweeps and the spring winds up.</summary>
+        Crouch,
+
+        /// <summary>Key released: the stored energy is being spent as a force.</summary>
+        Push,
+
+        /// <summary>The stroke is over or the wheels have left the ground.</summary>
+        Airborne,
+
+        /// <summary>Back down, running out the cooldown before another jump.</summary>
+        Landing,
+    }
+
+    /// <summary>
+    /// <c>KartJumpState</c> from <c>kart_simulation.h</c>: the active-suspension
+    /// jump, which is a spring wound up by holding the key and released as a
+    /// force rather than as an impulse on the velocity.
+    /// </summary>
+    [Serializable]
+    public struct KartJumpState
+    {
+        public KartJumpPhase Phase;
+        public float PhaseTime;
+
+        /// <summary>0 to 1 and back down, swept while the key is held.</summary>
+        public float GaugePosition;
+
+        /// <summary>What the gauge was worth when released, min to max efficiency.</summary>
+        public float JumpStrength;
+
+        public float CrouchDistance;
+
+        /// <summary>Joules in the spring: 1/2 k x^2.</summary>
+        public float StoredEnergy;
+
+        /// <summary>Newtons this substep, for the telemetry row. Zero outside the push.</summary>
+        public float AppliedForce;
+
+        public float ApexHeight;
+        public float TakeoffHeight;
+        public bool PreviousInput;
+
+        /// <summary>How high the last jump went, which is only meaningful once it has landed.</summary>
+        public float JumpHeight => ApexHeight - TakeoffHeight;
+
+        /// <summary>The label <c>jump_phase_name</c> prints in the telemetry panel.</summary>
+        public string PhaseName
+        {
+            get
+            {
+                switch (Phase)
+                {
+                    case KartJumpPhase.Crouch: return "CROUCH";
+                    case KartJumpPhase.Push: return "PUSH";
+                    case KartJumpPhase.Airborne: return "AIR";
+                    case KartJumpPhase.Landing: return "LAND";
+                    default: return "READY";
+                }
+            }
+        }
+    }
+
     /// <summary>Per-wheel suspension compression, 0 extended to 1 fully compressed.</summary>
     [Serializable]
     public struct KartWheelContactState
@@ -121,6 +189,7 @@ namespace OrangeCarrrrr.Core
         public KartLongitudinalState Longitudinal;
         public KartInstantBoostState InstantBoost;
         public KartTimedBoostState TimedBoost;
+        public KartJumpState Jump;
         public KartWheelContactState Wheels;
 
         public float PreviousSteerAngleRad;

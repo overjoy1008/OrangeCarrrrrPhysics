@@ -299,7 +299,14 @@ namespace OrangeCarrrrr.UI
         /// not something that happens by accident in a list of look-alikes.
         /// </summary>
         private static string Mark(KartAssetSource source)
-            => source == KartAssetSource.Demo ? string.Empty : "   [TC]";
+        {
+            switch (source)
+            {
+                case KartAssetSource.TCGames: return "   [TC]";
+                case KartAssetSource.Guest: return "   [GUEST]";
+                default: return string.Empty;
+            }
+        }
 
         /// <summary>
         /// Opens the list. <paramref name="chosen"/> is called with the picked

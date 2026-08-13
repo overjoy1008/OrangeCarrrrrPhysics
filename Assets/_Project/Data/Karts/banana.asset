@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afacce84b39ac7f4488d00dea27cb5f6, type: 3}
+  m_Name: banana
+  m_EditorClassIdentifier: OrangeCarrrrr.Runtime::OrangeCarrrrr.Runtime.KartSpecAsset
+  _assetName: banana
+  _source: 2
+  _modelPrefab: {fileID: 4189908671274978404, guid: d27517970de0f2f4789f69c5ae92b021, type: 3}
+  _skinTemplate: {fileID: 0}
+  _halfWidth: 0.5751418
+  _halfLength: 0.46614456
+  _modelHeight: 1.9500002
+  _suspensionRange: 0.5
+  _groundedDragScale: 1
+  _dynamics:
+    Mass: 100
+    AirFriction: 3
+    DragFactor: 0.725
+    ForwardAccelForce: 3300
+    BackwardAccelForce: 2000
+    GripBrakeForce: 2000
+    SlipBrakeForce: 1500
+    MaxSteerAngleDeg: 10
+    SteerConstraint: 28
+    FrontGripFactor: 5
+    RearGripFactor: 5
+    DriftTriggerFactor: 0.2
+    DriftTriggerTime: 0.2
+    DriftSlipFactor: 0.2
+    DriftEscapeForce: 4000
+    CornerDrawFactor: 0.05
+    DriftLeanFactor: 0.03
+    SteerLeanFactor: 0.01
+    JumpSpringMillionPerM: 1.2
+    JumpMaxCrouchDistance: 0.18
+    JumpGaugeSweepTime: 0.75
+    JumpPushDuration: 0.09
+    JumpMinEfficiency: 1
+    JumpMaxEfficiency: 2.5
+    JumpVelocityDirectionBias: 0.12
+    JumpBodyUpBlend: 0.25
+    JumpTorqueScale: 0.02
+    JumpMaxSlopeDeg: 45
+    JumpLandingCooldown: 0.12
+    JumpLandingDamping: 1200
+  _maxBoosters: 2
+  _boosterSound: {fileID: 8300000, guid: a70ef9d48a9992d4c9f97c97d378d795, type: 3}
+  _boosterSoundStart: 0.15
+  _boosterSoundSlowStart: 0
+  _themeMusic: {fileID: 8300000, guid: 1849c10f25ad9184bba42d2f0e0f221e, type: 3}

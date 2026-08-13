@@ -107,13 +107,53 @@ namespace OrangeCarrrrr.Runtime
 
         private void Update()
         {
+            if (_simulator == null) return;
+
+            // A kart that brings its own theme takes the music off the track,
+            // and picking another kart hands it back. Checked before the track,
+            // because while a guest is being driven the course's theme is not
+            // what should be playing whatever scene was loaded.
+            AudioClip kartTheme = _simulator.Kart != null ? _simulator.Kart.ThemeMusic : null;
+            if (kartTheme != _resolvedKartTheme)
+            {
+                _resolvedKartTheme = kartTheme;
+                if (kartTheme != null)
+                {
+                    PlayKartTheme(kartTheme);
+                    return;
+                }
+
+                // Back to the course's, from the top of its rotation.
+                _themeIndex = -1;
+                _resolvedFor = null;
+            }
+            if (kartTheme != null) return;
+
             // The track can change under the player when a scene is loaded, and the
             // clip has to follow it.
-            if (_simulator == null || _simulator.Track == null) return;
+            if (_simulator.Track == null) return;
             if (_simulator.Track.AssetName == _resolvedFor) return;
 
             ResolveClips();
             PlayTheme();
+        }
+
+        private AudioClip _resolvedKartTheme;
+
+        /// <summary>
+        /// The kart's own tune, looped like a course theme. It does not join the
+        /// pool: there is one of it, and the rotation is a property of a theme
+        /// that ships several tracks.
+        /// </summary>
+        private void PlayKartTheme(AudioClip clip)
+        {
+            if (_source == null) return;
+
+            _theme = clip;
+            _source.clip = clip;
+            _source.loop = true;
+            _source.volume = _volume;
+            _source.Play();
         }
 
         /// <summary>

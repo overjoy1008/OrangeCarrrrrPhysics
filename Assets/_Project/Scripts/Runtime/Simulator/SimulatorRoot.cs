@@ -25,6 +25,11 @@ namespace OrangeCarrrrr.Runtime
     {
         [Header("Content")]
         [SerializeField] private KartSpecAsset _kart;
+
+        [Tooltip(
+            "Asset name of the kart every scene opens on, looked up in the catalog " +
+            "at load. Empty keeps whatever the scene itself was authored with.")]
+        [SerializeField] private string _openingKart = KartGuestData.Oiia;
         [SerializeField] private TrackSpecAsset _track;
 
         [Tooltip("Optional. With a track collision world the kart drives on the real scene; without it, on the flat plane.")]
@@ -564,7 +569,7 @@ namespace OrangeCarrrrr.Runtime
             if (_state != null)
             {
                 KartSpec spec = kart.ToSpec();
-                KartSimulation.Rekart(_state, spec.Dynamics, spec.Geometry);
+                KartSimulation.Rekart(_state, Leaned(spec.Dynamics), spec.Geometry);
 
                 // Storage is per kart, so a swap onto a kart that holds fewer has
                 // to drop what no longer fits — the same trim the H key does.
@@ -624,9 +629,54 @@ namespace OrangeCarrrrr.Runtime
         /// already had, which is the demo's classic — the wrong timbre is a better
         /// outcome than a kart that goes silent.
         /// </summary>
+        /// <summary>
+        /// Puts the opening kart under the simulator, by name.
+        ///
+        /// By name rather than by reference because the kart is authored into
+        /// every one of the sixteen scenes, and changing which one they open on
+        /// would otherwise mean re-authoring all of them — and could not name a
+        /// guest at all, whose spec asset is created by the catalog builder rather
+        /// than committed. A name the catalog does not have leaves the scene's own
+        /// choice alone, which is what happens before the builder has run.
+        /// </summary>
+        private void ApplyOpeningKart()
+        {
+            // Play only. This component runs in edit mode too, and writing to a
+            // serialised field there would dirty every scene merely by opening
+            // it — a scene would be re-authored as a side effect of being looked
+            // at. In edit mode the scene keeps showing the kart it was saved with.
+            if (!Application.isPlaying) return;
+            if (string.IsNullOrEmpty(_openingKart)) return;
+
+            KartCatalog catalog = ResolveKartCatalog();
+            if (catalog == null) return;
+
+            for (int i = 0; i < catalog.Count; ++i)
+            {
+                KartSpecAsset candidate = catalog.At(i);
+                if (candidate == null ||
+                    !string.Equals(candidate.AssetName, _openingKart, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                _kart = candidate;
+                if (_kartView != null) _kartView.Kart = candidate;
+                if (_boostFlame != null) _boostFlame.Kart = candidate;
+                return;
+            }
+        }
+
         private void ApplyEngineSound()
         {
             if (_sound == null) return;
+
+            // Set before the early return below, because it is per kart and the
+            // preset is not: two guests can share the 9th's engine and still want
+            // different boosters.
+            _sound.BoosterOverride = _kart != null ? _kart.BoosterSound : null;
+            _sound.BoosterOverrideStart = _kart != null ? _kart.BoosterSoundStart : 0f;
+            _sound.BoosterOverrideSlowStart = _kart != null ? _kart.BoosterSoundSlowStart : 0f;
 
             string wanted = KartEnginePreset.For(_kart != null ? _kart.AssetName : null);
             if (_sound.Sounds != null && KartEnginePreset.Matches(_sound.Sounds.Preset, wanted)) return;
@@ -708,6 +758,7 @@ namespace OrangeCarrrrr.Runtime
         {
             EnsureEffects();
             EnsureRaceCameras();
+            ApplyOpeningKart();
 
             // After EnsureEffects, which is what finds or creates the player the
             // preset goes on, and before the first frame is heard.
@@ -847,6 +898,87 @@ namespace OrangeCarrrrr.Runtime
                 ? SimulatorViewMode.TopDown
                 : SimulatorViewMode.Chase;
 
+        /// <summary>
+        /// How hard, and which way, the body rolls into a drift.
+        ///
+        /// Both halves of that matter and neither can be settled from the outside.
+        /// The magnitude depends on how big the kart is — the recovered 0.07 suits
+        /// a wide, flat 2004 body and throws a narrow cat from lock to lock — and
+        /// the sign depends on which way round the model was built, since that is
+        /// what decides which roll reads as leaning <em>into</em> the corner.
+        ///
+        /// So the key walks a fixed ladder rather than nudging a float: eight
+        /// stops, four each way, which is enough to find the one that looks right
+        /// and few enough to reach it in a couple of presses.
+        /// </summary>
+        public static readonly float[] DriftLeanSteps =
+        {
+            0.07f, 0.05f, 0.04f, 0.03f, -0.03f, -0.04f, -0.05f, -0.07f,
+        };
+
+        /// <summary>
+        /// Which stop is chosen, or -1 while every kart is still on its own value.
+        ///
+        /// A session setting once set, like the boost-model toggles: it survives a
+        /// kart swap, because the reason to be on a given stop is usually the
+        /// comparison being made rather than the kart under it.
+        /// </summary>
+        private int _driftLeanStep = -1;
+
+        /// <summary>The drift lean now in force, for the HUD.</summary>
+        public float DriftLean => _state != null
+            ? _state.Config.DriftLeanFactor
+            : KartDynamicsConfig.Standard().DriftLeanFactor;
+
+        /// <summary>
+        /// The <c>L</c> key: the next stop down the ladder.
+        ///
+        /// The first press starts from the stop nearest the kart's own value, so
+        /// the ladder is entered where the kart already is rather than jumping to
+        /// its top.
+        /// </summary>
+        public void NextDriftLean()
+        {
+            if (_driftLeanStep < 0) _driftLeanStep = NearestDriftLeanStep(DriftLean);
+            _driftLeanStep = (_driftLeanStep + 1) % DriftLeanSteps.Length;
+
+            if (_state != null) _state.Config = Leaned(_state.Config);
+        }
+
+        private static int NearestDriftLeanStep(float value)
+        {
+            int nearest = 0;
+            float best = float.MaxValue;
+
+            for (int i = 0; i < DriftLeanSteps.Length; ++i)
+            {
+                float distance = Mathf.Abs(DriftLeanSteps[i] - value);
+                if (distance >= best) continue;
+
+                best = distance;
+                nearest = i;
+            }
+            return nearest;
+        }
+
+        /// <summary>
+        /// A kart's dynamics as the chosen stop wants them, or untouched while
+        /// none has been chosen.
+        ///
+        /// The steer lean follows the drift lean's sign. It is a tenth the size
+        /// and never needed a stop of its own, but a kart leaning into the corner
+        /// under drift and out of it under steer reads as a bug, so the two agree.
+        /// </summary>
+        private KartDynamicsConfig Leaned(KartDynamicsConfig dynamics)
+        {
+            if (_driftLeanStep < 0) return dynamics;
+
+            float lean = DriftLeanSteps[_driftLeanStep];
+            dynamics.DriftLeanFactor = lean;
+            dynamics.SteerLeanFactor = Mathf.Abs(dynamics.SteerLeanFactor) * Mathf.Sign(lean);
+            return dynamics;
+        }
+
         /// <summary>The <c>R</c> key: back to the reset pose with a snapped camera.</summary>
         public void ResetSimulation()
         {
@@ -861,7 +993,7 @@ namespace OrangeCarrrrr.Runtime
             bool noDelayBoost = _state != null && _state.NoDelayBoost;
 
             _state ??= new KartSimulationState();
-            KartSimulation.Init(_state, kartSpec.Dynamics, kartSpec.Geometry);
+            KartSimulation.Init(_state, Leaned(kartSpec.Dynamics), kartSpec.Geometry);
             _state.InstantBoost.StoredModel = storedModel;
             _state.ReverseInputEndsBoost = reverseEndsBoost;
             _state.NoDelayBoost = noDelayBoost;
@@ -1053,6 +1185,10 @@ namespace OrangeCarrrrr.Runtime
                 _controls.ReverseInput = 0f;
                 _controls.DriftInput = false;
                 _controls.BoostActive = false;
+
+                // The original blanks the jump on the line with the throttle and
+                // the boost, so nobody arrives at GO mid-crouch.
+                _controls.JumpInput = false;
                 _controls.DriveDisabled = true;
             }
             else if (_startBoostPending && _controls.ForwardInput != 0f)
@@ -1060,6 +1196,10 @@ namespace OrangeCarrrrr.Runtime
                 _startBoostPending = false;
                 if (_flow.Countdown.StartBoostGranted(_raceClockMs))
                 {
+                    // The line is not a moment to be slow at, and this goes
+                    // through the same timed boost an item does.
+                    if (_sound != null) _sound.ForceNextBoosterFast();
+
                     // The same call an item boost makes, so the start boost drives
                     // the booster sound and the wide field of view identically.
                     KartDynamics.TimedBoostStart(
@@ -1095,6 +1235,9 @@ namespace OrangeCarrrrr.Runtime
             if (_skidMarks != null) _skidMarks.Step(state, Ground, elapsedMs);
             if (_boostFlame != null) _boostFlame.Step(state);
             if (_sound != null) _sound.Step(state, _raceClockMs);
+
+            // After the sound, which is what chose the take.
+            if (_kartView != null && _sound != null) _kartView.SetSpinSlow(_sound.BoosterSlow);
 
             // After the sound driver, the way the original orders it: the gearbox
             // only re-pitches the engine loop the driver already opened, so Single

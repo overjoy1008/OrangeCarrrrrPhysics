@@ -70,6 +70,7 @@ namespace OrangeCarrrrr.Runtime
         [SerializeField] private bool _showModelBounds;
 
         private MeshRenderer[] _renderers;
+        private KartGuestSpin[] _spinners;
         private Texture2D _painted;
         private Material _material;
 
@@ -146,6 +147,19 @@ namespace OrangeCarrrrr.Runtime
             ApplySkin(force: true);
         }
 
+        /// <summary>
+        /// Tells the model's effects which take the booster picked, so a kart
+        /// that turns while boosting can turn at the speed it is singing at.
+        /// </summary>
+        public void SetSpinSlow(bool slow)
+        {
+            if (_spinners == null) return;
+            for (int i = 0; i < _spinners.Length; ++i)
+            {
+                if (_spinners[i] != null) _spinners[i].Slow = slow;
+            }
+        }
+
         /// <summary>Applies one frame of simulation state.</summary>
         public void Apply(KartSimulationState kart)
         {
@@ -153,6 +167,16 @@ namespace OrangeCarrrrr.Runtime
             transform.SetPositionAndRotation(
                 KartSpace.ToUnity(kart.Position),
                 KartSpace.ToUnity(kart.Orientation));
+
+            // A guest model may have a second look that follows the simulation.
+            // Driven from here rather than from the effect's own Update so it
+            // runs on the frames the kart is posed on and holds still on the
+            // ones it is not.
+            if (_spinners == null) return;
+            for (int i = 0; i < _spinners.Length; ++i)
+            {
+                if (_spinners[i] != null) _spinners[i].Step(kart, Time.deltaTime);
+            }
         }
 
         private void OnEnable()
@@ -236,6 +260,14 @@ namespace OrangeCarrrrr.Runtime
 
             _builtKart = _kart;
             _renderers = null;
+
+            // Collected on the rebuild rather than looked up per frame: the model
+            // only changes when the kart does.
+            _spinners = model.GetComponentsInChildren<KartGuestSpin>(includeInactive: true);
+            foreach (KartGuestSpin spinner in _spinners)
+            {
+                if (spinner != null) spinner.Reset();
+            }
         }
 
         /// <summary>

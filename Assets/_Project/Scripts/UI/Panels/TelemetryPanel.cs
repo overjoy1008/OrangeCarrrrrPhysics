@@ -14,9 +14,8 @@ namespace OrangeCarrrrr.UI
     /// The C version writes sixteen rows from one macro. Here each row is an entry
     /// in <see cref="Rows"/> that knows how to format itself and what colour it
     /// takes, so a row belonging to a feature that is out of scope is simply
-    /// absent from the list rather than printing zeros. Jump, the drift gauge and
-    /// the instant-boost store are the three still missing; adding one back is one
-    /// entry.
+    /// absent from the list rather than printing zeros. The instant-boost store is
+    /// the one still missing; adding it back is one entry.
     /// </summary>
     [AddComponentMenu("OrangeCarrrrr/HUD/Telemetry Panel")]
     public sealed class TelemetryPanel : HudWidget
@@ -67,6 +66,7 @@ namespace OrangeCarrrrr.UI
             new Row(FormatSteer, _ => HudPalette.TelemetryNeutral),
             new Row(FormatDrift, _ => HudPalette.TelemetryNeutral),
             new Row(FormatBoost, ColourBoost),
+            new Row(FormatJump, ColourJump),
             new Row(FormatForces, _ => HudPalette.TelemetryNeutral),
             new Row(FormatDrag, _ => HudPalette.TelemetryNeutral),
 
@@ -259,6 +259,25 @@ namespace OrangeCarrrrr.UI
             => KartDynamics.AnyBoostActive(kart.TimedBoost, kart.InstantBoost)
                 ? HudPalette.StatusBoost
                 : HudPalette.TelemetryNeutral;
+
+        /// <summary>
+        /// The jump's phase, its gauge, and what the last one was worth. The
+        /// height is the apex above the takeoff, so it is only finished once the
+        /// kart is back down.
+        /// </summary>
+        private static void FormatJump(StringBuilder text, KartSimulationState kart)
+            => text.AppendFormat(
+                "JUMP    {0,-6} gauge {1,4:F2} power {2,3:F0}%  E {3,6:F0}J F {4,6:F0}N h {5,4:F2}m",
+                kart.Jump.PhaseName, kart.Jump.GaugePosition,
+                kart.Jump.JumpStrength * 100f,
+                kart.Jump.StoredEnergy, kart.Jump.AppliedForce,
+                kart.Jump.JumpHeight);
+
+        /// <summary>Dimmed at rest, so a live jump is what catches the eye.</summary>
+        private static Color ColourJump(KartSimulationState kart)
+            => kart.Jump.Phase == KartJumpPhase.Ready
+                ? HudPalette.TelemetryNeutral
+                : HudPalette.StatusBoost;
 
         private static void FormatDrift(StringBuilder text, KartSimulationState kart)
             => text.AppendFormat("DRIFT   linger {0,5:F2}  trigger {1,5:F2}  entry {2}",

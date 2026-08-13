@@ -11,9 +11,14 @@ namespace OrangeCarrrrr.Core
     /// the substeps because the original ticks the item boost once per frame in
     /// milliseconds while the instant boost ticks per substep in seconds.
     ///
-    /// Deliberately out of scope: jump, the drift gauge, and the simulator's
-    /// alternate boost-storage and cutoff models. Where the C source branched on
-    /// those, this takes the recovered branch and nothing else.
+    /// The jump runs outside the grounded branch, after the tyre forces and
+    /// before drag, exactly where <c>kart_step_jump</c> is called. It contributes
+    /// nothing at all until the key is pressed, so a kart that never jumps steps
+    /// as it did before it existed.
+    ///
+    /// Deliberately out of scope: the drift gauge, and the simulator's alternate
+    /// boost-storage and cutoff models. Where the C source branched on those,
+    /// this takes the recovered branch and nothing else.
     /// </summary>
     public static class KartSimulation
     {
@@ -67,6 +72,7 @@ namespace OrangeCarrrrr.Core
             state.Longitudinal = default;
             state.InstantBoost = default;
             state.TimedBoost = default;
+            state.Jump = default;
             state.Wheels = default;
             state.LastStep = default;
 
@@ -310,9 +316,15 @@ namespace OrangeCarrrrr.Core
                     Dt = dt,
                     HalfWidth = state.Geometry.HalfWidth,
                     HalfLength = state.Geometry.HalfLength,
-                    // Jump is out of scope, so the landing damping the C source
-                    // feeds here is always zero.
-                    CompressionDamping = 0f,
+
+                    // Read before the jump steps, which is where the C source
+                    // reads it: the damping belongs to the phase the kart landed
+                    // in, not to the one this substep is about to move it to.
+                    CompressionDamping =
+                        state.Jump.Phase == KartJumpPhase.Airborne ||
+                        state.Jump.Phase == KartJumpPhase.Landing
+                            ? state.Config.JumpLandingDamping
+                            : 0f,
                     ChassisUp = up,
                 };
                 for (int i = 0; i < KartConstants.WheelCount; ++i)
@@ -408,6 +420,25 @@ namespace OrangeCarrrrr.Core
                 force.Z += KartConstants.WorldGravity * state.Config.Mass;
                 torque += state.AngularVelocity * AirborneSpinDamping;
             }
+
+            // Outside the grounded branch because it has to run either way: the
+            // stroke ends when the wheels leave, and the airborne phase is what
+            // watches for the landing.
+            var jumpInput = new KartJumpInput
+            {
+                Dt = dt,
+                JumpInput = controls.JumpInput,
+                Geometry = state.Geometry,
+                Right = right,
+                Forward = forward,
+                Up = up,
+                LinearVelocity = state.LinearVelocity,
+                Height = state.Position.Z,
+                Wheel = wheel,
+            };
+            KartJumpOutput jump = KartDynamics.StepJump(ref state.Jump, state.Config, jumpInput);
+            force += jump.Force;
+            torque += jump.Torque;
 
             var dragInput = new KartDragInput
             {

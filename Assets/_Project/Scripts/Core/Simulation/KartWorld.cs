@@ -68,6 +68,12 @@ namespace OrangeCarrrrr.Core
         public bool ReverseSteering;
         public bool DriftInput;
         public bool BoostActive;
+
+        /// <summary>
+        /// Held, not pressed. The jump takes the press edge itself so that a key
+        /// held from before the kart landed cannot start a new crouch.
+        /// </summary>
+        public bool JumpInput;
         public bool DriveDisabled;
     }
 

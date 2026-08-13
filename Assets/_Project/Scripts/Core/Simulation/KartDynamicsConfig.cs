@@ -58,8 +58,15 @@ namespace OrangeCarrrrr.Core
             JumpMaxCrouchDistance = 0.18f;
             JumpGaugeSweepTime = 0.75f;
             JumpPushDuration = 0.09f;
-            JumpMinEfficiency = 0.20f;
-            JumpMaxEfficiency = 1.0f;
+            // Tuned, not transcribed — the only two numbers in this tail that are
+            // not the demo's. The recovered pair is 0.2 and 1.0, which makes a
+            // well-timed jump about 2.5 m and a mistimed one barely clear the
+            // ground. These raise the floor to what used to be the ceiling and put
+            // the ceiling well above it, so the gauge is worth playing for rather
+            // than worth not fluffing. KartJumpTests still checks the C build's
+            // behaviour against the recovered pair, which it sets for itself.
+            JumpMinEfficiency = 1.0f;
+            JumpMaxEfficiency = 2.5f;
             JumpVelocityDirectionBias = 0.12f;
             JumpBodyUpBlend = 0.25f;
             JumpTorqueScale = 0.02f;

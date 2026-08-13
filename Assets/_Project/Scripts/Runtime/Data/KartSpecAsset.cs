@@ -46,6 +46,25 @@ namespace OrangeCarrrrr.Runtime
         [Header("Booster storage")]
         [SerializeField] private uint _maxBoosters = KartDemoData.DefaultMaxBoosters;
 
+        [Header("Sound")]
+        [Tooltip(
+            "A booster one-shot belonging to this kart rather than to its engine " +
+            "set. Empty on every recovered kart, where the set is the whole answer.")]
+        [SerializeField] private AudioClip _boosterSound;
+
+        [Tooltip("Seconds to skip into that clip, for a sample that opens on silence.")]
+        [SerializeField] private float _boosterSoundStart;
+
+        [Tooltip(
+            "A second take inside the same clip, picked at random against the " +
+            "first. Zero for a kart whose booster has only one.")]
+        [SerializeField] private float _boosterSoundSlowStart;
+
+        [Tooltip(
+            "A theme this kart brings with it, played instead of the track's. " +
+            "Empty on every recovered kart, whose music belongs to the course.")]
+        [SerializeField] private AudioClip _themeMusic;
+
         public string AssetName => _assetName;
 
         /// <summary>
@@ -73,6 +92,29 @@ namespace OrangeCarrrrr.Runtime
         /// it already brings its geometry and its dynamics.
         /// </summary>
         public Texture2D SkinTemplate => _skinTemplate;
+
+        /// <summary>
+        /// This kart's own booster one-shot, or null to use the engine set's.
+        ///
+        /// Only a guest ever has one. A recovered kart's booster belongs to its
+        /// generation, and giving one its own sound would be inventing content
+        /// for the 2004 client.
+        /// </summary>
+        public AudioClip BoosterSound => _boosterSound;
+
+        /// <summary>Where in <see cref="BoosterSound"/> playback should start.</summary>
+        public float BoosterSoundStart => _boosterSoundStart;
+
+        /// <summary>The slow take's start, or 0 when the clip holds only one.</summary>
+        public float BoosterSoundSlowStart => _boosterSoundSlowStart;
+
+        /// <summary>
+        /// A theme that follows this kart rather than the course, or null.
+        ///
+        /// Only a guest has one: the recovered music is the track's, and giving a
+        /// 2004 kart a tune of its own would be inventing content for the demo.
+        /// </summary>
+        public AudioClip ThemeMusic => _themeMusic;
         public float ModelHeight => _modelHeight;
         public uint MaxBoosters => _maxBoosters;
         public KartDynamicsConfig Dynamics => _dynamics;
@@ -114,10 +156,20 @@ namespace OrangeCarrrrr.Runtime
 
 #if UNITY_EDITOR
         /// <summary>Editor-only, for the asset builder to wire what it imported.</summary>
-        internal void SetContent(GameObject modelPrefab, Texture2D skinTemplate)
+        internal void SetContent(
+            GameObject modelPrefab,
+            Texture2D skinTemplate,
+            AudioClip boosterSound = null,
+            float boosterSoundStart = 0f,
+            float boosterSoundSlowStart = 0f,
+            AudioClip themeMusic = null)
         {
+            _themeMusic = themeMusic;
             _modelPrefab = modelPrefab;
             _skinTemplate = skinTemplate;
+            _boosterSound = boosterSound;
+            _boosterSoundStart = boosterSoundStart;
+            _boosterSoundSlowStart = boosterSoundSlowStart;
         }
 #endif
 

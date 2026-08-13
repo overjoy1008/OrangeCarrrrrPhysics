@@ -1,6 +1,6 @@
 ﻿<Solution>
-  <Project Path="OrangeCarrrrr.Core.csproj" />
   <Project Path="OrangeCarrrrr.Tests.EditMode.csproj" />
+  <Project Path="OrangeCarrrrr.Core.csproj" />
   <Project Path="OrangeCarrrrr.UI.csproj" />
   <Project Path="OrangeCarrrrr.Runtime.csproj" />
   <Project Path="OrangeCarrrrr.Editor.csproj" />

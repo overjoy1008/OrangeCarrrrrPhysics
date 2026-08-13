@@ -52,6 +52,16 @@ namespace OrangeCarrrrr.Editor
         private static void BuildScenes() => TrackSceneBuilder.Build();
 
         /// <summary>
+        /// The kart side of the same thing. Its builder watches the kart art
+        /// directories, so this is for when nothing was imported but the table it
+        /// reads has changed — a guest kart added to
+        /// <see cref="OrangeCarrrrr.Core.KartGuestData"/>, whose model was already
+        /// on disk.
+        /// </summary>
+        [MenuItem(Menu + "Rebuild Kart Catalog", priority = RebuildGroup + 3)]
+        private static void RebuildKarts() => KartCatalogBuilder.Build();
+
+        /// <summary>
         /// The whole pipeline, in order. This is the one to reach for on a clone
         /// that looks wrong and where it is not obvious which step went bad.
         /// </summary>
@@ -62,7 +72,8 @@ namespace OrangeCarrrrr.Editor
             TrackCourseBuilder.Build(force: true);
             TrackCatalogBuilder.Build();
             TrackSceneBuilder.Build();
-            Debug.Log("OrangeCarrrrr: reloaded meshes, courses, catalog and scenes.");
+            KartCatalogBuilder.Build();
+            Debug.Log("OrangeCarrrrr: reloaded meshes, courses, catalogs, scenes and karts.");
         }
     }
 }

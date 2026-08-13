@@ -75,6 +75,7 @@ namespace OrangeCarrrrr.Runtime
             if (keyboard.rKey.wasPressedThisFrame) _simulator.RequestRespawn();
             if (keyboard.fKey.wasPressedThisFrame) _simulator.ToggleDragTrigger();
             if (keyboard.eKey.wasPressedThisFrame) _simulator.ToggleGearMode();
+            if (keyboard.lKey.wasPressedThisFrame) _simulator.NextDriftLean();
             if (keyboard.pKey.wasPressedThisFrame) Parameters();
 
             if (keyboard.f1Key.wasPressedThisFrame) _simulator.ToggleRaceMode();

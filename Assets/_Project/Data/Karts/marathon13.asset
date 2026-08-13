@@ -44,8 +44,8 @@ MonoBehaviour:
     JumpMaxCrouchDistance: 0.18
     JumpGaugeSweepTime: 0.75
     JumpPushDuration: 0.09
-    JumpMinEfficiency: 0.2
-    JumpMaxEfficiency: 1
+    JumpMinEfficiency: 1
+    JumpMaxEfficiency: 2.5
     JumpVelocityDirectionBias: 0.12
     JumpBodyUpBlend: 0.25
     JumpTorqueScale: 0.02
@@ -53,3 +53,7 @@ MonoBehaviour:
     JumpLandingCooldown: 0.12
     JumpLandingDamping: 1200
   _maxBoosters: 2
+  _boosterSound: {fileID: 0}
+  _boosterSoundStart: 0
+  _boosterSoundSlowStart: 0
+  _themeMusic: {fileID: 0}

@@ -32,6 +32,12 @@ namespace OrangeCarrrrr.Editor
             foreach (string path in imported)
             {
                 string normalised = path.Replace('\\', '/');
+
+                // The prefabs and materials the guest importer writes land in the
+                // model directory too. Rebuilding on those would rebuild them
+                // again, and the build would never settle.
+                if (normalised.EndsWith(".prefab") || normalised.EndsWith(".mat")) continue;
+
                 if (!normalised.StartsWith(ModelDirectory + "/") &&
                     !normalised.StartsWith(SkinDirectory + "/") &&
                     !normalised.StartsWith(CommonDirectory + "/")) continue;
@@ -47,6 +53,8 @@ namespace OrangeCarrrrr.Editor
         private const string ModelDirectory = "Assets/_Project/Art/Karts/Models";
         private const string SkinDirectory = "Assets/_Project/Art/Karts/Skins";
         private const string CommonDirectory = "Assets/_Project/Art/Karts/Common";
+        private const string GuestAudioDirectory = "Assets/_Project/Audio/Kart/Guest";
+        private const string GuestMusicDirectory = "Assets/_Project/Audio/Music/Guest";
         private const string CatalogPath = SpecDirectory + "/KartCatalog.asset";
 
         /// <summary>
@@ -128,6 +136,36 @@ namespace OrangeCarrrrr.Editor
                 specs.Add(spec);
             }
 
+            int guests = 0;
+            foreach (KartGuestSpec guest in KartGuestData.Guests)
+            {
+                GameObject prefab = KartGuestModelBuilder.Build(guest, out KartSpec measured);
+                if (prefab == null || measured == null) continue;
+
+                string guestPath = $"{SpecDirectory}/{guest.AssetName}.asset";
+                var spec = AssetDatabase.LoadAssetAtPath<KartSpecAsset>(guestPath);
+                if (spec == null)
+                {
+                    spec = ScriptableObject.CreateInstance<KartSpecAsset>();
+                    AssetDatabase.CreateAsset(spec, guestPath);
+                }
+
+                // Measured, not transcribed: a guest's geometry comes back from
+                // the model the importer just fitted, so the body box and the
+                // thing on screen cannot drift apart. No skin either — the atlas
+                // painter keys off blocks the recovered templates carry and a
+                // guest's own texture has none, so it is left as its author
+                // drew it.
+                spec.ApplySpec(measured);
+                spec.SetContent(
+                    prefab, null, GuestBoosterSound(guest),
+                    guest.BoosterSoundStart, guest.BoosterSoundSlowStart,
+                    GuestClip(guest.AssetName, GuestMusicDirectory, guest.ThemeMusic));
+                EditorUtility.SetDirty(spec);
+                specs.Add(spec);
+                ++guests;
+            }
+
             var catalog = AssetDatabase.LoadAssetAtPath<KartCatalog>(CatalogPath);
             if (catalog == null)
             {
@@ -141,10 +179,32 @@ namespace OrangeCarrrrr.Editor
 
                 Debug.Log(
                     $"Kart catalog: {specs.Count} specs, {models} models, {skins} skins, " +
-                    $"{shared}/{SharedImages.Length} shared stamps. " +
-                    "Parameters come from the recovered KARTS[] table.");
+                    $"{guests} guests, {shared}/{SharedImages.Length} shared stamps. " +
+                    "Parameters come from the recovered KARTS[] table; a guest's " +
+                    "are measured off its own model.");
             }
             finally { _building = false; }
+        }
+
+        /// <summary>
+        /// A guest's own booster sample, from <c>Audio/Kart/Guest</c>.
+        ///
+        /// Kept out of the engine sets on purpose. Those are built one folder per
+        /// generation by <c>KartSoundSetBuilder</c> and a guest is in none of
+        /// them; dropping a sample into one would put a cat noise on every kart of
+        /// that generation.
+        /// </summary>
+        private static AudioClip GuestBoosterSound(KartGuestSpec guest)
+            => GuestClip(guest.AssetName, GuestAudioDirectory, guest.BoosterSound);
+
+        private static AudioClip GuestClip(string assetName, string directory, string file)
+        {
+            if (string.IsNullOrEmpty(file)) return null;
+
+            string path = $"{directory}/{file}";
+            var clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if (clip == null) Debug.LogWarning($"Guest kart '{assetName}': no clip at {path}.");
+            return clip;
         }
 
         /// <summary>

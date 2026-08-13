@@ -67,6 +67,89 @@ namespace OrangeCarrrrr.Runtime
             set { _sounds = value; Restart(); }
         }
 
+        /// <summary>
+        /// A booster one-shot that replaces the set's for as long as it is set.
+        ///
+        /// Only the booster, and only the sample: the volume, the voice it plays
+        /// on and the rule that a boost ending cuts it are all unchanged. Set from
+        /// the kart's own spec, so it follows the kart rather than the engine
+        /// preset — which is the point, since a guest borrows a preset it is not
+        /// really part of.
+        /// </summary>
+        public AudioClip BoosterOverride { get; set; }
+
+        /// <summary>
+        /// Seconds to skip into <see cref="BoosterOverride"/>.
+        ///
+        /// A boost is a short thing and the sample may not start at its first
+        /// sample: the OIIA booster carries 1.48 s of digital silence before the
+        /// voice. Trimming the file would work too, but the offset keeps the asset
+        /// as its author uploaded it, which is what the licence asks of the model
+        /// beside it. Ignored for the engine sets, whose samples start where they
+        /// should.
+        /// </summary>
+        public float BoosterOverrideStart { get; set; }
+
+        /// <summary>
+        /// A second take in the same clip, or 0 for none. An item boost picks
+        /// between this and <see cref="BoosterOverrideStart"/> at random.
+        /// </summary>
+        public float BoosterOverrideSlowStart { get; set; }
+
+        /// <summary>
+        /// Which take the booster now playing took. Read by the simulator so the
+        /// kart's own effects can follow the sound — the OIIA cat turns at half
+        /// speed while its slow take is running.
+        /// </summary>
+        public bool BoosterSlow { get; private set; }
+
+        /// <summary>
+        /// Makes the next booster take the fast one whatever the dice say.
+        ///
+        /// The start boost is not a moment to be slow at, and it goes through the
+        /// same timed boost an item does, so it says so here rather than being
+        /// told apart afterwards. Consumed by the next booster and then forgotten.
+        /// </summary>
+        public void ForceNextBoosterFast() => _forceFastBooster = true;
+
+        private bool _forceFastBooster;
+
+        private AudioClip BoosterClip =>
+            BoosterOverride != null ? BoosterOverride : _sounds.Booster;
+
+        /// <summary>
+        /// The short booster borrows the kart's own booster sample when it has
+        /// one. A kart that says something when it boosts should say it whichever
+        /// boost fired, and the set's instant sample under a cat's booster sounded
+        /// like two different karts.
+        /// </summary>
+        private AudioClip InstantBoostClip =>
+            BoosterOverride != null ? BoosterOverride : _sounds.InstantBoost;
+
+        private float InstantBoostStart => BoosterOverride != null ? BoosterOverrideStart : 0f;
+
+        /// <summary>
+        /// Where the booster one-shot should start, and which take that is.
+        ///
+        /// Called once per booster rather than per frame: it rolls the dice.
+        /// </summary>
+        private float TakeBoosterStart()
+        {
+            bool forced = _forceFastBooster;
+            _forceFastBooster = false;
+
+            if (BoosterOverride == null)
+            {
+                BoosterSlow = false;
+                return 0f;
+            }
+
+            BoosterSlow =
+                !forced && BoosterOverrideSlowStart > 0f && Random.value < 0.5f;
+
+            return BoosterSlow ? BoosterOverrideSlowStart : BoosterOverrideStart;
+        }
+
         private const string DefaultSetPath = "Assets/_Project/Data/Audio/Classic.asset";
 
         private void OnEnable() => Restart();
@@ -239,7 +322,7 @@ namespace OrangeCarrrrr.Runtime
             // The booster sample belongs to the state: a boost that ends early
             // takes it with it rather than playing on over a kart that has
             // already slowed down.
-            if (state.StartBooster) PlayOnce(_booster, _sounds.Booster, 1f);
+            if (state.StartBooster) PlayOnce(_booster, BoosterClip, 1f, TakeBoosterStart());
             else if (!kart.TimedBoost.Active) Stop(_booster);
 
             // The instant boost can retrigger inside its own window, which the
@@ -249,7 +332,11 @@ namespace OrangeCarrrrr.Runtime
                                kart.InstantBoost.ActivationCount != _instantBoostActivations;
             if (state.StartInstantBoost || retriggered)
             {
-                PlayOnce(_instantBoost, _sounds.InstantBoost, 1f);
+                // Always the fast take. The short booster is a flick out of a
+                // drift and it is over before the slow one has finished its first
+                // syllable.
+                PlayOnce(_instantBoost, InstantBoostClip, 1f, InstantBoostStart);
+                if (BoosterOverride != null) BoosterSlow = false;
             }
             else if (!kart.InstantBoost.Active)
             {
@@ -323,12 +410,13 @@ namespace OrangeCarrrrr.Runtime
             }
         }
 
-        private void PlayOnce(AudioSource source, AudioClip clip, float volume)
+        private void PlayOnce(AudioSource source, AudioClip clip, float volume, float startTime = 0f)
         {
             if (source == null || clip == null) return;
             source.clip = clip;
             source.volume = volume * _masterVolume;
             source.pitch = 1f;
+            source.time = startTime > 0f && startTime < clip.length ? startTime : 0f;
             source.Play();
         }
 

@@ -38,6 +38,11 @@ namespace OrangeCarrrrr.Core
         /// </summary>
         public static string For(string assetName)
         {
+            // A guest is in no generation, so its row lookup would fall through
+            // to Classic. It names its own set instead.
+            KartGuestSpec guest = KartGuestData.Find(assetName);
+            if (guest != null && !string.IsNullOrEmpty(guest.EnginePreset)) return guest.EnginePreset;
+
             switch (KartGalleryLayout.RowOf(assetName))
             {
                 case KartGalleryLayout.SrRow: return Sr;

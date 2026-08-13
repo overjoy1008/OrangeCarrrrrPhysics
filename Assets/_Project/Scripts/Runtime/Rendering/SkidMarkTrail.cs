@@ -112,15 +112,18 @@ namespace OrangeCarrrrr.Runtime
 
         [Tooltip(
             "Which of the skid faces is being laid. Cycled by the simulator's key. " +
-            "Opens on rainbow; I goes back to the demo's own mark.")]
-        [SerializeField] private int _style = RainbowStyle;
+            "Opens on the demo's own mark; I cycles to rainbow.")]
+        [SerializeField] private int _style = DemoStyle;
 
         /// <summary>
-        /// The face the simulator opens on. Index into <see cref="Styles"/>, whose
-        /// first entry is the demo's — so this is deliberately not the recovered
-        /// one, the same way the opening kart and paint are not.
+        /// The face the simulator opens on: the demo's own, which is
+        /// <see cref="Styles"/>[0].
+        ///
+        /// It opened on rainbow for a while, which put the later client's mark
+        /// under a 2004 kart before anyone had pressed a key. The recovered one is
+        /// the better default for the same reason the recovered parameters are.
         /// </summary>
-        private const int RainbowStyle = 1;
+        private const int DemoStyle = 0;
 
         /// <summary>The face now being laid, for the HUD.</summary>
         public string StyleName => Styles[Wrap(_style)].Name;
